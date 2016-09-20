@@ -11,16 +11,24 @@ model.variable('var19').label('lambda');
 % change 'Flux' to 'FluxN'
 model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
-model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8'});
+model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'Conc1' 'Conc2' 'Conc3' 'Conc4' 'Conc5' 'Conc6'});
 % desable FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
 model.variable('var20').active(false);
+model.variable('var22').set('sumN', ...
+    'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+
+%% set initial values for Flux and Conc
+for i=1:gnb
+    init.set(['FluxN', num2str(i)], 1);
+end
+
+for j=1:dnb
+    init.set(['Conc', num2str(j)], 1);
+end
 
 
-% define sumDelayedN for adding delayed neutrons in the neutron diffusion eq. 
-model.variable('var22').set('sumDelayedN', 'lambdas1*Conc1+lambdas2*Conc2+lambdas3*Conc3+lambdas4*Conc4+lambdas5*Conc5+lambdas6*Conc6', 'sum of lambda*C_i, for diffusion equation');
- 
 if MultiScale
     fprintf('multiscale');
 else
