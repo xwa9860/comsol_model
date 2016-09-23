@@ -14,7 +14,7 @@ model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area betwe
 model.param.set('pb_nb', '11000', 'number of pebbles in the core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
 model.param.set('Pnominal', '10*10^6[W]', 'Total nominal power');
-model.param.set('T0_fuel', '672[degC]', 'initial temperature for fuel pebbles, 800[degC]');
+model.param.set('T0_fuel', '800[degC]', 'initial temperature for fuel pebbles, 800[degC]');
 model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
 model.param.set('engenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
 
