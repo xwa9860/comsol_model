@@ -11,6 +11,22 @@ model.variable('var20').set('FluxN7', 'Flux7*Pop/Pint');
 model.variable('var20').set('FluxN8', 'Flux8*Pop/Pint');
 model.variable('var20').label('FluxN');
 
+model.variable('var22').set('sumN', ...
+    'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+
+model.variable.create('var23');
+model.variable('var23').model('mod1');
+model.variable('var23').selection.geom('geom1', 2);
+model.variable('var23').selection.set([1 2 3]);
+model.variable('var23').label('ConcN');
+model.variable('var23').set('ConcN1', 'betas1*sumN/lambdas1');
+model.variable('var23').set('ConcN2', 'betas2*sumN/lambdas2');
+model.variable('var23').set('ConcN3', 'betas3*sumN/lambdas3');
+model.variable('var23').set('ConcN4', 'betas4*sumN/lambdas4');
+model.variable('var23').set('ConcN5', 'betas5*sumN/lambdas5');
+model.variable('var23').set('ConcN6', 'betas6*sumN/lambdas6');
+
+
 % set up a stationary study to calculate the value of FluxN's
 model.study.create('std6');
 model.study('std6').create('stat', 'Stationary');

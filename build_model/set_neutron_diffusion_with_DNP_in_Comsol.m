@@ -74,7 +74,7 @@ k=0;
 
 for i =1:gnb+dnb
     if i<=gnb
-     cfeq.setIndex('f', num2str(0), k);
+     cfeq.setIndex('f', ['chid', num2str(i), '*lambda*sumDelayedN*r'], k);
      cfeq.setIndex('ea', num2str(0), k);
     else
     cfeq.setIndex('f', ['betas', num2str(i-gnb),'*sumN'], k);  
