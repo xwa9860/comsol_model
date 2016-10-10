@@ -52,6 +52,8 @@ model.variable('var18').label('power');
 
 model.variable.create('var22');
 model.variable('var22').model('mod1');
+% define sumDelayedN for adding delayed neutrons in the neutron diffusion eq. 
+model.variable('var22').set('sumDelayedN', 'lambdas1*Conc1+lambdas2*Conc2+lambdas3*Conc3+lambdas4*Conc4+lambdas5*Conc5+lambdas6*Conc6', 'sum of lambda*C_i, for diffusion equation');
 model.variable('var22').set('sumN', ...
     'nsf1*Flux1+nsf2*Flux2+nsf3*Flux3+nsf4*Flux4+nsf5*Flux5+nsf6*Flux6+nsf7*Flux7+nsf8*Flux8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
 model.variable('var22').selection.geom('geom1', 2);

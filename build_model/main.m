@@ -35,6 +35,7 @@ fprintf('%.10f ', lambda_eigen);
 % run('calc_temperature_feedback_coefs.m'); 
 
 %% steady state calculation
+fprintf('\nRun steady state study\n');
 model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
 model.variable.create('var19');
 model.variable('var19').model('mod1');
