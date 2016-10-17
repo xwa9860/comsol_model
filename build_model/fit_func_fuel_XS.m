@@ -9,7 +9,11 @@ tot_caseNb=5;
 fuel_temp = [300, 600, 900, 1200, 1500];
 log_fuel_temp = log(fuel_temp);
 if MultiScale
+<<<<<<< HEAD
+    temp_var_pb = '(Tp2+Tp3+Tp4+Tp5)/4.0'; % name of the comsol variable for fuel temperature
+=======
     temp_var_pb = '(Tp1+Tp2+Tp3)/3.0'; % name of the comsol variable for fuel temperature
+>>>>>>> 10f63122cddf148eaa50de412c84a65474c1139e
 % used to set the fuel cross-section variable in comsol
 else
     temp_var_pb = 'T_fuel';  % name of the comsol variable for fuel temperature
