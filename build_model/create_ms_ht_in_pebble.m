@@ -49,7 +49,7 @@ for i=1:region-1
     for j=1:region-1
         if i<=region-2 && j<=region-2
             if i==j
-            cfeq.setIndex('da', ['r',num2str(i+1)],k);
+            cfeq.setIndex('da', ['eigenMode*r',num2str(i+1)],k);
             else
             cfeq.setIndex('da',num2str(0),k);
             end
