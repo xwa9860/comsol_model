@@ -14,7 +14,7 @@ if MultiScale
     run('create_ms_ht_in_pebble.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', 'Tpn');
+    model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4+Tp5)/4.0');
 else
     run('create_ht_fuel.m');
 end
