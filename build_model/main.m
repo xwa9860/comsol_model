@@ -92,8 +92,8 @@ model.sol('sol13').runAll;
 % model.sol('sol15').runAll;
 % 
 %% Transient calculation
-fprintf('\nRunning transient...\n');
-run('create_transient_study.m')
+%fprintf('\nRunning transient...\n');
+%run('create_transient_study.m')
 %run('create_transient_results')
 %model.sol('sol4').runAll;
 
