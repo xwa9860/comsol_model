@@ -93,8 +93,10 @@ run('create_scaling_study.m')
 model.sol('sol15').runAll;
 
 %% Transient calculation
-%fprintf('\nRunning transient...\n');
-%run('create_transient_study.m')
+fprintf('\nRunning transient...\n');
+
+model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+run('create_transient_study.m')
 %run('create_transient_results')
 %model.sol('sol4').runAll;
 
