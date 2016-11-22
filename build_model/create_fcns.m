@@ -41,7 +41,6 @@ model.func('step1').set('from', '1');
 model.func('step1').set('location', '0.1');
 %define ramp function for overcooling 
 model.func.create('rm1', 'Ramp');
-model.func('rm1').set('location', '150');
 model.func('rm1').set('cutoffactive', 'on');
 model.func('rm1').set('slope', 'OCSlope');
 model.func('rm1').set('location', 'OCOnset');
