@@ -17,7 +17,7 @@ if MultiScale
     model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4)/3.0');
 else
     run('create_ht_fuel.m');
-end
+end 
 
 %Neutronics module
 run('create_neutron_diffusion.m');
@@ -96,3 +96,5 @@ fprintf('\nRunning transient...\n');
 run('create_transient_study.m')
 %run('create_transient_results')
 %model.sol('sol4').runAll;
+
+run('create_results')

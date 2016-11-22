@@ -1,0 +1,1 @@
+U = mphgetu(model, 'solnum', 13); % sol13 is the steady state solver number
