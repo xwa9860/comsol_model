@@ -28,3 +28,10 @@ model.param.set('Tp1','0[degC]');
 model.param.set('V_zone', '4/3*pi*r0^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
 model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
 model.param.set('Pop', OpPower, 'operation power');
+
+model.param.set('OCSlope', OCSlope); % value of OCSlope defined in 'define_input_parameters.m'
+model.param.descr('OCSlope', 'Over cooling inlet T drop slope');
+model.param.set('OCOnset', OCOnset);% value of OCOnset defined in 'define_input_parameters.m'
+model.param.descr('OCOnset', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
+
+
