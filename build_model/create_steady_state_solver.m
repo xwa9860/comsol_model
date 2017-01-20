@@ -19,11 +19,13 @@ model.sol('sol13').feature('s1').create('fc1', 'FullyCoupled');
 model.sol('sol13').feature('s1').create('d1', 'Direct');
 model.sol('sol13').feature('s1').feature.remove('fcDef');
 
-
+% take initial value from the previous eigenvalue solution for not solved
+% variables
 model.sol('sol13').feature('v1').set('notsolnum', 'auto');
 model.sol('sol13').feature('v1').set('notsolmethod', 'sol');
 model.sol('sol13').feature('v1').set('notsol', 'sol16');
 model.sol('sol13').feature('v1').set('control', 'user');
+
 model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
 model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
 model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);

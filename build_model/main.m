@@ -8,14 +8,13 @@ run('create_fcns.m')
 run('create_geom.m')
 run('create_vars.m')
 run('create_mats.m')
-
 %Heat transfer modules
 run('create_ht_flibe.m');
 if MultiScale
     run('create_ms_ht_in_pebble.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', 'Tpn');
+    model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4)/3.0');
 else
     run('create_ht_fuel.m');
 end 
