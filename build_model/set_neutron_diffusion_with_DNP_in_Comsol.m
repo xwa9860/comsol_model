@@ -33,13 +33,13 @@ for i = 1:gnb+dnb
     for j = 1:gnb+dnb
     if i<=gnb && j<=gnb
         if i == j
-                cfeq.setIndex('da', ['invV', num2str(i), '*r*engenMode'] , k);
+                cfeq.setIndex('da', ['invV', num2str(i), '*r*eigenMode'] , k);
         else
             cfeq.setIndex('da', num2str(0), k);
         end
     else
         if i == j
-                cfeq.setIndex('da', 'engenMode' , k);
+                cfeq.setIndex('da', 'eigenMode' , k);
         else
             cfeq.setIndex('da', num2str(0), k);
         end

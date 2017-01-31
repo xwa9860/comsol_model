@@ -45,7 +45,10 @@ model.variable.create('var18');
 model.variable('var18').model('mod1');
 model.variable('var18').set('Pdensity', ...
     'kappa1*fiss1*Flux1+kappa2*fiss2*Flux2+kappa3*fiss3*Flux3+kappa4*fiss4*Flux4+kappa5*fiss5*Flux5+kappa6*fiss6*Flux6+kappa7*fiss7*Flux7+kappa8*fiss8*Flux8', 'power density');
+model.variable('var18').set('PdensityN', ...
+    'Pdensity*Pop/Pint', 'power density normalized to Pop');
 model.variable('var18').set('Pint', 'intop1(Pdensity)', 'integrated total core power');
+model.variable('var18').set('PintN', 'intop1(PdensityN)', 'integrated total core power normalized to Pop, should be equal to Pop');
 model.variable('var18').selection.geom('geom1', 2);
 model.variable('var18').selection.set([1 2 3]);
 model.variable('var18').label('power');

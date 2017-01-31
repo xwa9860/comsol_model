@@ -8,14 +8,13 @@ run('create_fcns.m')
 run('create_geom.m')
 run('create_vars.m')
 run('create_mats.m')
-
 %Heat transfer modules
 run('create_ht_flibe.m');
 if MultiScale
     run('create_ms_ht_in_pebble.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', 'Tpn');
+    model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4+Tp5)/4.0');
 else
     run('create_ht_fuel.m');
 end 
@@ -47,6 +46,7 @@ model.param.set('engenMode', '1', 'binary value for NON engenvalue mode(value = 
  
 run('create_steady_state_solver.m')
 model.sol('sol13').runAll;
+
 
 %% Rerun eigenvalue calculation with temperature profile from steady state
 % set to eigenvalue mode
@@ -87,18 +87,14 @@ lambda_eigen_new = mphglobal(model, 'lambda');
 fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
-
 % %% Scale the flux to power
 % fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 % run('create_scaling_study.m')
 % model.sol('sol15').runAll;
 % 
-% %% Transient calculation
-% fprintf('\nRunning transient...\n');
-% 
-% model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
-% run('create_transient_study.m')
-%run('create_transient_results')
+%% Transient calculation
+%fprintf('\nRunning transient...\n');
+%run('create_transient_study.m')
 %model.sol('sol4').runAll;
 
 run('create_results')

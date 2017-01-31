@@ -2,8 +2,9 @@
 dimNb = 2; % 2D model
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
+region=5; % temperature group number
 
-MultiScale= true
+MultiScale= true;
 
 %Try to use ChiT for all the Chi's and use beta effective for delayed
 %neutrons
