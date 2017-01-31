@@ -6,6 +6,8 @@ for caseNb = 1:5
     model.sol('sol16').runAll;
     lambda_eigen = mphglobal(model, 'lambda');
     fuel_eigens(caseNb) = lambda_eigen;
+    fprintf('\nAt fuel temperature\n');
+    fprintf('%.10f \n', fuel_temperatures(caseNb))
     fprintf('\nThe eigenvalue is\n');
     fprintf('%.10f \n', lambda_eigen)
 end
@@ -14,14 +16,14 @@ drho_fuel = calc_delta_reactivity(fuel_eigens, 'COMSOL');
 rownb = 5;
 unb = 4;
 for caseNb = 1:5
-    read_array_XS(IMP_KEFF, rownb, 1)
+    read_array_XS(IMP_KEFF, rownb, 1);
     keff_serpent(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
     rownb = rownb + unb;
 end
 
 drho_serpent_fuel = calc_delta_reactivity(keff_serpent, 'SERPENT');
 [p, some] = polyfit(fuel_temperatures, drho_fuel, 1);
-fprintf('\n The flibe feedback coef is %4.2f\n', c1);
+fprintf('\n The fuel feedback coef in serpent is %4.2f\n', p);
 
 
 %% compute temperature reactivity feedback for flibe
@@ -35,17 +37,17 @@ for caseNb = 1:5
     fprintf('\nThe eigenvalue is\n');
     fprintf('%.10f \n', lambda_eigen)
 end
-drho_flibe = delta_reactivity(flibe_eigens, 'COMSOL');
+drho_flibe = calc_delta_reactivity(flibe_eigens, 'COMSOL');
 
 rownb = rownb + 1; % continue from the cases for fuel
 for caseNb = 1:5
-    read_array_XS(IMP_KEFF, rownb, 1)
+    read_array_XS(IMP_KEFF, rownb, 1);
     keff_serpent(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
     rownb = rownb + unb;
 end
-drho_serpent_flibe = delta_reactivity(keff_serpent, 'SERPENT');
+drho_serpent_flibe = calc_delta_reactivity(keff_serpent, 'SERPENT');
 [p, some] = polyfit(flibe_temperatures, drho_flibe, 1);
-fprintf('\n The flibe feedback coef is %4.2f\n', c1);
+fprintf('\n The flibe feedback coef is %4.2f\n', p);
 
 %% reset the initial values to the reactor nominal value
 model.param.set('T0_fuel', '800[degC]', 'initial temperature for fuel');
