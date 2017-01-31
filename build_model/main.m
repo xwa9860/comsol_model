@@ -14,7 +14,7 @@ if MultiScale
     run('create_ms_ht_in_pebble.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4+Tp5)/4.0');
+    model.variable('var25').set('T_fuel', '(Tp2+Tp3+Tp4)/3.0');
 else
     run('create_ht_fuel.m');
 end 
@@ -95,6 +95,8 @@ model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get 
 %% Transient calculation
 %fprintf('\nRunning transient...\n');
 %run('create_transient_study.m')
+model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+run('create_transient_study.m')
+%run('create_transient_results')
 %model.sol('sol4').runAll;
-
 run('create_results')

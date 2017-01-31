@@ -85,9 +85,9 @@ model.sol('sol15').feature('v1').feature('mod1_Flux7').set('solvefor', false);
 model.sol('sol15').feature('v1').feature('mod1_Flux8').set('solvefor', false);
 model.sol('sol15').feature('v1').feature('mod1_Flux5').set('solvefor', false);
 if MultiScale
-    model.sol('sol15').feature('v1').feature('mod1_Tp1').set('solvefor', false);
-    model.sol('sol15').feature('v1').feature('mod1_Tp2').set('solvefor', false);
-    model.sol('sol15').feature('v1').feature('mod1_Tpn').set('solvefor', false);
+%     model.sol('sol15').feature('v1').feature('mod1_Tp1').set('solvefor', false);
+%     model.sol('sol15').feature('v1').feature('mod1_Tp2').set('solvefor', false);
+%     model.sol('sol15').feature('v1').feature('mod1_Tpn').set('solvefor', false);
 else
     model.sol('sol15').feature('v1').feature('mod1_T_fuel').set('solvefor', false);
 end
