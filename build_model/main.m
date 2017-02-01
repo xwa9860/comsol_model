@@ -88,15 +88,14 @@ fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
 % %% Scale the flux to power
-% fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
-% run('create_scaling_study.m')
-% model.sol('sol15').runAll;
-% 
+fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
+run('create_scaling_study.m')
+model.sol('sol15').runAll; 
+
 %% Transient calculation
-%fprintf('\nRunning transient...\n');
-%run('create_transient_study.m')
-model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+fprintf('\nRunning transient...\n');
 run('create_transient_study.m')
-%run('create_transient_results')
+model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+run('create_transient_results')
 %model.sol('sol4').runAll;
-run('create_results')
+%run('create_results')

@@ -15,7 +15,7 @@ OpPower = '1E7[W]' %string, input to comsol global variable 'Pop'
 % define transient parameters
 tf = 20 %second, finishing time of the transient
 dt = 0.1 %second, time step to record the results(not the timestep that the solver takes)
-rho_ext = 0.0 % reactivity insertion value 
+rho_ext = 0.06 % reactivity insertion value 
 
 
 % define Overcooling transient parameters
