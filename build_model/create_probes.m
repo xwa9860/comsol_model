@@ -10,7 +10,7 @@ model.probe('dom1').label('Probe Pint');
 model.probe('dom1').set('table', 'tbl1');
 model.probe('dom1').set('descr', 'integrated total core power');
 model.probe('dom1').set('window', 'window1');
-model.probe('dom1').set('expr', 'Pint');
+model.probe('dom1').set('expr', 'PintN');
 model.probe('dom1').set('unit', 'W*m');
 
 % domain probe for average fuel temperature
