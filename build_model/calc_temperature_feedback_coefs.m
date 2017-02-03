@@ -1,4 +1,5 @@
-%Compute temperature reactivity feedback for fuel
+%Compute temperature reactivity feedback for fuel and plot the comparison
+%between this model and serpent
 fuel_temperatures = [300, 600, 900, 1200, 1500];
 
 for caseNb = 1:5
@@ -55,18 +56,22 @@ model.param.set('T0_flibe', '700[degC]', 'initial temperature for flibe');
 
 %% plot the results
 figure;
-plot(flibe_temperatures, drho_flibe, 'o');
+plot(flibe_temperatures, drho_flibe, 'k-*');
 hold on;
-plot(flibe_temperatures, drho_serpent_flibe, '+');
+plot(flibe_temperatures, drho_serpent_flibe, 'k--+');
 title('Temperature(and void) reactivity feedback for flibe');
+ylabel('Reactivity');
+xlabel('Temperature(K)');
 legend('Diffusion', 'Monte carlo')
 hold off;
         
 figure;
-plot(fuel_temperatures, drho_fuel, 'o');
+plot(fuel_temperatures, drho_fuel, 'k-*');
 hold on;
-plot(fuel_temperatures, drho_serpent_fuel, '+');
+plot(fuel_temperatures, drho_serpent_fuel, 'k--+');
 title('Temperature reactivity feedback for fuel');
 legend('Diffusion', 'Monte carlo')
+ylabel('Reactivity');
+xlabel('Temperature(K)');
 hold off;
         

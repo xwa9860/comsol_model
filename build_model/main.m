@@ -32,8 +32,8 @@ lambda_eigen = mphglobal(model, 'lambda');
 fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f ', lambda_eigen);
 
-%% run the following only if needed
-run('calc_temperature_feedback_coefs.m'); 
+%% run the following line only if needed
+%run('calc_temperature_feedback_coefs.m'); 
 
 %% steady state calculation
 fprintf('\nRun steady state study\n');
