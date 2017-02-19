@@ -4,8 +4,8 @@ dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
 
-MultiScale= true;
-
+MultiScale= false;
+sp3 = false;
 %Try to use ChiT for all the Chi's and use beta effective for delayed
 %neutrons
 BetaEff = true;
@@ -19,5 +19,5 @@ rho_ext = 0.06 % reactivity insertion value
 
 
 % define Overcooling transient parameters
-OCOnset = 0 %s, starting time of overcooling
+OCOnset = 0 %s, starting time of overcooling, a very large time means the overcooling is not simulated
 OCSlope = -10 %K/s, speed of decrease in inlet coolant temperature

@@ -1,7 +1,7 @@
 
 model.param.set('v_inlet', '0.14[m/s]', 'upwards velocity, uniform in the core0.14[m/s]');
 model.param.set('Po', '0 [atm]', 'pressure');
-model.param.set('T0_flibe', '778[degC]', 'initial temperature for flibe salt, 700[degC] for TMSR');
+model.param.set('T0_flibe', '700[degC]', 'initial temperature for flibe salt, 700[degC] for TMSR');
 model.param.set('pb_h', '0.4501[m]', 'a parameter for pebble height, defined as in picture ''core_dim_definition''. Calculated with MATLAB Livelink, file ''volume.m''');
 model.param.set('z0', '20[cm]-4.899[cm]', 'height of pebble boundary when pb_h =0');
 model.param.set('zin', 'z0+pb_h', 'inner height that fuel pebble regions starts');
