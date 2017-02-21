@@ -1,5 +1,5 @@
 model.param.set('reactivity_insertion', num2str(rho_ext), 'external reactivity insertion');
-%set to non-eigenvalue mode
+%set to non-eigenvalue mode, add the time derivative term in the PDE
 model.param.set('engenMode', '1', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
 
 %enable the lambda variable and define lambda for RI transient
@@ -9,10 +9,10 @@ model.variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
 model.variable('var19').label('lambda');
 
 % change 'Flux' to 'FluxN'
-model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density');
+model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
 model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
-% desable FluxN variable, because FluxN become dependent variable in
+% desable the FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
 model.variable('var20').active(false);
@@ -22,6 +22,7 @@ model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lamb
 
 % desable ConcN
 model.variable('var23').active(false);
+
 %% set initial values for Flux and Conc
 init = model.physics('neutrondiffusion').feature('init1');
 for i=1:gnb
