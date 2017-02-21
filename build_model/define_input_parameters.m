@@ -12,12 +12,15 @@ BetaEff = true;
 
 OpPower = '1E7[W]' %string, input to comsol global variable 'Pop'
 
-% define transient parameters
+%% define transient study parameters
 tf = 20 %second, finishing time of the transient
 dt = 0.1 %second, time step to record the results(not the timestep that the solver takes)
-rho_ext = 0.06 % reactivity insertion value 
+
+%% define reactivity insertion value, 0 means that this simulation is not
+% about reactivity insertion
+rho_ext = 0% reactivity insertion value 
 
 
-% define Overcooling transient parameters
-OCOnset = 0 %s, starting time of overcooling, a very large time means the overcooling is not simulated
+%% define Overcooling transient parameters
+OCOnset = 100 %s, starting time of overcooling, a very large time means the overcooling is not simulated
 OCSlope = -10 %K/s, speed of decrease in inlet coolant temperature
