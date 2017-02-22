@@ -1,4 +1,5 @@
-% 1) check Pint==Pop: Pint is the integral of power in the core, Pop is the
+% check Pint==Pop: Pint is the integral of power in the core, Pop is the
+fprintf('check scaling power')
 % defined operation power
 Pint = mphevalpoint(model,'Pint','selection',2, 'dataset', 'dset4');
 % dset4 is the scaling study results
@@ -7,15 +8,14 @@ if Pint ~= Pop
     fprintf('\nPint is different from Pop at steady state\n');
     fprintf('%.10f vs %.10f \n', Pint, Pop);
 end
-
-%% transient results
 % check average of flibe temperature in the fuel region after scaling
 Volume = mphint2(model, '1', 2, 'selection', 2);
 T_flibe_ave = mphint2(model, 'T_flibe', 2, 'selection', 2)/Volume
 % check temperature difference between flibe and fuel
 T_fuel_ave = mphint2(model, 'T_fuel', 2, 'selection', 2)/Volume
 T_fuel_ave - T_flibe_ave
-
+%% transient results
+fprintf('check transient results')
 % check temperature rise of flibe
 T_flibe_inlet = mphmin(model, 'T_flibe', 2,'dataset', 'dset5', 't', 0.3) %dset5 is the transient
 T_flibe_outlet = mphmax(model, 'T_flibe',2, 'dataset', 'dset5', 't', 0.3)
