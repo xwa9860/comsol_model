@@ -1,6 +1,6 @@
 model.param.set('reactivity_insertion', num2str(rho_ext), 'external reactivity insertion');
 %set to non-eigenvalue mode, add the time derivative term in the PDE
-model.param.set('engenMode', '1', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
 
 %enable the lambda variable and define lambda for RI transient
 model.variable('var19').active(true);
