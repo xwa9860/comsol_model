@@ -34,6 +34,7 @@ model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
 model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
 model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
 model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
+
 model.sol('sol13').feature('s1').feature('fc1').set('initstep', '0.01');
 model.sol('sol13').feature('s1').feature('fc1').set('maxiter', '500');
 model.sol('sol13').feature('s1').feature('fc1').set('minstep', '1.0E-6');

@@ -5,7 +5,7 @@ gnb=8; % energy group number
 region=5; % temperature group number
 
 MultiScale= false;
-sp3 = false;
+sp3 = true;
 %Try to use ChiT for all the Chi's and use beta effective for delayed
 %neutrons
 BetaEff = true;

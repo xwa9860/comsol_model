@@ -11,7 +11,11 @@ model.variable('var19').label('lambda');
 % change 'Flux' to 'FluxN'
 model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
-model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
+if sp3
+    model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'Flux21' 'Flux22' 'Flux23' 'Flux24' 'Flux25' 'Flux26' 'Flux27' 'Flux28' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
+else
+        model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
+end
 % desable the FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
@@ -27,6 +31,12 @@ model.variable('var23').active(false);
 init = model.physics('neutrondiffusion').feature('init1');
 for i=1:gnb
     init.set(['FluxN', num2str(i)], ['FluxN', num2str(i)]);
+end
+
+if sp3
+for i=1:gnb
+    init.set(['Flux2', num2str(i)], ['Flux2', num2str(i)]);
+end
 end
 
 for j=1:dnb

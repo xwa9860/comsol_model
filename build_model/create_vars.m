@@ -63,6 +63,3 @@ model.variable('var22').selection.geom('geom1', 2);
 model.variable('var22').selection.set([1 2 3]);
 model.variable('var22').label('delayed');
 
-
-
-
