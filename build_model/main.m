@@ -31,7 +31,8 @@ run('create_probes.m')
 
 %% solvers
 %% Eigenvalue calculation
-run('create_eigen_solver.m')
+run('create_eigen_solver.m');
+fprintf('Run eigenvalue study');
 model.sol('sol16').runAll;
 lambda_eigen = mphglobal(model, 'lambda');
 fprintf('\nThe eigenvalue with initial temperatures is\n');

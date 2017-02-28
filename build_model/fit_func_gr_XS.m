@@ -17,9 +17,10 @@ Res_ChiP_gr = read_array_XS(INF_CHIP, u_gr, gnb);
 Res_ChiD_gr = read_array_XS(INF_CHID, u_gr, gnb);
 Res_F_gr = read_array_XS(INF_FISS, u_gr, gnb);
 Res_Scat_gr = read_inf_s0(INF_S0, u_gr, gnb);   
-Res_Rem_gr= read_array_XS(INF_REMXS, u_gr, gnb);
+Res_Rem_gr = read_array_XS(INF_REMXS, u_gr, gnb);
 Res_NSF_gr = read_array_XS(INF_NSF, u_gr, gnb);
-    
+Res_Tot_gr = read_array_XS(INF_TOT, u_gr, gnb);
+Res_Diff2_gr = 9/35.0./Res_Tot_gr;
 % filename = 'gr_data.txt';
 % fileID = fopen(filename, 'wt');
 % fprintf(fileID, 'univ_gr 1\n');
@@ -38,7 +39,10 @@ set_XS_data_to_comsol_model(model, comsol_var_name, 'betas', Res_Betas_gr(2:end)
 set_XS_data_to_comsol_model(model, comsol_var_name, 'lambdas', Res_Lambdas_gr(2:end), '[1/s]', 'fixed');
 
 set_XS_data_to_comsol_model(model, comsol_var_name, 'kappa', Res_Kappa_gr, '[MeV]', 'fixed');
-set_XS_data_to_comsol_model(model, comsol_var_name, 'diff', Res_Diff_gr, '[cm]', 'fixed');
+%diffusion coefficient
+set_XS_data_to_comsol_model(model, comsol_var_name, 'diff1', Res_Diff_gr, '[cm]', 'fixed');
+% D2 for sp3 method
+set_XS_data_to_comsol_model(model, comsol_var_name, 'diff2', Res_Diff2_gr, '[cm]', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name, 'invV', Res_InvV_gr, '[s/cm]', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name, 'chit', Res_ChiT_gr, '', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name, 'chip', Res_ChiP_gr, '', 'fixed');
@@ -48,6 +52,6 @@ set_XS_data_to_comsol_model(model, comsol_var_name, 'scat', Res_Scat_gr, '[1/cm]
 set_XS_data_to_comsol_model(model, comsol_var_name, 'nsf', Res_NSF_gr, '[1/cm]', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name, 'nsf0', Res_NSF_gr, '[1/cm]', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name, 'rem', Res_Rem_gr, '[1/cm]', 'fixed');
-
+set_XS_data_to_comsol_model(model, comsol_var_name, 'tot', Res_Tot_gr, '[1/cm]', 'fixed');
 
 
