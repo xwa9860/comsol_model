@@ -58,7 +58,7 @@ end
 
 %% set matrix 'da' in comsol
 k=0;
-for i = 1:NT_nb+dnb
+for i = 1:NT_nb+dnb 
     for j = 1:NT_nb+dnb
         if i<=gnb && j<=gnb
             if i == j
@@ -79,21 +79,19 @@ end
 
 %% set matrix 'c': diffusion coefficients
 k=0;
-for i =1:NT_nb+dnb
-    for j=1:NT_nb+dnb
+for i =1:NT_nb+dnb %column number
+    for j=1:NT_nb+dnb %line number
         cfeq.setIndex('c', ...
         {num2str(0), num2str(0)},  k);
-        if i<=gnb && j<=gnb
-             if i==j
+        if i<=gnb && j<=gnb && i==j
                 cfeq.setIndex('c', ...
                     {['diff1', num2str(j), '*r'],...
                      ['diff1', num2str(j), '*r']},  k);
-             end
         end
-        if sp3 && i < gnb && j>gnb && j<=NT_nb && i==j
+        if sp3 && gnb<i  && i<=NT_nb && j<=gnb && j==(i-gnb)
                  cfeq.setIndex('c', ...
-                    {['2*diff1', num2str(j-gnb), '*r'],...
-                     ['2*diff1', num2str(j-gnb), '*r']},  k);
+                    {['2*diff1', num2str(i-gnb), '*r'],...
+                     ['2*diff1', num2str(i-gnb), '*r']},  k);
         end      
         if sp3 && i >gnb && i<=NT_nb && j>gnb && j<=NT_nb && i==j 
                  cfeq.setIndex('c', ...
