@@ -22,8 +22,8 @@ function [c0, c1] = fit_and_plot(x, y, comp, energy_gr)
         % are 0, so (y_pred-y)/y = infinity; if they are either 0 or close
         % to 0, then we set the function coefficients to 0, so the cross
         % sections are 0 at all temperature
-        y
-        y_pred
+        %y
+        %y_pred
         c0 = 0;
         c1 = 0;
     end
