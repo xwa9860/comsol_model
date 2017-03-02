@@ -4,7 +4,7 @@ dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
 
-global MultiScale
+
 MultiScale= true;
 sp3 = false;
 %Try to use ChiT for all the Chi's and use beta effective for delayed

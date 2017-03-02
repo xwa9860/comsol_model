@@ -31,7 +31,7 @@ if MultiScale
             for j = 1:3 % triso layer
                 folder_name = 'diffusion_cx_data/multi_temp_dep_data/';
                 file_name = ['tmsr_sf1_' num2str(i) num2str(j) '_' fuel_temp_lib(t_nb,:) '_res.m'];     
-                run(strcat(folder_name, file_name))
+                run(strcat(folder_name, file_name));
                 %construct the temperature matrix as X for fitting
                 fuel_temp(l,k) = t_option(t_nb);   
                 k=k+1;  
@@ -39,7 +39,7 @@ if MultiScale
             end
         end
     end
-    run([folder_name 'tmsr_sf1_res.m'])
+    run([folder_name 'tmsr_sf1_res.m']);
     
     %%
     % an example fuel temp variable is
@@ -56,7 +56,7 @@ else
     for caseNb = 1:tot_caseNb
         folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(fuel_temp(caseNb))];
         file_name = '/tmsr_sf1_res.m';   
-        run([folder_name file_name])
+        run([folder_name file_name]);
     end
 end
 
@@ -92,7 +92,7 @@ end
 
 
 % fit a log_linear function XS = c1*log(T) + c0
-fuel_scat.coefs = fit_matrix(log_fuel_temp, Res_Scat_Fuel, 'scat fuel', MultiScale)
+fuel_scat.coefs = fit_matrix(log_fuel_temp, Res_Scat_Fuel, 'scat fuel', MultiScale);
 fuel_scat.temp_var = temp_var_pb;
 fuel_NSF.coefs = fit_matrix(log_fuel_temp, Res_NSF_Fuel, 'NSF fuel', MultiScale);
 fuel_NSF.temp_var = temp_var_pb;

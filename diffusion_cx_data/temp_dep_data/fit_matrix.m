@@ -31,8 +31,6 @@ if MS
     end 
 
     if length(mat_size) == 2 %2D matrix
-        size(matrix_to_fit)
-        size(x)
          coefs=x\matrix_to_fit;
     end 
 else

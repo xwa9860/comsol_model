@@ -28,7 +28,7 @@ if strcmp(flag, 'fixed')
        end
 %% for cross sections with log linear dependence with temperature
 elseif strcmp(flag, 'log_temp_dep')
-    var_size = size(var_to_write.coefs)  % should be gnb*2 or gnb*gnb*2
+    var_size = size(var_to_write.coefs);  % should be gnb*2 or gnb*gnb*2
     if MS
         if length(var_size) ==2
             % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
@@ -40,7 +40,7 @@ elseif strcmp(flag, 'log_temp_dep')
                     else
                         var_str = '(';
                         for k = 1:var_size(2) %temperature number
-                            var_str = [var_str,'(', num2str(var_to_write.coefs(j, k)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+']    
+                            var_str = [var_str,'(', num2str(var_to_write.coefs(j, k)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
                         end
                       
                         model.variable(comsol_var_name).set(...
@@ -63,7 +63,7 @@ elseif strcmp(flag, 'log_temp_dep')
                     else
                         var_str = '(';
                         for k = 1:var_size(2) %temperature number
-                            var_str = [var_str,'(' num2str(var_to_write.coefs(i, k, j)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+']    
+                            var_str = [var_str,'(' num2str(var_to_write.coefs(i, k, j)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
                         end
                       
                         model.variable(comsol_var_name).set(...
