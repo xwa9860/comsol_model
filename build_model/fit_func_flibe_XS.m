@@ -3,7 +3,7 @@ unb = 4; % total universes number used in Serpent, here is used to determine whi
 %% getting the serpent results into the matlab data 'Workspace'
 % array for fitting the data from serpent output in the specific folders
 flibe_density = [17, 18, 19, 20, 21];
-flibe_temp = (2279.92-flibe_density*100)/0.488+273.15
+flibe_temp = (2279.92-flibe_density*100)/0.488+273.15;
 u_flibe = 4; %universe number for flibe is 4 in serpent file
 temp_var_flibe = 'T_flibe';
 

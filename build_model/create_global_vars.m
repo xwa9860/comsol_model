@@ -34,4 +34,4 @@ model.param.descr('OCSlope', 'Over cooling inlet T drop slope');
 model.param.set('OCOnset', OCOnset);% value of OCOnset defined in 'define_input_parameters.m'
 model.param.descr('OCOnset', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
 
-
+model.param.set('Tp00', 1, 'placeholder for the bias term in linear regression of cross sections on temperature');

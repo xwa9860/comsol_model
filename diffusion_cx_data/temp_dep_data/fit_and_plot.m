@@ -17,7 +17,7 @@ function [c0, c1] = fit_and_plot(x, y, comp, energy_gr)
     %a large threshold turns off the warning
     residual = abs(max((y_pred - y)./y));
     if residual > threshold
-        display('Warning: large(almost infinite) relative error, set c0 and c1 to 0')
+        display('Warning from fit_and_plot.m: large(almost infinite) relative error, set c0 and c1 to 0')
         % this happens mostly because some of the cross-section data values
         % are 0, so (y_pred-y)/y = infinity; if they are either 0 or close
         % to 0, then we set the function coefficients to 0, so the cross

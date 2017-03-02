@@ -5,21 +5,59 @@ format long e
 
 unb = 4; % total universes number
 u_fuel = 3;
-tot_caseNb=5;
-fuel_temp = [300, 600, 900, 1200, 1500];
-log_fuel_temp = log(fuel_temp);
+
+
 if MultiScale
-    temp_var_pb = '(Tp2+Tp3+Tp4)/3.0'; % name of the comsol variable for fuel temperature
-% used to set the fuel cross-section variable in comsol
+    % fuel temperature names in a array
+    temp_var_pb = ['tp11'; 'tp12'; 'tp13'; 'tp21'; 'tp22'; 'tp23'; 'tp31'; 'tp32'; 'tp33'; 'tp00']; 
+    % names of the comsol variable for fuel temperature used to set the fuel cross-section variable in comsol
+    % TODO: change these to the real names that is used in the heat
+    % transfer module
 else
     temp_var_pb = 'T_fuel';  % name of the comsol variable for fuel temperature
 % used to set the fuel cross-section variable in comsol
 end
 
-for caseNb = 1:tot_caseNb
-    folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(fuel_temp(caseNb))];
-    file_name = '/tmsr_sf1_res.m';   
- 	run([folder_name file_name])
+%% create X(temperatures) and Y(cross sections) for linear regression
+if MultiScale
+    tot_caseNb=19;
+    t_option = [600, 1200];
+    fuel_temp_lib = ['06'; '12']; % temperature library name, used in file names
+    fuel_temp = 900* ones(tot_caseNb, 10);
+    l=1; % strat from line 1
+    for t_nb = 1:2 % temperature number, 1 for 600K and 2 for 1200K
+        k=1;%column that corresponds to the temperature varaibles
+        for i = 1:3 %pebble layer
+            for j = 1:3 % triso layer
+                folder_name = 'diffusion_cx_data/multi_temp_dep_data/';
+                file_name = ['tmsr_sf1_' num2str(i) num2str(j) '_' fuel_temp_lib(t_nb,:) '_res.m'];     
+                run(strcat(folder_name, file_name))
+                %construct the temperature matrix as X for fitting
+                fuel_temp(l,k) = t_option(t_nb);   
+                k=k+1;  
+                l=l+1;
+            end
+        end
+    end
+    run([folder_name 'tmsr_sf1_res.m'])
+    
+    %%
+    % an example fuel temp variable is
+    %
+    % <<fuel_temp.png>>
+    % 
+    %
+    log_fuel_temp = log(fuel_temp);
+     
+else
+    tot_caseNb=5;
+    fuel_temp = [300, 600, 900, 1200, 1500];
+    log_fuel_temp = log(fuel_temp);
+    for caseNb = 1:tot_caseNb
+        folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(fuel_temp(caseNb))];
+        file_name = '/tmsr_sf1_res.m';   
+        run([folder_name file_name])
+    end
 end
 
 u=u_fuel+unb;
@@ -54,15 +92,15 @@ end
 
 
 % fit a log_linear function XS = c1*log(T) + c0
-fuel_scat.coefs = fit_matrix(log_fuel_temp, Res_Scat_Fuel, 'scat fuel');
+fuel_scat.coefs = fit_matrix(log_fuel_temp, Res_Scat_Fuel, 'scat fuel', MultiScale)
 fuel_scat.temp_var = temp_var_pb;
-fuel_NSF.coefs = fit_matrix(log_fuel_temp, Res_NSF_Fuel, 'NSF fuel');
+fuel_NSF.coefs = fit_matrix(log_fuel_temp, Res_NSF_Fuel, 'NSF fuel', MultiScale);
 fuel_NSF.temp_var = temp_var_pb;
-fuel_Rem.coefs = fit_matrix(log_fuel_temp, Res_Rem_Fuel, 'removal fuel');
+fuel_Rem.coefs = fit_matrix(log_fuel_temp, Res_Rem_Fuel, 'removal fuel', MultiScale);
 fuel_Rem.temp_var = temp_var_pb;
-fuel_Tot.coefs = fit_matrix(log_fuel_temp, Res_Tot_Fuel, 'total fuel');
+fuel_Tot.coefs = fit_matrix(log_fuel_temp, Res_Tot_Fuel, 'total fuel', MultiScale);
 fuel_Tot.temp_var = temp_var_pb;
-fuel_Diff2.coefs = fit_matrix(log_fuel_temp, Res_Diff2_Fuel, 'diff2 fuel');
+fuel_Diff2.coefs = fit_matrix(log_fuel_temp, Res_Diff2_Fuel, 'diff2 fuel', MultiScale);
 fuel_Diff2.temp_var = temp_var_pb;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section was used to write the cross sections out into a file,
@@ -100,12 +138,12 @@ set_XS_data_to_comsol_model(model, comsol_var_name,  'fiss', Res_F_Fuel, '[1/cm]
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chit', Res_ChiT_Fuel, '', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chip', Res_ChiP_Fuel, '', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chid', Res_ChiD_Fuel, '', 'fixed');
-set_XS_data_to_comsol_model(model, comsol_var_name,  'scat', fuel_scat, '[1/cm]', 'log_temp_dep');
-set_XS_data_to_comsol_model(model, comsol_var_name,  'nsf', fuel_NSF, '[1/cm]', 'log_temp_dep');
-set_XS_data_to_comsol_model(model, comsol_var_name,  'rem', fuel_Rem, '[1/cm]', 'log_temp_dep');
-set_XS_data_to_comsol_model(model, comsol_var_name,  'tot', fuel_Tot, '[1/cm]', 'log_temp_dep');
+set_XS_data_to_comsol_model(model, comsol_var_name,  'scat', fuel_scat, '[1/cm]', 'log_temp_dep', MultiScale);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'nsf', fuel_NSF, '[1/cm]', 'log_temp_dep', MultiScale);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'rem', fuel_Rem, '[1/cm]', 'log_temp_dep', MultiScale);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'tot', fuel_Tot, '[1/cm]', 'log_temp_dep', MultiScale);
 % diffusion coefficient D2 for sp3 (need to define the correct value)
-set_XS_data_to_comsol_model(model, comsol_var_name,  'diff2', fuel_Diff2, '[cm]', 'log_temp_dep');
+set_XS_data_to_comsol_model(model, comsol_var_name,  'diff2', fuel_Diff2, '[cm]', 'log_temp_dep', MultiScale);
 
 array=[];
 for i =1:8

@@ -1,7 +1,8 @@
 %%return coefs: 
-%For scattering matrix coefs: coefs(:,:,1) is the gnb*gnb
-%%size matrix for c0, and coefs(:,:,2) is the gnb*gnb size matrix for c1
-%For other type of XS coefs: coefs(:,1) is the gnb*1 size array for c0
+%In the non MS mode
+    %For scattering matrix coefs: coefs(:,:,1) is the gnb*gnb
+    %size matrix for c0, and coefs(:,:,2) is the gnb*gnb size matrix for c1
+    %For other type of XS coefs: coefs(:,1) is the gnb*1 size array for c0
 
 
 function coefs = fit_matrix(x, matrix_to_fit, figTitle, MS)
@@ -24,7 +25,7 @@ if MS
         %for i=1:mat_size(2)
             for j = 1:mat_size(3)
                 y = matrix_to_fit(1:length(x), :, j);
-                coefs(j, :,:) = x\y
+                coefs(j, :,:) = x\y;
             end
         %end
     end 
