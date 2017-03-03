@@ -40,7 +40,8 @@ elseif strcmp(flag, 'log_temp_dep')
                     else
                         var_str = '(';
                         for k = 1:var_size(2) %temperature number
-                            var_str = [var_str,'(', num2str(var_to_write.coefs(j, k)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
+                            var_str = [var_str,'(', num2str(var_to_write.coefs(j, k)), ')*log(', ...
+                                var_to_write.temp_var(k,:) ,'[1/K])+'];    
                         end
                       
                         model.variable(comsol_var_name).set(...
@@ -63,7 +64,8 @@ elseif strcmp(flag, 'log_temp_dep')
                     else
                         var_str = '(';
                         for k = 1:var_size(2) %temperature number
-                            var_str = [var_str,'(' num2str(var_to_write.coefs(i, k, j)), ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
+                            var_str = [var_str,'(' num2str(var_to_write.coefs(i, k, j)), ...
+                                ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
                         end
                       
                         model.variable(comsol_var_name).set(...
