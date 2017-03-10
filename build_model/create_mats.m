@@ -1,9 +1,9 @@
 model.material.create('mat1', 'Common', 'mod1');
 model.material.create('mat2', 'Common', 'mod1');
 model.material.create('mat3', 'Common', 'mod1');
-model.material('mat1').selection.set([2]);
-model.material('mat2').selection.set([3]);
-model.material('mat3').selection.set([1]);
+model.material('mat1').selection.set([pbDomain]);
+model.material('mat2').selection.set([refDomain]);
+model.material('mat3').selection.set([saltDomain]);
 
 model.material('mat1').label('Salt at the upper region');
 model.material('mat1').set('family', 'water');

@@ -44,7 +44,8 @@ elseif dimNb==3
     model.physics('ht').field('temperature').field('T_flibe');
     model.physics('ht').selection.set([2 3]);
     model.physics('ht').create('temp1', 'TemperatureBoundary', 2);
-    model.physics('ht').feature('temp1').selection.set([9 10 39 40 19 20 31 34]);
+    %model.physics('ht').feature('temp1').selection.set([9 10 39 40 19 20 31 34]);
+    model.physics('ht').feature('temp1').selection.set([9 10 17 18 19 20 27 28 29 32 34 35]);
     model.physics('ht').create('ofl1', 'ConvectiveOutflow', 2);
     model.physics('ht').feature('ofl1').selection.set([15 16 23 24 43 44 48 49]);
     model.physics('ht').create('hs1', 'HeatSource', 3);
@@ -73,6 +74,6 @@ elseif dimNb==3
     model.physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*T_fuel');
     model.physics('ht').feature('hs1').label('heat transfer from fuel-cst term');
     model.physics('ht').feature('hs2').set('heatSourceType', 'LinearSource');
-    model.physics('ht').feature('hs2').set('qs', 'h_conv*pb_area/fuel_v');
+    model.physics('ht').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
     model.physics('ht').feature('hs2').label('heat transfer from fuel - linear term');
 end

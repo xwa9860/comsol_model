@@ -95,7 +95,7 @@ fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 run('create_scaling_study.m')
 model.sol('sol15').runAll; 
 
-run('create_steady_state_results')
+%run('create_steady_state_results')
 
 %% Transient calculation
 fprintf('\nRunning transient...\n');

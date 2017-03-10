@@ -16,7 +16,7 @@ model.probe('dom1').set('unit', 'W*m');
 % domain probe for average fuel temperature
 model.probe.create('dom2', 'Domain');
 model.probe('dom2').model('mod1');
-model.probe('dom2').selection.set([2]);
+model.probe('dom2').selection.set(pbDomain);
 model.probe('dom2').label('average_fuel_temp_probe');
 model.probe('dom2').set('table', 'tbl1');
 model.probe('dom2').set('descr', 'T_fuel');
@@ -27,7 +27,7 @@ model.probe('dom2').set('unit', 'degC');
 % domain probe for average flibe temperature(only in the upper region)
 model.probe.create('dom3', 'Domain');
 model.probe('dom3').model('mod1');
-model.probe('dom3').selection.set([2]);
+model.probe('dom3').selection.set(pbDomain);
 model.probe('dom3').label('average_flibe_temp_probe');
 model.probe('dom3').set('table', 'tbl1');
 model.probe('dom3').set('descr', 'T_flibe');
@@ -41,7 +41,7 @@ model.probe('dom4').model('mod1');
 model.probe('dom4').label('max fuel temp');
 model.probe('dom4').set('probename', 'T_fuel_max');
 model.probe('dom4').set('type', 'maximum');
-model.probe('dom4').selection.set([2]);
+model.probe('dom4').selection.set(pbDomain);
 model.probe('dom4').set('expr', 'T_fuel');
 model.probe('dom4').set('table', 'tbl1');
 model.probe('dom4').set('window', 'window3');
