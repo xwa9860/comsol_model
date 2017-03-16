@@ -32,6 +32,8 @@ elseif dimNb == 3
     model.mesh('mesh1').autoMeshSize(7);
 
     model.geom('geom1').create('wp1', 'WorkPlane');
+    %model.geom('geom1').feature('wp1').set('quickplane', 'yz');
+    %model.geom('geom1').runPre('fin');
     model.geom('geom1').feature('wp1').geom.create('imp1', 'Import');
     model.geom('geom1').feature('wp1').geom.feature('imp1').set('filename', [mydir, 'geom_data/tmsr_geom_new.mphbin']);
     model.geom('geom1').feature('wp1').geom.feature('imp1').set('type', 'native');

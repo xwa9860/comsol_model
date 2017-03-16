@@ -35,9 +35,17 @@ for i = 1:NT_nb+dnb % column number
         if sp3 && i<=gnb && j>gnb && j<=NT_nb
             %lower left
             if i == j-gnb
-             cfeq.setIndex('a', ['-2/5.0*(rem', num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'], k);   
-             else
-             cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(j-gnb),num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'] , k);
+                if dimNb ==2
+                    cfeq.setIndex('a', ['-2/5.0*(rem', num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'], k); 
+                elseif dimNb ==3
+                    cfeq.setIndex('a', ['-2/5.0*(rem', num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)'], k);
+                end                    
+            else
+                 if dimNb ==2
+                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(j-gnb),num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'] , k);
+                 elseif dimNb ==3
+                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(j-gnb),num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)'] , k);
+                 end                  
             end             
         end
         if sp3 && j<=gnb && gnb<i && i<=NT_nb
@@ -48,8 +56,13 @@ for i = 1:NT_nb+dnb % column number
         if sp3 && gnb<i && i<=NT_nb && gnb<j && j<=NT_nb
             %lower right part of the matrix
             if i == j
-            cfeq.setIndex('a', ...
-            ['tot',num2str(i-gnb),'*r'],  k);
+                if dimNb ==2
+                cfeq.setIndex('a', ...
+                ['tot',num2str(i-gnb),'*r'],  k);
+                elseif dimNb ==3
+                 cfeq.setIndex('a', ...
+                ['tot',num2str(i-gnb)],  k);
+                end                   
             else
               cfeq.setIndex('a', ...
               num2str(0), k);
@@ -114,14 +127,28 @@ for i =1:NT_nb+dnb %column number
             end
         end
         if sp3 && gnb<i  && i<=NT_nb && j<=gnb && j==(i-gnb)
+            if dimNb == 2
                  cfeq.setIndex('c', ...
                     {['2*diff1', num2str(i-gnb), '*r'],...
                      ['2*diff1', num2str(i-gnb), '*r']},  k);
+            elseif dimNb ==3
+                 cfeq.setIndex('c', ...
+                    {['2*diff1', num2str(i-gnb)],...
+                     ['2*diff1', num2str(i-gnb)],...
+                     ['2*diff1', num2str(i-gnb)]},  k); 
+            end
         end      
         if sp3 && i >gnb && i<=NT_nb && j>gnb && j<=NT_nb && i==j 
+            if dimNb == 2
                  cfeq.setIndex('c', ...
                     {['diff2', num2str(j-gnb), '*r'],...
                      ['diff2', num2str(j-gnb), '*r']},  k);
+            elseif dimNb ==3
+                  cfeq.setIndex('c', ...
+                    {['diff2', num2str(j-gnb)],...
+                     ['diff2', num2str(j-gnb)],...
+                     ['diff2', num2str(j-gnb)]},  k);
+            end
         end  
             
     k=k+1;

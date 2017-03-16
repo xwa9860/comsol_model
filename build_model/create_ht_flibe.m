@@ -62,7 +62,7 @@ elseif dimNb==3
     model.physics('ht').prop('RadiationProperty').set('fieldName', 'root.J');
     model.physics('ht').feature('fluid1').set('k', {'0.6*' '0' '0' '0' '0.6*' '0' '0' '0' '0.6*'});
     model.physics('ht').feature('fluid1').set('minput_pressure', '0');
-    model.physics('ht').feature('fluid1').set('minput_velocity', {'0' '0' 'v_inlet'});
+    model.physics('ht').feature('fluid1').set('minput_velocity', {'0' 'v_inlet' '0'});
     model.physics('ht').feature('fluid1').set('minput_strainreferencetemperature', '0');
     model.physics('ht').feature('fluid1').label('Fluid');
     model.physics('ht').feature('init1').set('Tinit', 'T0_flibe');

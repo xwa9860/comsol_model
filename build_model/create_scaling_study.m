@@ -16,8 +16,8 @@ model.variable('var22').set('sumN', ...
 
 model.variable.create('var23');
 model.variable('var23').model('mod1');
-model.variable('var23').selection.geom('geom1', 2);
-model.variable('var23').selection.set([1 2 3]);
+%model.variable('var23').selection.geom('geom1', 2);
+%model.variable('var23').selection.set([1 2 3]);
 model.variable('var23').label('ConcN');
 model.variable('var23').set('ConcN1', 'betas1*sumN/lambdas1');
 model.variable('var23').set('ConcN2', 'betas2*sumN/lambdas2');

@@ -90,7 +90,7 @@ lambda_eigen_new = mphglobal(model, 'lambda');
 fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
-%% Scale the flux to power
+% Scale the flux and delayed neutron precursor concentration to power
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 run('create_scaling_study.m')
 model.sol('sol15').runAll; 
