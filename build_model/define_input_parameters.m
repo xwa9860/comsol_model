@@ -1,5 +1,5 @@
 % Define input variables for the model
-dimNb = 3; % 3D model
+dimNb =3; % 3D model
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
@@ -14,7 +14,7 @@ elseif dimNb ==3
     refDomain = 1;
 end
 MultiScale= false;
-sp3 = false;
+sp3 = true;
 %Try to use ChiT for all the Chi's and use beta effective for delayed
 %neutrons
 BetaEff = true;
