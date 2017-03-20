@@ -89,11 +89,20 @@ model.sol('sol16').runAll;
 lambda_eigen_new = mphglobal(model, 'lambda');
 fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
+%% Verification
+if dimNb == 2 && not(sp3) % for 2d diffusion
+    if abs(lambda_eigen_new - 0.9766152037) > 1E-5
+        fprintf('error in eigen value')
+    end
+end
+%% scaling study
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
 % Scale the flux and delayed neutron precursor concentration to power
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 run('create_scaling_study.m')
 model.sol('sol15').runAll; 
+
+
 
 %run('create_steady_state_results')
 
