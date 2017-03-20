@@ -1,3 +1,4 @@
+clear all;
 run('define_input_parameters.m')
 run('create_comsol_model.m')
 run('create_global_vars.m');

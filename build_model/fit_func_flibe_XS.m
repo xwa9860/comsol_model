@@ -1,3 +1,11 @@
+%%
+%{ 
+get the cross section data from serpent for different temperatures for flibe
+fit lienar function
+input it in comsol
+!! It's important to run this script after 'fit_func_fuel_XS.m'
+%}
+
 %% get the data
 unb = 4; % total universes number used in Serpent, here is used to determine which row the needed parameter is
 %% getting the serpent results into the matlab data 'Workspace'
@@ -15,8 +23,9 @@ for case_nb = 1:5
 end
 
 
-u = u_flibe + 5*unb + unb;
-
+u = u_flibe + u - u_fuel; 
+% the last value of u in 'fit_func_fuel_XS' - u_fuel at the end of the for loop + flibe universe number u_flibe
+fprintf('Uflibe = %d\n', u)
 %% ------temperature independent
 Res_Betas_flibe = read_array_XS(FWD_ANA_BETA_ZERO, 1, dnb+1);
 Res_Lambdas_flibe = read_array_XS(FWD_ANA_LAMBDA, 1, 1+dnb);
@@ -45,6 +54,7 @@ for case_nb = 1:5
     end
     
     u = u+unb;
+    fprintf('Uflibe = %d\n', u)
 end
 % Diffusion coefficient diff2 for sp3 algorithm
 Res_Diff2_flibe = 9/35.0 ./Res_Tot_flibe;

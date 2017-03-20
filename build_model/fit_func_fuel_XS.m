@@ -14,7 +14,7 @@ if MultiScale
     % TODO: change these to the real names that is used in the heat
     % transfer module
 else
-    temp_var_pb = 'T_fuel';  % name of the comsol variable for fuel temperature
+    temp_var_pb = 'T_fuel';%['T_fuel', 'T_flibe'];  % name of the comsol variable for fuel temperature
 % used to set the fuel cross-section variable in comsol
 end
 
@@ -61,6 +61,7 @@ else
 end
 
 u=u_fuel+unb;
+fprintf('fuel u=%d\n', u)
 %% ------read temperature independent parameters from serpent output
 if BetaEff 
     Res_Betas_Fuel = read_array_XS(ADJ_MEULEKAMP_BETA_EFF, 1, 1+dnb);
@@ -88,6 +89,7 @@ for case_nb = 1:tot_caseNb
     Res_Tot_Fuel(case_nb, :) = read_array_XS(INF_TOT, u, gnb);
     Res_Diff2_Fuel(case_nb, :) = 9/35.0 ./read_array_XS(INF_TOT, u, gnb); % diff2_{i,g} = 9/35/Sigma_tot_{i,g}
     u = u+unb;
+    fprintf('fuel u=%d\n', u)
 end
 
 
