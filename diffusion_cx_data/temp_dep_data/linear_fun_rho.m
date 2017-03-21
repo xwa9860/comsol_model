@@ -13,13 +13,13 @@ if length(mat_size)== 2
     if mat_size(1) == gnb %2D matrix of 8*8
         for i=1:mat_size(1)
             for j = 1:mat_size(2)
-                res_mat_c1(i, j) =  ref_xs_matrix(i, j)/ref_temp ;
+                res_mat_c1(i, j) =  ref_xs_matrix(j, i)/ref_temp ;
                 res_mat_c0(i, j) = 0;
 
             end
         end 
-    elseif  mat_size(1) == 1 && mat_size(2) == gnb%2D matrix
-        for i=1:mat_size(2)  %2D matrix with size 1*gnb(array)
+    elseif  mat_size(1) == 1 && mat_size(2) == gnb%2D matrix with size 1*gnb(array)
+        for i=1:mat_size(2)  
                 res_mat_c1(i) = ref_xs_matrix(1, i)/ref_temp;
                 res_mat_c0(i) = 0;
         end

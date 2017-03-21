@@ -14,7 +14,13 @@ for caseNb = 1:5
 end
 drho_fuel = calc_delta_reactivity(fuel_eigens, 'COMSOL');
 
-rownb = 5;
+rownb = size(IMP_KEFF);
+rownb = rownb(1)+1;
+for caseNb = 1:5
+    folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(fuel_temperatures(caseNb))];
+    file_name = '/tmsr_sf1_res.m';   
+    run([folder_name file_name]);
+end
 unb = 4;
 for caseNb = 1:5
     read_array_XS(IMP_KEFF, rownb, 1);
@@ -28,7 +34,8 @@ fprintf('\n The fuel feedback coef in serpent is %4.2f\n', p);
 
 
 %% compute temperature reactivity feedback for flibe
-flibe_temperatures = [1461.5, 1256.6, 1051.7, 846.8, 641.8]; % correspond to density 1700, 1800, ...2100
+flibe_density = [17, 18, 19, 20, 21];
+flibe_temperatures = (2279.92-flibe_density*100)/0.488+273.15;
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel');
 for caseNb = 1:5
     model.param.set('T0_flibe', num2str(flibe_temperatures(caseNb)), 'initial temperature for flibe');
@@ -40,11 +47,17 @@ for caseNb = 1:5
 end
 drho_flibe = calc_delta_reactivity(flibe_eigens, 'COMSOL');
 
-rownb = rownb + 1; % continue from the cases for fuel
+rownb = rownb + 1 % continue from the cases for fuel
+for caseNb = 1:5
+    folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(flibe_density(caseNb))];
+    file_name = '/tmsr_sf1_res.m';    
+    run([folder_name file_name]);   
+end
+
 for caseNb = 1:5
     read_array_XS(IMP_KEFF, rownb, 1);
     keff_serpent(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
-    rownb = rownb + unb;
+    rownb = rownb + unb
 end
 drho_serpent_flibe = calc_delta_reactivity(keff_serpent, 'SERPENT');
 [p, some] = polyfit(flibe_temperatures, drho_flibe, 1);

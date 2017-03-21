@@ -22,26 +22,27 @@ if strcmp(flag, 'fixed')
            for i=1:var_size(1)  
                for j=1:var_size(2)
                    model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
-                    [num2str(var_to_write(i, j),'%10.8e'), unit]);
+                    [num2str(var_to_write(j, i),'%10.8e'), unit]);
                end 
            end
        end
 %% for cross sections with log linear dependence with temperature
-elseif strcmp(flag, 'log_temp_dep')
+elseif strcmp(flag, 'temp_dep')
     var_size = size(var_to_write.coefs);  % should be gnb*2 or gnb*gnb*2
+    
     if MS
         if length(var_size) ==2
             % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
-             for j = 1:var_size(1)
-                    if sum(var_to_write.coefs(j, :) ==0) 
+             for j = 1:var_size(2)
+                    if sum(var_to_write.coefs(:, j) ==0) 
                         model.variable(comsol_var_name).set(...
                             [XS_name, num2str(j)], ...
                             [num2str(0),  unit]);
                     else
                         var_str = '(';
-                        for k = 1:var_size(2) %temperature number
-                            var_str = [var_str,'(', num2str(var_to_write.coefs(j, k)), ')*log(', ...
-                                var_to_write.temp_var(k,:) ,'[1/K])+'];    
+                        for k = 1:var_size(1) %temperature number
+                            var_str = [var_str,'(', num2str(var_to_write.coefs(k, j)), ')*', ...
+                                var_to_write.temp_var{k} ,'+'];
                         end
                       
                         model.variable(comsol_var_name).set(...
@@ -65,9 +66,8 @@ elseif strcmp(flag, 'log_temp_dep')
                         var_str = '(';
                         for k = 1:var_size(2) %temperature number
                             var_str = [var_str,'(' num2str(var_to_write.coefs(i, k, j)), ...
-                                ')*log(', var_to_write.temp_var(k,:) ,'[1/K])+'];    
+                                ')*', var_to_write.temp_var{k} ,'+'];    
                         end
-                      
                         model.variable(comsol_var_name).set(...
                                 [XS_name, num2str(i),num2str(j)], ...
                                 [var_str, '0)', unit]);
@@ -75,36 +75,37 @@ elseif strcmp(flag, 'log_temp_dep')
                 end
             end
         end
-    else
-        if length(var_size) == 2
-            % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
-            for j = 1:var_size(1)
-                    if var_to_write.coefs(j, 1) ==0 && var_to_write.coefs(j, 2)==0
-                        model.variable(comsol_var_name).set(...
-                            [XS_name, num2str(j)], ...
-                            [num2str(0),  unit]);
-                    else
-                        model.variable(comsol_var_name).set(...
-                            [XS_name, num2str(j)], ...
-                            ['(',num2str(var_to_write.coefs(j, 2),'%10.8e'), '*log(', var_to_write.temp_var ,'[1/K])+(', num2str(var_to_write.coefs(j, 1)), '))' , unit]);
-                    end
-            end
-        else
-            for i = 1:var_size(1)
-                for j = 1:var_size(2)
-                    if var_to_write.coefs(i, j, 1) ==0 && var_to_write.coefs(i, j, 2)==0
-                        model.variable(comsol_var_name).set(...
-                            [XS_name, num2str(i),num2str(j)], ...
-                            [num2str(0),  unit]);
-                    else
-                        model.variable(comsol_var_name).set(...
-                            [XS_name, num2str(i),num2str(j)], ...
-                            ['(',num2str(var_to_write.coefs(i, j, 2)), '*log(', var_to_write.temp_var ,'[1/K])+(', num2str(var_to_write.coefs(i, j, 1)), '))' , unit]);
-                    end
-                end
-            end
-        end
     end
+%     else
+%         if length(var_size) == 2
+%             % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
+%             for j = 1:var_size(1)
+%                     if var_to_write.coefs(j, 1) ==0 && var_to_write.coefs(j, 2)==0
+%                         model.variable(comsol_var_name).set(...
+%                             [XS_name, num2str(j)], ...
+%                             [num2str(0),  unit]);
+%                     else
+%                         model.variable(comsol_var_name).set(...
+%                             [XS_name, num2str(j)], ...
+%                             ['(',num2str(var_to_write.coefs(j, 2),'%10.8e'), '*log(', var_to_write.temp_var ,'[1/K])+(', num2str(var_to_write.coefs(j, 1)), '))' , unit]);
+%                     end
+%             end
+%         else
+%             for i = 1:var_size(1)
+%                 for j = 1:var_size(2)
+%                     if var_to_write.coefs(i, j, 1) ==0 && var_to_write.coefs(i, j, 2)==0
+%                         model.variable(comsol_var_name).set(...
+%                             [XS_name, num2str(i),num2str(j)], ...
+%                             [num2str(0),  unit]);
+%                     else
+%                         model.variable(comsol_var_name).set(...
+%                             [XS_name, num2str(i),num2str(j)], ...
+%                             ['(',num2str(var_to_write.coefs(i, j, 2)), '*log(', var_to_write.temp_var ,'[1/K])+(', num2str(var_to_write.coefs(i, j, 1)), '))' , unit]);
+%                     end
+%                 end
+%             end
+%         end
+%     end
 %% for cross sections with linear dependence of temperature
 elseif strcmp(flag, 'lin_temp_dep')
     var_size = size(var_to_write.c0);
@@ -137,7 +138,5 @@ elseif strcmp(flag, 'lin_temp_dep')
         end
     end
 end
-
 end % end of function
-
    

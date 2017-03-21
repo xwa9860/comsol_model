@@ -1,6 +1,9 @@
 %% This function get the neutronics data from serpent output file for fuel 
 % and input them in the comsol model 
 
+% temp_var_pb = matrix of case_nb * variable_nb
+% coefs: temp_var_pb * coefs = XS values, dimension variable_nb * 1
+
 format long e
 
 unb = 4; % total universes number
@@ -9,12 +12,12 @@ u_fuel = 3;
 
 if MultiScale
     % fuel temperature names in a array
-    temp_var_pb = ['tp11'; 'tp12'; 'tp13'; 'tp21'; 'tp22'; 'tp23'; 'tp31'; 'tp32'; 'tp33'; 'tp00']; 
+    temp_var_pb = {num2str(1), 'tp11', 'tp12', 'tp13', 'tp21', 'tp22', 'tp23', 'tp31', 'tp32', 'tp33', 'tp00'}; 
     % names of the comsol variable for fuel temperature used to set the fuel cross-section variable in comsol
     % TODO: change these to the real names that is used in the heat
     % transfer module
 else
-    temp_var_pb = 'T_fuel';%['T_fuel', 'T_flibe'];  % name of the comsol variable for fuel temperature
+    temp_var_pb = {num2str(1), 'log(T_fuel[1/K])', 'T_flibe[1/K]'};  % name of the comsol variable for fuel temperature
 % used to set the fuel cross-section variable in comsol
 end
 
@@ -50,18 +53,31 @@ if MultiScale
     log_fuel_temp = log(fuel_temp);
      
 else
-    tot_caseNb=5;
-    fuel_temp = [300, 600, 900, 1200, 1500];
-    log_fuel_temp = log(fuel_temp);
-    for caseNb = 1:tot_caseNb
+    tot_caseNb=9;
+    fuel_temp = [300, 600, 1200, 1500];
+    flibe_density = [17, 18, 19, 20, 21];
+    flibe_temp = (2279.92-flibe_density*100)/0.488+273.15;
+    temp_var = ones(tot_caseNb, 3); % three variables 1, T_fuel and T_flibe
+    
+    
+    for caseNb = 1:4
         folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(fuel_temp(caseNb))];
         file_name = '/tmsr_sf1_res.m';   
         run([folder_name file_name]);
+        temp_var(caseNb, 2) = log(fuel_temp(caseNb));      
+        temp_var(caseNb, 3) = flibe_temp(3);
+    end
+    for caseNb = 5:9
+        folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(flibe_density(caseNb-4))];
+        file_name = '/tmsr_sf1_res.m';    
+        run([folder_name file_name]);
+        temp_var(caseNb, 2) = log(900);  
+        temp_var(caseNb, 3) = flibe_temp(caseNb-4);
     end
 end
 
 u=u_fuel+unb;
-fprintf('fuel u=%d\n', u)
+fprintf('fuel u=%d\n', u);
 %% ------read temperature independent parameters from serpent output
 if BetaEff 
     Res_Betas_Fuel = read_array_XS(ADJ_MEULEKAMP_BETA_EFF, 1, 1+dnb);
@@ -89,20 +105,20 @@ for case_nb = 1:tot_caseNb
     Res_Tot_Fuel(case_nb, :) = read_array_XS(INF_TOT, u, gnb);
     Res_Diff2_Fuel(case_nb, :) = 9/35.0 ./read_array_XS(INF_TOT, u, gnb); % diff2_{i,g} = 9/35/Sigma_tot_{i,g}
     u = u+unb;
-    fprintf('fuel u=%d\n', u)
+    fprintf('fuel u=%d\n', u);
 end
 
 
-% fit a log_linear function XS = c1*log(T) + c0
-fuel_scat.coefs = fit_matrix(log_fuel_temp, Res_Scat_Fuel, 'scat fuel', MultiScale);
+% fit a log_linear function XS = temp_var * coefs
+fuel_scat.coefs = fit_matrix(temp_var, Res_Scat_Fuel, 'scat fuel', true);
 fuel_scat.temp_var = temp_var_pb;
-fuel_NSF.coefs = fit_matrix(log_fuel_temp, Res_NSF_Fuel, 'NSF fuel', MultiScale);
+fuel_NSF.coefs = fit_matrix(temp_var, Res_NSF_Fuel, 'NSF fuel', true);
 fuel_NSF.temp_var = temp_var_pb;
-fuel_Rem.coefs = fit_matrix(log_fuel_temp, Res_Rem_Fuel, 'removal fuel', MultiScale);
+fuel_Rem.coefs = fit_matrix(temp_var, Res_Rem_Fuel, 'removal fuel', true);
 fuel_Rem.temp_var = temp_var_pb;
-fuel_Tot.coefs = fit_matrix(log_fuel_temp, Res_Tot_Fuel, 'total fuel', MultiScale);
+fuel_Tot.coefs = fit_matrix(temp_var, Res_Tot_Fuel, 'total fuel', true);
 fuel_Tot.temp_var = temp_var_pb;
-fuel_Diff2.coefs = fit_matrix(log_fuel_temp, Res_Diff2_Fuel, 'diff2 fuel', MultiScale);
+fuel_Diff2.coefs = fit_matrix(temp_var, Res_Diff2_Fuel, 'diff2 fuel', true);
 fuel_Diff2.temp_var = temp_var_pb;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section was used to write the cross sections out into a file,
@@ -140,12 +156,12 @@ set_XS_data_to_comsol_model(model, comsol_var_name,  'fiss', Res_F_Fuel, '[1/cm]
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chit', Res_ChiT_Fuel, '', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chip', Res_ChiP_Fuel, '', 'fixed');
 set_XS_data_to_comsol_model(model, comsol_var_name,  'chid', Res_ChiD_Fuel, '', 'fixed');
-set_XS_data_to_comsol_model(model, comsol_var_name,  'scat', fuel_scat, '[1/cm]', 'log_temp_dep', MultiScale);
-set_XS_data_to_comsol_model(model, comsol_var_name,  'nsf', fuel_NSF, '[1/cm]', 'log_temp_dep', MultiScale);
-set_XS_data_to_comsol_model(model, comsol_var_name,  'rem', fuel_Rem, '[1/cm]', 'log_temp_dep', MultiScale);
-set_XS_data_to_comsol_model(model, comsol_var_name,  'tot', fuel_Tot, '[1/cm]', 'log_temp_dep', MultiScale);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'scat', fuel_scat, '[1/cm]', 'temp_dep', true);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'nsf', fuel_NSF, '[1/cm]', 'temp_dep', true);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'rem', fuel_Rem, '[1/cm]', 'temp_dep', true);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'tot', fuel_Tot, '[1/cm]', 'temp_dep', true);
 % diffusion coefficient D2 for sp3 (need to define the correct value)
-set_XS_data_to_comsol_model(model, comsol_var_name,  'diff2', fuel_Diff2, '[cm]', 'log_temp_dep', MultiScale);
+set_XS_data_to_comsol_model(model, comsol_var_name,  'diff2', fuel_Diff2, '[cm]', 'temp_dep', true);
 
 array=[];
 for i =1:8

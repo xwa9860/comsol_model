@@ -25,9 +25,9 @@ for i = 1:NT_nb+dnb % column number
                 end
             else
                  if dimNb == 2
-                     cfeq.setIndex('a', ['(-scat', num2str(j),num2str(i), '-(1-beta1)*chip', num2str(j),'*nsf', num2str(i), '*lambda)*r'] , k);
+                     cfeq.setIndex('a', ['(-scat', num2str(i),num2str(j), '-(1-beta1)*chip', num2str(j),'*nsf', num2str(i), '*lambda)*r'] , k);
                  elseif dimNb ==3
-                     cfeq.setIndex('a', ['(-scat', num2str(j),num2str(i), '-(1-beta1)*chip', num2str(j),'*nsf', num2str(i), '*lambda)'] , k);
+                     cfeq.setIndex('a', ['(-scat', num2str(i),num2str(j), '-(1-beta1)*chip', num2str(j),'*nsf', num2str(i), '*lambda)'] , k);
  
                  end
             end
@@ -42,9 +42,9 @@ for i = 1:NT_nb+dnb % column number
                 end                    
             else
                  if dimNb ==2
-                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(j-gnb),num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'] , k);
+                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(i),num2str(j-gnb), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'] , k);
                  elseif dimNb ==3
-                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(j-gnb),num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)'] , k);
+                     cfeq.setIndex('a', ['-2/5.0*(-scat', num2str(i),num2str(j-gnb), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)'] , k);
                  end                  
             end             
         end

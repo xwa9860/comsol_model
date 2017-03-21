@@ -7,4 +7,4 @@ addpath(mydir(1:end-1));
 addpath([mydir, 'diffusion_cx_data']);
 addpath([mydir, 'diffusion_cx_data/temp_dep_data']);
 addpath([mydir, 'build_model']);
-
+addpath([mydir, 'utilities']);
