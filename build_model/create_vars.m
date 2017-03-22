@@ -35,7 +35,7 @@ model.variable('var16').label('pb_neutronic_CX_t');
 
 model.variable.create('var17');
 model.variable('var17').model('mod1');
-run('fit_func_flibe_XS.m')
+run('fit_func_flibe_XS.m');
 model.variable('var17').selection.geom('geom1', dimNb);
 model.variable('var17').selection.set(saltDomain);
 model.variable('var17').label('flibe_neutronic_CX_t');

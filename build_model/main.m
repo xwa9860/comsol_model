@@ -1,11 +1,11 @@
 clear all;
-run('define_input_parameters.m')
-run('create_comsol_model.m')
+run('define_input_parameters.m');
+run('create_comsol_model.m');
 run('create_global_vars.m');
-run('create_fcns.m')
-run('create_geom.m')
-run('create_vars.m')
-run('create_mats.m')
+run('create_fcns.m');
+run('create_geom.m');
+run('create_vars.m');
+run('create_mats.m');
 
 %Heat transfer modules
 run('create_ht_flibe.m');
@@ -22,10 +22,10 @@ end
 run('create_neutron_diffusion.m');
 
 %Math operatoins
-run('create_operations.m')
+run('create_operations.m');
 
 %Probes to get desired variable values during transient
-run('create_probes.m')
+run('create_probes.m');
 
 %% solvers
 %% Eigenvalue calculation
@@ -37,7 +37,7 @@ fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f ', lambda_eigen);
 
 %% run the following line only if needed
-%run('calc_temperature_feedback_coefs.m'); 
+run('calc_temperature_feedback_coefs.m'); 
 
 %% steady state calculation
 fprintf('\nRun steady state study\n');
@@ -48,7 +48,7 @@ model.variable('var19').set('lambda', 'lambda_critical');
 model.variable('var19').label('lambda');
 model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
  
-run('create_steady_state_solver.m')
+run('create_steady_state_solver.m');
 model.sol('sol13').runAll;
 
 
@@ -100,15 +100,15 @@ end
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
 % Scale the flux and delayed neutron precursor concentration to power
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
-run('create_scaling_study.m')
+run('create_scaling_study.m');
 model.sol('sol15').runAll; 
 
 
-run('create_steady_state_results')
+run('create_steady_state_results');
 
 %% Transient calculation
 fprintf('\nRunning transient...\n');
-run('create_transient_study.m')
+run('create_transient_study.m');
 model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
 %model.sol('sol4').runAll;
 %run('create_transient_results')

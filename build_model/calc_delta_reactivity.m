@@ -1,4 +1,4 @@
-function drho = delta_reactivity(eigens, flag)
+function drho = delta_reactivity(eigens, refNb, flag)
 % TESTED
 % compute delta reactivity compare to the reference reactivity from
 % eigenvalues that comsol calculates
@@ -9,7 +9,7 @@ else
 end
 
 rhos = (keffs - 1) ./ keffs;
-drho = rhos - rhos(3);
+drho = rhos - rhos(refNb);
     
     
 % test

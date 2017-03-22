@@ -12,7 +12,7 @@ for caseNb = 1:5
     fprintf('\nThe eigenvalue is\n');
     fprintf('%.10f \n', lambda_eigen)
 end
-drho_fuel = calc_delta_reactivity(fuel_eigens, 'COMSOL');
+drho_fuel = calc_delta_reactivity(fuel_eigens, 3, 'COMSOL');
 
 rownb = size(IMP_KEFF);
 rownb = rownb(1)+1;
@@ -24,20 +24,21 @@ end
 unb = 4;
 for caseNb = 1:5
     read_array_XS(IMP_KEFF, rownb, 1);
-    keff_serpent(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
+    keff_serpent_fuel(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
     rownb = rownb + unb;
 end
 
-drho_serpent_fuel = calc_delta_reactivity(keff_serpent, 'SERPENT');
+drho_serpent_fuel = calc_delta_reactivity(keff_serpent_fuel, 3, 'SERPENT');
 [p, some] = polyfit(fuel_temperatures, drho_fuel, 1);
 fprintf('\n The fuel feedback coef in serpent is %4.2f\n', p);
 
 
 %% compute temperature reactivity feedback for flibe
-flibe_density = [17, 18, 19, 20, 21];
+flibe_density = [17, 18, 19, 20, 21]; % the results for 21 is off
+tot_case = 5;
 flibe_temperatures = (2279.92-flibe_density*100)/0.488+273.15;
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel');
-for caseNb = 1:5
+for caseNb = 1:tot_case
     model.param.set('T0_flibe', num2str(flibe_temperatures(caseNb)), 'initial temperature for flibe');
     model.sol('sol16').runAll;
     lambda_eigen = mphglobal(model, 'lambda');
@@ -45,21 +46,21 @@ for caseNb = 1:5
     fprintf('\nThe eigenvalue is\n');
     fprintf('%.10f \n', lambda_eigen)
 end
-drho_flibe = calc_delta_reactivity(flibe_eigens, 'COMSOL');
+drho_flibe = calc_delta_reactivity(flibe_eigens, 3, 'COMSOL');
 
-rownb = rownb + 1 % continue from the cases for fuel
-for caseNb = 1:5
+rownb = rownb + 1; % continue from the cases for fuel
+for caseNb = 1:tot_case
     folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(flibe_density(caseNb))];
     file_name = '/tmsr_sf1_res.m';    
     run([folder_name file_name]);   
 end
 
-for caseNb = 1:5
+for caseNb = 1:tot_case
     read_array_XS(IMP_KEFF, rownb, 1);
-    keff_serpent(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
-    rownb = rownb + unb
+    keff_serpent_flibe(caseNb) = read_array_XS(IMP_KEFF, rownb, 1);
+    rownb = rownb + unb;
 end
-drho_serpent_flibe = calc_delta_reactivity(keff_serpent, 'SERPENT');
+drho_serpent_flibe = calc_delta_reactivity(keff_serpent_flibe, 3, 'SERPENT');
 [p, some] = polyfit(flibe_temperatures, drho_flibe, 1);
 fprintf('\n The flibe feedback coef is %4.2f\n', p);
 
@@ -71,7 +72,7 @@ model.param.set('T0_flibe', '700[degC]', 'initial temperature for flibe');
 figure;
 plot(flibe_temperatures, drho_flibe, 'k-*');
 hold on;
-plot(flibe_temperatures, drho_serpent_flibe, 'k--+');
+errorbar(flibe_temperatures, drho_serpent_flibe, 8.4E-5*ones(1,tot_case), 'k--+');
 title('Temperature(and void) reactivity feedback for flibe');
 ylabel('Reactivity');
 xlabel('Temperature(K)');
@@ -81,7 +82,7 @@ hold off;
 figure;
 plot(fuel_temperatures, drho_fuel, 'k-*');
 hold on;
-plot(fuel_temperatures, drho_serpent_fuel, 'k--+');
+errorbar(fuel_temperatures, drho_serpent_fuel, 8.4E-5*ones(1,5), 'k--+');
 title('Temperature reactivity feedback for fuel');
 legend('Diffusion', 'Monte carlo')
 ylabel('Reactivity');
