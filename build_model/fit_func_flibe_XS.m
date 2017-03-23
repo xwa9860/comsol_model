@@ -10,17 +10,17 @@ input it in comsol
 unb = 4; % total universes number used in Serpent, here is used to determine which row the needed parameter is
 %% getting the serpent results into the matlab data 'Workspace'
 % array for fitting the data from serpent output in the specific folders
-flibe_density = [17, 18, 19, 20, 21];
+flibe_density = 21;
 flibe_temp = (2279.92-flibe_density*100)/0.488+273.15;
 u_flibe = 4; %universe number for flibe is 4 in serpent file
 temp_var_flibe = 'T_flibe';
 
 % run serpent result files
-for case_nb = 1:5
-    folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(flibe_density(case_nb))];
-    file_name = '/tmsr_sf1_res.m';    
- 	run([folder_name file_name])
-end
+
+folder_name = ['diffusion_cx_data/temp_dep_data/tmsr_11000_' num2str(flibe_density)];
+file_name = '/tmsr_sf1_res.m';    
+run([folder_name file_name])
+
 
 
 u = u_flibe + u - u_fuel; 
@@ -38,24 +38,24 @@ Res_ChiD_flibe = read_array_XS(INF_CHID, u, gnb);
 Res_F_flibe = read_array_XS(INF_FISS, u, gnb); 
 Res_NSF_flibe = read_array_XS(INF_NSF, u, gnb);
 
-%% ------temperature dependent
-for case_nb = 1:5
+% %% ------temperature dependent
+% for case_nb = 1:5
     % Removal array[n*1] from INF_REMXS
-    Res_Rem_flibe(case_nb, :)= read_array_XS(INF_REMXS, u, gnb);
+    Res_Rem_flibe= read_array_XS(INF_REMXS, u, gnb);
     % Total array[n*1] from INF_TOT
-    Res_Tot_flibe(case_nb, :)= read_array_XS(INF_TOT, u, gnb);
+    Res_Tot_flibe= read_array_XS(INF_TOT, u, gnb);
     %Scattering matrix[n*n] from INF_S0
-    Res_Scat_flibe(case_nb, :, :) = read_inf_s0(INF_S0, u, gnb);  
+    Res_Scat_flibe = read_inf_s0(INF_S0, u, gnb);  
       % tested: this function reads the right scattering cxs for flibe
-    if case_nb == 3
-        Ref_Rem_flibe = read_array_XS(INF_REMXS, u, gnb);
-        Ref_Tot_flibe = read_array_XS(INF_TOT, u, gnb);
-        Ref_Scat_flibe = read_inf_s0(INF_S0, u, gnb);
-    end
+%     if case_nb == 3
+%         Ref_Rem_flibe = read_array_XS(INF_REMXS, u, gnb);
+%         Ref_Tot_flibe = read_array_XS(INF_TOT, u, gnb);
+%         Ref_Scat_flibe = read_inf_s0(INF_S0, u, gnb);
+%     end
     
-    u = u+unb;
-    fprintf('Uflibe = %d\n', u)
-end
+%     u = u+unb;
+%     fprintf('Uflibe = %d\n', u)
+% end
 % Diffusion coefficient diff2 for sp3 algorithm
 Res_Diff2_flibe = 9/35.0 ./Res_Tot_flibe;
 % 
@@ -71,15 +71,15 @@ Res_Diff2_flibe = 9/35.0 ./Res_Tot_flibe;
 % XS(rho_ref)
 % because the density rho is linear with temperature, XS(T) = 0 +
 % XS_ref/T_ref * T
-
-[flibe_scat.c1, flibe_scat.c0] = linear_fun_rho(flibe_temp(3), Ref_Scat_flibe, 'scat flibe');
-flibe_scat.temp_var = temp_var_flibe;
-[flibe_Rem.c1, flibe_Rem.c0] = linear_fun_rho(flibe_temp(3), Ref_Rem_flibe, 'removal flibe');
-flibe_Rem.temp_var = temp_var_flibe;
-[flibe_Tot.c1, flibe_Tot.c0] = linear_fun_rho(flibe_temp(3), Ref_Tot_flibe, 'total flibe');
-flibe_Tot.temp_var = temp_var_flibe;
-[flibe_Diff2.c1, flibe_Diff2.c0] = linear_fun_rho(flibe_temp(3), Ref_Tot_flibe, 'total flibe');
-flibe_Diff2.temp_var = temp_var_flibe;
+% 
+% [flibe_scat.c1, flibe_scat.c0] = linear_fun_rho(flibe_temp(3), Ref_Scat_flibe, 'scat flibe');
+% flibe_scat.temp_var = temp_var_flibe;
+% [flibe_Rem.c1, flibe_Rem.c0] = linear_fun_rho(flibe_temp(3), Ref_Rem_flibe, 'removal flibe');
+% flibe_Rem.temp_var = temp_var_flibe;
+% [flibe_Tot.c1, flibe_Tot.c0] = linear_fun_rho(flibe_temp(3), Ref_Tot_flibe, 'total flibe');
+% flibe_Tot.temp_var = temp_var_flibe;
+% [flibe_Diff2.c1, flibe_Diff2.c0] = linear_fun_rho(flibe_temp(3), Ref_Tot_flibe, 'total flibe');
+% flibe_Diff2.temp_var = temp_var_flibe;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section was used to write the cross sections out into a file,
 % which can be then imported into comsol
@@ -111,8 +111,8 @@ set_XS_data_to_comsol_model(model, 'var17',  'chip', Res_ChiP_flibe, '', 'fixed'
 set_XS_data_to_comsol_model(model, 'var17',  'chid', Res_ChiD_flibe, '', 'fixed');
 set_XS_data_to_comsol_model(model, 'var17',  'fiss', Res_F_flibe, '[1/cm]', 'fixed');  
 set_XS_data_to_comsol_model(model, 'var17',  'nsf', Res_NSF_flibe, '[1/cm]', 'fixed');
-set_XS_data_to_comsol_model(model, 'var17',  'scat', flibe_scat, '[1/cm]', 'lin_temp_dep');
-set_XS_data_to_comsol_model(model, 'var17',  'rem', flibe_Rem, '[1/cm]', 'lin_temp_dep');
-set_XS_data_to_comsol_model(model, 'var17',  'tot', flibe_Tot, '[1/cm]', 'lin_temp_dep');
+set_XS_data_to_comsol_model(model, 'var17',  'scat', Res_Scat_flibe, '[1/cm]', 'fixed');
+set_XS_data_to_comsol_model(model, 'var17',  'rem', Res_Rem_flibe, '[1/cm]', 'fixed');
+%set_XS_data_to_comsol_model(model, 'var17',  'tot', flibe_Tot, '[1/cm]', 'fixed');
 % D2 coefficient in sp3 formulation
-set_XS_data_to_comsol_model(model, 'var17',  'diff2', flibe_Diff2, '[1/cm]', 'lin_temp_dep');
+%set_XS_data_to_comsol_model(model, 'var17',  'diff2', flibe_Diff2, '[1/cm]', 'fixed');
