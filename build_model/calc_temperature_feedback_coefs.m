@@ -47,6 +47,7 @@ for caseNb = 1:tot_case
     fprintf('%.10f \n', lambda_eigen)
 end
 drho_flibe = calc_delta_reactivity(flibe_eigens, 3, 'COMSOL');
+drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;
 
 rownb = rownb + 1; % continue from the cases for fuel
 for caseNb = 1:tot_case
@@ -72,11 +73,12 @@ model.param.set('T0_flibe', '700[degC]', 'initial temperature for flibe');
 figure;
 plot(flibe_temperatures, drho_flibe, 'k-*');
 hold on;
+plot(flibe_temperatures, drho_flibe_initial_XS, 'k:*');
 errorbar(flibe_temperatures, drho_serpent_flibe, 8.4E-5*ones(1,tot_case), 'k--+');
 title('Temperature(and void) reactivity feedback for flibe');
 ylabel('Reactivity');
 xlabel('Temperature(K)');
-legend('Diffusion', 'Monte carlo')
+legend('Diffusion','Diffusion with original cross sections', 'Monte carlo')
 hold off;
         
 figure;
