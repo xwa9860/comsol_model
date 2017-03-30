@@ -73,18 +73,19 @@ model.param.set('T0_flibe', '700[degC]', 'initial temperature for flibe');
 figure;
 plot(flibe_temperatures, drho_flibe, 'k-*');
 hold on;
-plot(flibe_temperatures, drho_flibe_initial_XS, 'k:*');
-errorbar(flibe_temperatures, drho_serpent_flibe, 8.4E-5*ones(1,tot_case), 'k--+');
+%plot(flibe_temperatures, drho_flibe_initial_XS, 'k:*');
+errorbar(flibe_temperatures, drho_serpent_flibe, 2E-5*ones(1,tot_case), 'k--+');
 title('Temperature(and void) reactivity feedback for flibe');
 ylabel('Reactivity');
 xlabel('Temperature(K)');
-legend('Diffusion','Diffusion with original cross sections', 'Monte carlo')
+%legend('Diffusion','Diffusion with original cross sections', 'Monte carlo')
+legend('Diffusion', 'Monte carlo');
 hold off;
         
 figure;
 plot(fuel_temperatures, drho_fuel, 'k-*');
 hold on;
-errorbar(fuel_temperatures, drho_serpent_fuel, 8.4E-5*ones(1,5), 'k--+');
+errorbar(fuel_temperatures, drho_serpent_fuel, 2E-5*ones(1,5), 'k--+');
 title('Temperature reactivity feedback for fuel');
 legend('Diffusion', 'Monte carlo')
 ylabel('Reactivity');
