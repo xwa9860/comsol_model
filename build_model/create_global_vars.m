@@ -17,15 +17,16 @@ model.param.set('Pnominal', '10*10^6[W]', 'Total nominal power');
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel pebbles, 800[degC]');
 model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
 model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
-
 model.param.set('r1','0[m]');
-model.param.set('r2', '1.040041911525952e-02[m]');
-model.param.set('r3', '1.695227260078176e-02[m]');
-model.param.set('r4', '2.155185348552224e-02[m]');
-model.param.set('r5', '2.844814651447776e-02[m]');
+model.param.set('r2', '0.008667015929383[m]');
+model.param.set('r3', '0.017602558504261[m]');
+model.param.set('r4', '0.020149899425206[m]');
+model.param.set('r5', '0.027500000000000[m]');
 model.param.set('r0', '0.03[m]');
+% ask about radius
+model.param.set('rfuel_zone','0.025[m]')
 model.param.set('Tp1','0[degC]');
-model.param.set('V_zone', '4/3*pi*r0^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
+model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
 model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
 model.param.set('Pop', OpPower, 'operation power');
 

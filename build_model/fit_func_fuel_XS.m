@@ -9,8 +9,10 @@ tot_caseNb=5;
 fuel_temp = [300, 600, 900, 1200, 1500];
 log_fuel_temp = log(fuel_temp);
 if MultiScale
-    temp_var_pb = '(Tp2+Tp3+Tp4)/3.0'; % name of the comsol variable for fuel temperature
+    temp_var_pb ='(Tp2+Tp3+Tp4+Tp22+Tp23+Tp24+Tp25+Tp26+Tp27+Tp32+Tp33+Tp34+Tp35+Tp36+Tp37+Tp42+Tp43+Tp44+Tp45+Tp46+Tp47)/21'; % name of the comsol variable for fuel temperature
 % used to set the fuel cross-section variable in comsol
+
+% '(Tp2+Tp22+Tp23+Tp24+Tp25+Tp26+Tp27+Tp3+Tp32+Tp33+Tp34+Tp35+Tp36+Tp37+Tp4+Tp42+Tp43+Tp44+Tp45+Tp46+Tp47)/21.0'
 else
     temp_var_pb = 'T_fuel';  % name of the comsol variable for fuel temperature
 % used to set the fuel cross-section variable in comsol
