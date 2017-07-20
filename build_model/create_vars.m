@@ -1,10 +1,3 @@
-
-function model = create_vars(model, data_path, dimNb, unb, gnb, u_flibe)
-
-saltDomain = 1;
-pbDomain = 2;
-refDomain = 3;
-
 model.variable.create('var1');
 model.variable('var1').model('mod1');
 model.variable('var1').set('d', '3[cm]', 'pebble diameter');

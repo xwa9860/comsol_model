@@ -10,7 +10,7 @@ tot_case_nb = 5;
 % array for fitting the data from serpent output in the specific folders
 flibe_density = [17, 18, 19, 20, 21];
 flibe_temp = (2279.92-flibe_density*100)/0.488+273.15;
-flibe_temp = horzcat(ones(5,1)*exp(1), flibe_temp');
+flibe_temp = horzcat(ones(5,1), flibe_temp');
 
 fixed_data = read_fixed([data_path, 'case_1.m'], u_flibe);
 model = set_fixed(model, comsol_var_name, fixed_data, data_units);

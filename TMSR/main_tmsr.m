@@ -8,33 +8,12 @@ run('create_comsol_model.m');
 run('create_global_vars.m');
 run('create_fcns.m');
 run('create_geom.m');
-
-if dimNb == 2
-    pbDomain = 2;
-    refDomain = 3;
-    saltDomain = 1;
-else %checked in comsol
-    pbDomain = 3;
-    refDomain = 1;
-    saltDomain = 2;
-end
-
-model = create_vars(model, data_path, dimNb, unb, gnb, u_flibe);
-
+run('create_vars.m');
 run('create_mats.m');
-if dimNb==2
-    model.material('mat1').selection.set([2]);
-    model.material('mat2').selection.set([3]);
-    model.material('mat3').selection.set([1]);
-else
-    model.material('mat1').selection.set([3]);
-    model.material('mat2').selection.set([1]);
-    model.material('mat3').selection.set([2]);
     
 %     model.material('mat1').selection.set([7 8]);
 %     model.material('mat2').selection.set([5 6 9 11]);
 %     model.material('mat3').selection.set([6 10 11]);
-end 
 
 %Heat transfer modules
 run('create_ht_flibe.m');

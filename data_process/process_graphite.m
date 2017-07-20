@@ -20,14 +20,6 @@ function model = process_graphite(model, data_path, data_units, comsol_var_name)
         name = k{1};
         set_data(model, comsol_var_name,  name, 'NA', xsdata(name), data_units(name), 'fixed');
     end
-    %set_data(model, comsol_var_name, 'scat', xsdata('Scat'), '[1/cm]', 'fixed');
-    %set_data(model, comsol_var_name, 'nsf', xsdata('NSF'), '[1/cm]', 'fixed');
-    %set_data(model, comsol_var_name, 'nsf0', xsdata('NSF'), '[1/cm]', 'fixed');
-    %set_data(model, comsol_var_name, 'rem', xsdata('Rem'), '[1/cm]', 'fixed');
-    %set_data(model, comsol_var_name, 'tot', xsdata('Tot'), '[1/cm]', 'fixed');
-
-
-
 
 end
 

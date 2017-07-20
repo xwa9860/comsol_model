@@ -1,12 +1,22 @@
 
 
 % Define input variables for the model 
-dimNb= 3; % 3D model
+dimNb= 2; % 3D model
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
 region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
+
+if dimNb == 2
+    pbDomain = 2;
+    refDomain = 3;
+    saltDomain = 1;
+else %checked in comsol
+    pbDomain = 3;
+    refDomain = 1;
+    saltDomain = 2;
+end
 
 MultiScale= false;
 sp3 = false;
