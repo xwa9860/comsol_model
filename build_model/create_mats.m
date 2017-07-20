@@ -8,8 +8,13 @@ model.material('mat3').selection.set([saltDomain]);
 
 
 %% placeholders
-model.material('mat1').label('Salt in pebble bed');
+
+model.material('mat1').label('Salt-with porosity and permeability');
 model.material('mat1').propertyGroup('def').func.label('Functions');
+model.material('mat1').propertyGroup('def').set('ratioofspecificheat', '1');
+model.material('mat1').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
+model.material('mat1').propertyGroup('def').set('hydraulicpermeability', {'Kbr' '0' '0' '0' 'Kbr' '0' '0' '0' 'Kbr'});
+model.material('mat1').propertyGroup('def').set('porosity', 'ep');
 model.material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
 model.material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
 model.material('mat1').propertyGroup('def').set('heatcapacity', '2386');
