@@ -11,10 +11,6 @@ run('create_geom.m');
 run('create_vars.m');
 run('create_mats.m');
     
-%     model.material('mat1').selection.set([7 8]);
-%     model.material('mat2').selection.set([5 6 9 11]);
-%     model.material('mat3').selection.set([6 10 11]);
-
 %Heat transfer modules
 run('create_ht_flibe.m');
 if MultiScale
@@ -30,10 +26,10 @@ end
 run('create_neutron_diffusion.m');
 
 %Math operatoins
-run('create_operations.m');
+%run('create_operations.m');
 
 %Probes to get desired variable values during transient
-run('create_probes.m');
+%run('create_probes.m');
 
 %% solvers
 %% Eigenvalue calculation
@@ -47,17 +43,17 @@ fprintf('%.10f \n', lambda_eigen);
 %% run the following line only if needed
 %run('calc_temperature_feedback_coefs.m'); 
 
-%% steady state calculation
-fprintf('\nRun steady state study\n');
-model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
-model.variable.create('var19');
-model.variable('var19').model('mod1');
-model.variable('var19').set('lambda', 'lambda_critical');
-model.variable('var19').label('lambda');
-model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
- 
-run('create_steady_state_solver.m');
-model.sol('sol13').runAll;
+% %% steady state calculation
+% fprintf('\nRun steady state study\n');
+% model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
+% model.variable.create('var19');
+% model.variable('var19').model('mod1');
+% model.variable('var19').set('lambda', 'lambda_critical');
+% model.variable('var19').label('lambda');
+% model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+%  
+% run('create_steady_state_solver.m');
+% model.sol('sol13').runAll;
 
 % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % set to eigenvalue mode

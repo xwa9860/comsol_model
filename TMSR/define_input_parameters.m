@@ -1,7 +1,7 @@
 
 
 % Define input variables for the model 
-dimNb= 2; % 3D model
+dimNb= 3; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number

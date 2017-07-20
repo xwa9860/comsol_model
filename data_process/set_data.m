@@ -16,7 +16,7 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
            for i=1:var_size(1)  
                for j=1:var_size(2)
                    model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
-                    [num2str(values(i, j),'%10.8e'), unit]);
+                    [num2str(values(j, i),'%10.8e'), unit]); %changed
                end 
            end
         end
@@ -52,8 +52,8 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
                 for g2 = 1:var_size(3)
                     if nnz(values(:, g1, g2))==0
                         model.variable(comsol_var_name).set(...
-                            [XS_name, num2str(g1), num2str(g2)], ...
-                            [num2str(0),  unit]);
+                            [XS_name, num2str(g2), num2str(g1)], ...
+                            [num2str(0),  unit]);  %changed g2 and g1
                     else
                         func = ['(', num2str(values(1, g1, g2), '%10.8e')];
                         for m = 2:var_size(1)
@@ -64,7 +64,7 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
                             end
                         end
                         model.variable(comsol_var_name).set(...
-                        [XS_name, num2str(g1), num2str(g2)],  strjoin([func, ')', unit]));
+                        [XS_name, num2str(g2), num2str(g1)],  strjoin([func, ')', unit])); %changed g2 and g1
                     end
                 end
             end
