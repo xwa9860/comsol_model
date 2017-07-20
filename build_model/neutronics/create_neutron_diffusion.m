@@ -12,13 +12,6 @@ else
     model.physics('neutrondiffusion').field('dimensionless').component({'Flux1' 'Flux2' 'Flux3' 'Flux4' 'Flux5' 'Flux6' 'Flux7' 'Flux8' ... 
     'Conc1' 'Conc2' 'Conc3' 'Conc4' 'Conc5' 'Conc6'});
 end
-<<<<<<< HEAD:build_model/create_neutron_diffusion.m
-=======
-model.physics('neutrondiffusion').create('dir1', 'DirichletBoundary', dimNb-1);
-
-model.physics('neutrondiffusion').feature('dir1').selection.set([2 5 7 11 14]);
-model.physics('neutrondiffusion').create('flux1', 'FluxBoundary', dimNb-1);
->>>>>>> multiT:build_model/neutronics/create_neutron_diffusion.m
 
 if dimNb == 2
     model.physics('neutrondiffusion').create('dir1', 'DirichletBoundary', 1);

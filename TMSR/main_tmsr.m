@@ -9,7 +9,15 @@ run('create_global_vars.m');
 run('create_fcns.m');
 run('create_geom.m');
 
-pbDomain = 3;
+if dimNb == 2
+    pbDomain = 2;
+    refDomain = 3;
+    saltDomain = 1;
+else %checked in comsol
+    pbDomain = 3;
+    refDomain = 1;
+    saltDomain = 2;
+end
 
 model = create_vars(model, data_path, dimNb, unb, gnb, u_flibe);
 

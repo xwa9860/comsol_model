@@ -47,19 +47,6 @@ model.variable('var4').model('mod1');
 model.variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TMSR-SF1 & SF0)');
 model.variable('var4').set('k_fuel', '15[W/m/K]');
 model.variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
-<<<<<<< HEAD
-model.variable('var4').selection.geom('geom1', dimNb);
-model.variable('var4').selection.set(pbDomain);
-model.variable('var4').label('fuel properties');
-
-
-model.variable.create('var10');
-model.variable('var10').model('mod1');
-run('fit_func_gr_XS.m');
-model.variable('var10').selection.geom('geom1', dimNb);
-model.variable('var10').selection.set([refDomain]);
-model.variable('var10').label('gr_neutronic_CX');
-=======
 
 model.variable('var4').set('rhoS', '1720[kg/m^3]', 'graphite fuel density');
 model.variable('var4').set('kS', '15[W/m/K]', 'graphite fuel thermal conductivity of pebble, based on graphite matrix');
@@ -84,7 +71,6 @@ model.variable('var_xs_gr').selection.geom('geom1', dimNb);
 model.variable('var_xs_gr').selection.set(refDomain);
 model.variable('var_xs_gr').label('XS_gr');
 
->>>>>>> multiT
 
 model.variable.create('var16');
 model.variable('var16').model('mod1');
@@ -94,22 +80,13 @@ model.variable('var16').selection.set(pbDomain);
 model.variable('var16').label('XS_pb');
 
 
-<<<<<<< HEAD
-
-model.variable.create('var17');
-model.variable('var17').model('mod1');
-run('fit_func_flibe_XS.m');
-model.variable('var17').selection.geom('geom1', dimNb);
-model.variable('var17').selection.set(saltDomain);
-model.variable('var17').label('flibe_neutronic_CX_t');
-=======
 model.variable.create('var17');
 model.variable('var17').model('mod1');
 model = process_flibe(model, [data_path, 'flibe\'], data_units, 'var17', unb, gnb, u_flibe);
 model.variable('var17').selection.geom('geom1', dimNb);
 model.variable('var17').selection.set([saltDomain]);
 model.variable('var17').label('XS_flibe');
->>>>>>> multiT
+
 
 model.variable.create('var18');
 model.variable('var18').model('mod1');

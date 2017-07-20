@@ -1,12 +1,11 @@
 model.material.create('mat1', 'Common', 'mod1');
 model.material.create('mat2', 'Common', 'mod1');
 model.material.create('mat3', 'Common', 'mod1');
-<<<<<<< HEAD
+
 model.material('mat1').selection.set([pbDomain]);
 model.material('mat2').selection.set([refDomain]);
 model.material('mat3').selection.set([saltDomain]);
-=======
->>>>>>> multiT
+
 
 
 model.material('mat1').label('Porous pb bed');

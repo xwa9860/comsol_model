@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-clear all;
-close all;
-mname = mfilename;
-mydir = which(mname); mydir = mydir(1:end-2-numel(mname));
-addpath([mydir, 'geom_data']);
-addpath(mydir(1:end-1));
-addpath([mydir, 'diffusion_cx_data']);
-addpath([mydir, 'diffusion_cx_data/temp_dep_data']);
-addpath([mydir, 'build_model']);
-addpath([mydir, 'utilities']);
-=======
-
 
 mname = mfilename;
 mydir = which(mname); mydir = mydir(1:end-2-numel(mname));
@@ -28,4 +15,4 @@ addpath([mydir, 'TMSR'])
 %addpath([mydir, 'MK1'])
 
 clear mydir mname
->>>>>>> multiT
+
