@@ -1,7 +1,7 @@
 
 
 % Define input variables for the model 
-dimNb= 3; % model dimension, 2 or 3
+dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
@@ -23,6 +23,8 @@ sp3 = false;
 
 unb = 4;
 u_flibe = 4;
+u_fuel = 3;
+u_gr = 1;
 OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
 
 %% define transient study parameters

@@ -1,9 +1,8 @@
-function model = process_graphite(model, data_path, data_units, comsol_var_name)
+function model = process_graphite(model, data_path, data_units, comsol_var_name, u_gr)
     %{ 
     This function get the neutronics data from serpent output file for fuel 
     and input them in the comsol model 
     %}
-    u_gr = 1; % universe number for graphite
     file_name = [data_path, 'case_1.m'];  
 
     fixed_data = read_fixed(file_name, u_gr);

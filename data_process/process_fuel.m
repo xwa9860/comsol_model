@@ -1,10 +1,8 @@
-function model = process_fuel(model, data_path, data_units, comsol_var_name)
+function model = process_fuel(model, data_path, data_units, comsol_var_name, unb, u_fuel)
     %{ 
     This function get the neutronics data from serpent output file for fuel 
     and input them in the comsol model 
     %}
-    unb = 4; % total universes number
-    u_fuel = 3;
     tot_case_nb=5;
     gnb = 8;
 
