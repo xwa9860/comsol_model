@@ -20,12 +20,13 @@ drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687
 figure;
 plot(flibe_temps, drho_flibe_comsol, 'k-*');
 hold on;
-plot(flibe_temps, drho_flibe_initial_XS, 'k:*');
 errorbar(flibe_temps, drho_flibe_serpent, 2E-5*ones(1, 5), 'k--+');
+%plot(flibe_temps, drho_flibe_initial_XS, 'k:*');
+
 title('Temperature(and void) reactivity feedback for flibe');
 ylabel('Reactivity');
 xlabel('Temperature(K)');
-legend('Diffusion','Diffusion with original cross sections', 'Monte carlo')
+legend('Diffusion', 'Monte carlo', 'Diffusion with original cross sections')
 %legend('Diffusion', 'Monte carlo');
 hold off;
         

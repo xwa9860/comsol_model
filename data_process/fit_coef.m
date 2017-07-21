@@ -18,9 +18,6 @@ Return coefs:
      beta21, beta22, ..beta2g;
             ...
      betam1, betam2, .. betamg]
-
-% aug17, 2016: added multi-temperature dependent functions for multi-scale
-% treatment
 %}
 
     mat_size = size(matrix_to_fit); % caseNb*XSmatrixSize, e.g. scattering matrix: temp_case_nb*8*8

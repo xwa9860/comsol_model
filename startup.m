@@ -12,8 +12,8 @@ addpath([mydir, 'data_process'])
 addpath([mydir, 'utilities'])
 addpath([mydir, 'solvers'])
 addpath([mydir, 'tests'])
-addpath([mydir, 'TMSR'])
-%addpath([mydir, 'MK1'])
+%addpath([mydir, 'TMSR'])
+addpath([mydir, 'MK1'])
 
 clear mydir mname
 
