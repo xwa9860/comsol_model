@@ -3,9 +3,10 @@ close all;
 format long e;
 data_path = 'TMSR\XS_data\';
 
-run('define_input_parameters.m');
+run('model_attributes.m');
 run('create_comsol_model.m');
 run('create_global_vars.m');
+run('create_common_global_vars.m');
 run('create_fcns.m');
 run('create_geom.m');
 run('create_vars.m');

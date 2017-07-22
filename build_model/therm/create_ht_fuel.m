@@ -1,15 +1,15 @@
 model.physics.create('ht3', 'HeatTransferInFluids', 'geom1');
 model.physics('ht3').identifier('ht3');
 model.physics('ht3').field('temperature').field('T_fuel');
-model.physics('ht3').selection.set([pbDomain]);
+model.physics('ht3').selection.set(domains('fuel'));
 model.physics('ht3').create('solid1', 'SolidHeatTransferModel', dimNb);
-model.physics('ht3').feature('solid1').selection.set([pbDomain]);
+model.physics('ht3').feature('solid1').selection.set(domains('fuel'));
 model.physics('ht3').create('hs1', 'HeatSource', dimNb);
-model.physics('ht3').feature('hs1').selection.set([pbDomain]);
+model.physics('ht3').feature('hs1').selection.set(domains('fuel'));
 model.physics('ht3').create('hs2', 'HeatSource', dimNb);
-model.physics('ht3').feature('hs2').selection.set([pbDomain]);
+model.physics('ht3').feature('hs2').selection.set(domains('fuel'));
 model.physics('ht3').create('hs3', 'HeatSource', dimNb);
-model.physics('ht3').feature('hs3').selection.set([pbDomain]);
+model.physics('ht3').feature('hs3').selection.set(domains('fuel'));
 
 model.physics('ht3').create('temp1', 'TemperatureBoundary', dimNb-1);
 if dimNb == 3

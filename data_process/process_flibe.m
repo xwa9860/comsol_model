@@ -1,4 +1,4 @@
-%% get the data from serpent and set the data to comsol for flibe
+%% get the data from serpent and set the data to comsol for the pure flibe part at the bottom of the core in TMSR
 
 function model = process_flibe(model, data_path, data_units, comsol_var_name, unb, gnb, u_flibe)
 

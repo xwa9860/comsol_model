@@ -11,4 +11,66 @@ MultiScale= false;
 sp3 = false;
 
 unb = 4;
-u_flibe = 4;
+
+keySet = {'inlet', 'outlet_high', 'outlet_low','CR', 'fuel',...
+          'Blanket', 'ORCC','OR', 'CB', 'DC',...
+          'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+          'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
+uvalueSet = int16([3 1 1 3 9 ...
+             8 2 1 7 6 ...
+             5 4 4 4 4  ...
+             4 4 4 4 4]);
+dvalueSet = int16([11, 7, 6, 10, 9,...
+            8, 5, 4, 3, 2, ...
+            1, 12, 13, 14, 15,...
+            16, 17, 18, 19, 20 ]);
+% domain 19 and 20 are two halves of the CR8
+domains = containers.Map(keySet,dvalueSet);
+universes = containers.Map(keySet, uvalueSet);
+universe_names = {'OR', 'ORCC', 'CR', 'CRCC', 'VS', 'DC', 'CB', 'BK','fuel'};
+
+temp_indep_comps = {'inlet', 'outlet_high', 'outlet_low','CR',...
+          'Blanket', 'ORCC','OR', 'CB', 'DC',...
+          'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+          'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
+      
+% for material definition
+ gr_comps = {'CR',...
+  'ORCC','OR', 'CB', 'DC',...
+  'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+  'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
+
+% for setting fuel XS and heat generation domains
+fuel_domNb = domains('fuel');
+fuel_univ = universes('fuel');
+
+% for porous media mmtm module and material properties
+porous_media = {'inlet', 'outlet_high', 'outlet_low', 'Blanket', 'fuel'};
+valueSet = values(domains, porous_media);
+pm_domains = cell2mat(valueSet);
+main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
+channel_domains = cell2mat(values(domains, {'inlet', 'outlet_high', 'outlet_low'}));
+
+% for flibe heat transfer module
+flibe_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
+
+dirichelet_b = [1 2 3 4 5 6 9 10 11 12 15 16 17 18 21 22 23 24 33 34 61 62 63 64 67 ...
+ 68 69 70 75 76 79 80 97 98 99 100 105 106 109 110 117 118 121 122 123 ...
+ 124 125 127 128 130 131 133 134 139 153 154 156 157 160 162 171 172 ... 
+ 175 176 178 179 190 192 193 197 199 203 215 217 218 220 221 223 224 ...
+ 225 228 229 232 233 241 242 243 244];
+
+OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
+
+%% define transient study parameters
+tf = 20; %second, finishing time of the transient
+dt = 0.1; %second, time step to record the results(not the timestep that the solver takes)
+
+%% define reactivity insertion value, 0 means that this simulation is not
+% about reactivity insertion
+rho_ext = 0;% reactivity insertion value 
+
+
+%% define Overcooling transient parameters
+OCOnset = 100; %s, starting time of overcooling, a very large time means the overcooling is not simulated
+OCSlope = -10; %K/s, speed of decrease in inlet coolant temperature

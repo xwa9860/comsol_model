@@ -4,20 +4,22 @@ format long e;
 format longEng
 
 TMSR = false;
-data_path = 'TMSR\XS_data\';
+data_path = 'MK1\XS_data\';
 
 run('model_attributes.m');
 run('create_comsol_model.m');
+run('create_common_global_vars.m');
 run('create_global_vars.m');
 run('create_fcns.m');
-run('create_geom.m');
 
-model = create_vars(model, data_path, dimNb, unb, gnb, u_flibe);
+
+run('create_geom.m');
+run('create_vars.m');
 run('create_mats.m');
 
 run('create_porous_media')
 % %Heat transfer modules
-run('create_ht_flibe.m');
+% run('create_ht_flibe.m');
 % if MultiScale
 %     run('create_ms_ht_in_pebble.m');
 %     model.variable.create('var25');
@@ -29,22 +31,22 @@ run('create_ht_flibe.m');
 % 
 % %Neutronics module
 % run('create_neutron_diffusion.m');
-% 
+
 % %Math operatoins
 % run('create_operations.m');
 % 
 % %Probes to get desired variable values during transient
 % run('create_probes.m');
 % 
-% %% solvers
-% %% Eigenvalue calculation
-% run('create_eigen_solver.m');
-% fprintf('Run eigenvalue study');
+%% solvers
+%% Eigenvalue calculation
+%run('create_eigen_solver.m');
+%fprintf('Run eigenvalue study');
 % model.sol('sol16').runAll;
 % lambda_eigen = mphglobal(model, 'lambda');
 % fprintf('\nThe eigenvalue with initial temperatures is\n');
 % fprintf('%.10f \n', lambda_eigen);
-% 
+
 % %% run the following line only if needed
 % %run('calc_temperature_feedback_coefs.m'); 
 % 
@@ -56,9 +58,9 @@ run('create_ht_flibe.m');
 % model.variable('var19').set('lambda', 'lambda_critical');
 % model.variable('var19').label('lambda');
 % model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-%  
-% run('create_steady_state_solver.m');
-% model.sol('sol13').runAll;
+% %  
+run('create_steady_state_solver.m');
+%model.sol('sol13').runAll;
 % 
 % % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % % set to eigenvalue mode

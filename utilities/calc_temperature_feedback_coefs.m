@@ -4,14 +4,14 @@
 %% fuel
 fuel_temps = [300, 600, 900, 1200, 1500];
 drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps);
-drho_fuel_serpent = read_keffs([data_path, 'temp_coef/fuel/'], u_fuel, fuel_temps);
+drho_fuel_serpent = read_keffs([data_path, 'temp_coef/fuel/'], universes('fuel'), fuel_temps);
 
 
 %% flibe
 flibe_density = [21, 20, 19, 18, 17];
 flibe_temps = (2279.92-flibe_density*100)/0.488+273.15;
 drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps);
-drho_flibe_serpent = read_keffs([data_path, 'temp_coef/flibe/'], u_flibe, flibe_temps);
+drho_flibe_serpent = read_keffs([data_path, 'temp_coef/flibe/'], universes('salt'), flibe_temps);
 %compute the drho with raw flibe cross sections taken directly from serpent
 %file, without data fitting
 drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;

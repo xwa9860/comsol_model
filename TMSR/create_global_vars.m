@@ -14,9 +14,9 @@ model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area betwe
 model.param.set('pb_nb', '11000', 'number of pebbles in the core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
 model.param.set('Pnominal', '10*10^6[W]', 'Total nominal power');
+
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel pebbles, 800[degC]');
 model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
-model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
 model.param.set('r1','0[m]');
 model.param.set('r2', '0.008667015929383[m]');
 model.param.set('r3', '0.017602558504261[m]');
@@ -30,9 +30,5 @@ model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in
 model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
 model.param.set('Pop', OpPower, 'operation power');
 
-model.param.set('OCSlope', OCSlope); % value of OCSlope defined in 'define_input_parameters.m'
-model.param.descr('OCSlope', 'Over cooling inlet T drop slope');
-model.param.set('OCOnset', OCOnset);% value of OCOnset defined in 'define_input_parameters.m'
-model.param.descr('OCOnset', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
 
 model.param.set('Tp00', 1, 'placeholder for the bias term in linear regression of cross sections on temperature');

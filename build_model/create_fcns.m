@@ -15,8 +15,6 @@ model.func('rm1').set('slope', 'OCSlope');
 model.func('rm1').set('location', 'OCOnset');
 model.func('rm1').set('cutoff', '-100');
 
-
-
 model.func.create('an4', 'Analytic');
 model.func('an4').label('FLiBe Density');
 model.func('an4').set('args', {'T'});
