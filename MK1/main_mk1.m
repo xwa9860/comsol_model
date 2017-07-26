@@ -6,32 +6,34 @@ format longEng
 TMSR = false;
 data_path = 'MK1\XS_data\';
 
+tic
 run('model_attributes.m');
 run('create_comsol_model.m');
 run('create_common_global_vars.m');
 run('create_global_vars.m');
 run('create_fcns.m');
-
-
 run('create_geom.m');
+toc
 run('create_vars.m');
+toc
 run('create_mats.m');
 
 run('create_porous_media')
-% %Heat transfer modules
-% run('create_ht_flibe.m');
-% if MultiScale
-%     run('create_ms_ht_in_pebble.m');
-%     model.variable.create('var25');
-%     model.variable('var25').model('mod1');
-%     model.variable('var25').set('T_fuel', '(Tp2+Tp22+Tp23+Tp24+Tp25+Tp26+Tp27+Tp3+Tp32+Tp33+Tp34+Tp35+Tp36+Tp37+Tp4+Tp42+Tp43+Tp44+Tp45+Tp46+Tp47)/21.0');
-% else
-%     run('create_ht_fuel.m');
-% end 
-% 
-% %Neutronics module
-% run('create_neutron_diffusion.m');
+%Heat transfer modules
+run('create_ht_flibe.m');
+if MultiScale
+    run('create_ms_ht_in_pebble.m');
+    model.variable.create('var25');
+    model.variable('var25').model('mod1');
+    model.variable('var25').set('T_fuel', '(Tp2+Tp22+Tp23+Tp24+Tp25+Tp26+Tp27+Tp3+Tp32+Tp33+Tp34+Tp35+Tp36+Tp37+Tp4+Tp42+Tp43+Tp44+Tp45+Tp46+Tp47)/21.0');
+else
+    run('create_ht_fuel.m');
+end 
 
+
+%Neutronics module
+run('create_neutron_diffusion.m');
+toc
 % %Math operatoins
 % run('create_operations.m');
 % 
@@ -40,8 +42,12 @@ run('create_porous_media')
 % 
 %% solvers
 %% Eigenvalue calculation
-%run('create_eigen_solver.m');
-%fprintf('Run eigenvalue study');
+run('create_eigen_solver.m');
+model.physics('ht3').active(false);
+model.physics('ht').active(false);
+model.physics('br').active(false);
+fprintf('Run eigenvalue study');
+
 % model.sol('sol16').runAll;
 % lambda_eigen = mphglobal(model, 'lambda');
 % fprintf('\nThe eigenvalue with initial temperatures is\n');
@@ -59,7 +65,7 @@ run('create_porous_media')
 % model.variable('var19').label('lambda');
 % model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
 % %  
-run('create_steady_state_solver.m');
+%run('create_steady_state_solver.m');
 %model.sol('sol13').runAll;
 % 
 % % %% Rerun eigenvalue calculation with temperature profile from steady state

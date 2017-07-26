@@ -112,15 +112,15 @@ model.material('mat4').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
 
 
 
-%% pure flibe in TMSR
-if TMSR
-    model.material.create('mat3', 'Common', 'mod1');
-    model.material('mat3').selection.set(domains('salt'));
-    model.material('mat3').label('Only liquid salt(no pebbles)');
-    model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-    model.material('mat3').propertyGroup('def').set('density', '1900');
-    model.material('mat3').propertyGroup('def').set('heatcapacity', '2300');
-    model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
-    model.material('mat3').propertyGroup('def').set('dynamicviscosity', '2'); 
-    model.material('mat3').propertyGroup('def').set('porosity', 'ep');
-end
+% %% pure flibe in TMSR
+% if TMSR
+%     model.material.create('mat3', 'Common', 'mod1');
+%     model.material('mat3').selection.set(domains('salt'));
+%     model.material('mat3').label('Only liquid salt(no pebbles)');
+%     model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+%     model.material('mat3').propertyGroup('def').set('density', '1900');
+%     model.material('mat3').propertyGroup('def').set('heatcapacity', '2300');
+%     model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
+%     model.material('mat3').propertyGroup('def').set('dynamicviscosity', '2'); 
+%     model.material('mat3').propertyGroup('def').set('porosity', 'ep');
+% end

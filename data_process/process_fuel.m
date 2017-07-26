@@ -1,4 +1,4 @@
-function model = process_fuel(model, data_path, data_units, comsol_var_name, unb, u_fuel)
+function model = process_fuel(model, data_path, data_units, comsol_var_name, unb, u_fuel, TMSR)
     %{ 
     This function get the neutronics data from serpent output file for fuel 
     and input them in the comsol model 
@@ -27,11 +27,11 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
         input = [ones(9, 1) log_fuel_temp flibe_temps];
     else
         tot_case_nb = 50;
-        temp_var_pb = strings(24, 1);  % name of the comsol variable for fuel temperature
+        temp_var_pb = strings(25, 1);  % name of the comsol variable for fuel temperature
         for i = 1:24
          temp_var_pb(i) = strcat("log(T_fuel_", num2str(i), ")");
         end
-         
+        temp_var_pb(25) = "T_flibe";
         % used to set the fuel cross-section variable in comsol
 
         raw_temps = load('D:\diffusion_models\model\m_files\MK1\XS_data\temp.mat');        
@@ -46,6 +46,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
         input = [ones(50, 1) log(fuel_temps) raw_flibe_temps'];
         
     end
+    
     fixed_data = read_fixed([data_path, 'case_1.m'], u_fuel);
     model = set_fixed(model, comsol_var_name, fixed_data, data_units);
 

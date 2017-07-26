@@ -1,5 +1,5 @@
 % Define input variables for the model 
-dimNb= 2; % model dimension, 2 or 3
+dimNb= 3; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 region=5; % temperature group number
@@ -9,7 +9,7 @@ region_fuel_kernel=3; %termperature of fuel kernel
 TMSR = true;
 
 keySet = {'fuel', 'salt', 'gr'};
-uvalueSet = [3, 4, 1];
+uvalueSet = [9, 9, 1];
 if dimNb == 2
     dvalueSet = [2, 1, 3 ];
 else %checked in comsol
@@ -20,7 +20,11 @@ universes = containers.Map(keySet, uvalueSet);
 
 universe_names = ["gr", "disp", "fuel", "flibe"];
 
+% for XS definition
 temp_indep_comps = {'gr'};
+% for material definition
+gr_comps = {'gr'};
+channel_domains = cell2mat(values(domains, {'salt'}));
 
 % for setting fuel XS and heat generation domains
 fuel_domNb = domains('fuel');

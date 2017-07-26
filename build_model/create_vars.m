@@ -62,13 +62,13 @@ for i = 1:length(temp_indep_comps)
     model.variable(['var_xs_' name]).label(['xs_' name]);
 end
  
-model.variable.create('var16');
-model.variable('var16').model('mod1');
-
-model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ);
-model.variable('var16').selection.geom('geom1', dimNb);
-model.variable('var16').selection.set(fuel_domNb);
-model.variable('var16').label('XS_pb');
+% model.variable.create('var16');
+% model.variable('var16').model('mod1');
+% 
+% model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
+% model.variable('var16').selection.geom('geom1', dimNb);
+% model.variable('var16').selection.set(fuel_domNb);
+% model.variable('var16').label('XS_pb');
 
 if TMSR
     model.variable.create('var17');
@@ -101,3 +101,9 @@ model.variable('var22').selection.geom('geom1', dimNb);
 model.variable('var22').selection.set(cell2mat(values(domains)));
 model.variable('var22').label('delayed');
 
+% create T_fuel_i varaibles temporarily for testing
+model.variable.create('var_T_fuel');
+model.variable('var_T_fuel').model('mod1');
+for i = 1:24
+model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
+end

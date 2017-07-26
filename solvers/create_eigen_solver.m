@@ -21,10 +21,15 @@ model.study('std2').label('Eigenvalue study');
 model.study('std2').feature('eigv').set('eigwhich', 'sr');
 model.study('std2').feature('eigv').set('shift', '1');
 model.study('std2').feature('eigv').set('neigs', '1');
-if MultiScale
-        model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'neutrondiffusion' 'on' 'htpb' 'off'});    
+
+if TMSR
+    if MultiScale
+            model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'neutrondiffusion' 'on' 'htpb' 'off'});    
+    else
+            model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
+    end
 else
-        model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
+    model.study('std2').feature('eigv').set('activate', {'br' 'off' 'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
 end
 
 

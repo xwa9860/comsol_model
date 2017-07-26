@@ -2,6 +2,8 @@
 % add delayed neutrons 
 model.physics.create('neutrondiffusion', 'CoefficientFormPDE', 'geom1');
 model.physics('neutrondiffusion').identifier('neutrondiffusion');
+model.physics('neutrondiffusion').prop('ShapeProperty').set('order', '1');
+
 model.physics('neutrondiffusion').field('dimensionless').field('Flux');
 % add DE model
 if sp3
