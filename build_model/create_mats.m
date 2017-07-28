@@ -25,17 +25,17 @@ model.material('mat2').propertyGroup('def').set('density', '1960[kg/m^3]');
 
 
 %coolant channel
-model.material.create('mat3', 'Common', 'mod1');
-model.material('mat3').selection.set(channel_domains);
-model.material('mat3').label('Salt-channels, hydraulicpermeability is different from porous media salt');
-model.material('mat3').propertyGroup('def').func.label('Functions');
-model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
-model.material('mat3').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
-model.material('mat3').propertyGroup('def').set('hydraulicpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.material('mat3').propertyGroup('def').set('porosity', 'ep');
-model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
-model.material('mat3').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
-model.material('mat3').propertyGroup('def').set('heatcapacity', '2386');
+% model.material.create('mat3', 'Common', 'mod1');
+% model.material('mat3').selection.set(channel_domains);
+% model.material('mat3').label('Salt-channels, hydraulicpermeability is different from porous media salt');
+% model.material('mat3').propertyGroup('def').func.label('Functions');
+% model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
+% model.material('mat3').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
+% model.material('mat3').propertyGroup('def').set('hydraulicpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+% model.material('mat3').propertyGroup('def').set('porosity', 'ep');
+% model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
+% model.material('mat3').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
+% model.material('mat3').propertyGroup('def').set('heatcapacity', '2386');
 
 % model.material('mat2').propertyGroup.create('Enu', 'Young''s modulus and Poisson''s ratio');
 % model.material('mat2').propertyGroup.create('Murnaghan', 'Murnaghan');

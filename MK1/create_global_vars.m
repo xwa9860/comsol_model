@@ -4,6 +4,13 @@ model.param.set('Ochuteout', '0.8', 'defueling chute pressure multiplier');
 
 model.param.set('T0_flibe', '600[degC]', 'inlet temperature');
 model.param.set('T0_fuel', '800[degC]', 'initial temperature');
+model.param.set('T_inlet', '778[degC]','nominal value is 672');
+model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
+model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
+model.param.set('pb_nb', '44000', 'number of pebbles in the core');
+model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
+model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');
+
 
 model.param.set('Houtlet', '1.5 [m]', 'outlet region height overlapping with active core region');
 model.param.set('Hinlet', '1.501 [m]', 'inlet region height overlapping with active core region');

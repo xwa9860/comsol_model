@@ -36,7 +36,7 @@ model.variable('var2').set('d', '3[cm]', 'pebble diameter');
 model.variable.create('var4');
 model.variable('var4').model('mod1');
 model.variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TMSR-SF1 & SF0)');
-model.variable('var4').set('k_fuel', '0[W/m/K]');
+model.variable('var4').set('k_fuel', '15[W/m/K]');
 model.variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
 model.variable('var4').selection.geom('geom1', dimNb);
 model.variable('var4').selection.set(domains('fuel'));
