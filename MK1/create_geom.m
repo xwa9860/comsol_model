@@ -93,6 +93,12 @@ model.geom('geom1').feature('wp1').geom.feature('r4').label('inlet');
 model.geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.01' '1'});
 model.geom('geom1').feature('wp1').geom.feature('r4').set('pos', {'0.35-0.01' '1.5'});
 model.geom('geom1').feature('wp1').geom.feature('r4').active(false);
+model.geom('geom1').feature('wp1').geom.create('ic1', 'InterpolationCurve');
+model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '0.35', 0, 0);
+model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '1.5', 0, 1);
+model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '0.35', 1, 0);
+model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '2.5', 1, 1);
+model.geom('geom1').feature('wp1').geom.run('ic1');
 
 % outlet low
 model.geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
