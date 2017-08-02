@@ -11,10 +11,10 @@ model.physics('ht3').feature('hs2').selection.set(domains('fuel'));
 model.physics('ht3').create('hs3', 'HeatSource', dimNb);
 model.physics('ht3').feature('hs3').selection.set(domains('fuel'));
 
-model.physics('ht3').create('temp1', 'TemperatureBoundary', dimNb-1);
-if dimNb == 3
-model.physics('ht3').feature('temp1').selection.set([4 5 9 10 13]);
-end
+% model.physics('ht3').create('temp1', 'TemperatureBoundary', dimNb-1);
+% if dimNb == 3
+% model.physics('ht3').feature('temp1').selection.set([4 5 9 10 13]);
+% end
 
 model.physics('ht3').label('Heat Transfer in Fuel Pebble');
 model.physics('ht3').comments('fuel temperature');

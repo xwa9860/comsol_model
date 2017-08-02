@@ -1,4 +1,5 @@
-% Define input variables for the model 
+% TMSR 
+%Define input variables for the model 
 dimNb= 3; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
@@ -36,9 +37,16 @@ valueSet = values(domains,porous_media);
 pm_domains = cell2mat(valueSet);
 main_pm_domains = pm_domains;
 
-% for flibe heat transfer module
+%% for flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'salt', 'fuel'}));
-
+if dimNb == 3
+    inlet_temp_bound = [9 10 17 18 19 20 27 28 29 32 34 35];
+    out_flow_bound = [15 16 23 24 43 44 48 49];
+else
+    inlet_temp_bound = [2 8];
+    out_flow_bound = [5 10];
+end
+%% neutron diffusion module
 if dimNb ==3
 dirichelet_b = [1 2 3 4 5 6 19 20 23 24 25 26 27 29 31 33 47 48 49 50];
 else

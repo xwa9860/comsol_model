@@ -9,6 +9,9 @@ model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
 model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
 model.param.set('pb_nb', '44000', 'number of pebbles in the core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
+model.param.set('fuel_v', 'pb_v/0.6');
+
+
 model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');
 
 
@@ -26,4 +29,7 @@ model.param.set('mf', '1', 'fueling chute mass flowrate, fraction of total');
 model.param.set('bottomInletFraction', '0.3', 'fraction of mass flow rate going through the bottom inlet');
 model.param.set('Pci0', '1.3', 'center inlet pressure head (m) (boundary condition)');
 model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary condition)');
+
 model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
+model.param.set('pb_diam', '3[cm]');
+model.param.set('Pop', '236[MW]');
