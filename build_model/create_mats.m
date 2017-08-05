@@ -11,6 +11,20 @@ model.material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0
 model.material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
 model.material('mat1').propertyGroup('def').set('heatcapacity', '2386');
 
+
+%% pure flibe in TMSR
+if TMSR
+    model.material.create('mat3', 'Common', 'mod1');
+    model.material('mat3').selection.set(domains('salt'));
+    model.material('mat3').label('Only liquid salt(no pebbles)');
+    model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+    model.material('mat3').propertyGroup('def').set('density', '1900');
+    model.material('mat3').propertyGroup('def').set('heatcapacity', '2300');
+    model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
+    model.material('mat3').propertyGroup('def').set('dynamicviscosity', '2'); 
+    model.material('mat3').propertyGroup('def').set('porosity', 'ep');
+end
+
 %% graphite
 model.material.create('mat2', 'Common', 'mod1');
 valueSet = values(domains,gr_comps);
@@ -37,38 +51,6 @@ model.material('mat2').propertyGroup('def').set('density', '1960[kg/m^3]');
 % model.material('mat3').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
 % model.material('mat3').propertyGroup('def').set('heatcapacity', '2386');
 
-% model.material('mat2').propertyGroup.create('Enu', 'Young''s modulus and Poisson''s ratio');
-% model.material('mat2').propertyGroup.create('Murnaghan', 'Murnaghan');
-% model.material('mat2').propertyGroup.create('Lame', ['Lam' native2unicode(hex2dec({'00' 'e9'}), 'unicode') ' parameters']);
-% model.material('mat2').set('ambient', 'custom');
-% model.material('mat2').set('specular', 'custom');
-% model.material('mat2').set('fresnel', '0.9');
-% model.material('mat2').set('noise', 'on');
-% model.material('mat2').set('family', 'custom');
-% model.material('mat2').set('diffuse', 'custom');
-% model.material('mat2').set('noisefreq', '1');
-% model.material('mat2').set('customambient', {'0.6666666666666666' '0.6666666666666666' '0.6666666666666666'});
-% model.material('mat2').set('lighting', 'cooktorrance');
-% model.material('mat2').set('roughness', '0.3');
-% model.material('mat2').set('customspecular', {'0.7843137254901961' '0.7843137254901961' '0.7843137254901961'});
-% model.material('mat2').set('customdiffuse', {'0.6666666666666666' '0.6666666666666666' '0.6666666666666666'});
-% model.material('mat2').set('fresnel', '0.9');
-% model.material('mat2').propertyGroup('def').set('relpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-% model.material('mat2').propertyGroup('def').set('electricconductivity', {'4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]'});
-% model.material('mat2').propertyGroup('def').set('relpermittivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-% model.material('mat2').propertyGroup('def').set('thermalexpansioncoefficient', {'12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]'});
-% model.material('mat2').propertyGroup('Enu').set('youngsmodulus', '200e9[Pa]');
-% model.material('mat2').propertyGroup('Enu').set('poissonsratio', '0.30');
-% model.material('mat2').propertyGroup('Murnaghan').set('l', '');
-% model.material('mat2').propertyGroup('Murnaghan').set('m', '');
-% model.material('mat2').propertyGroup('Murnaghan').set('n', '');
-% model.material('mat2').propertyGroup('Murnaghan').set('l', '-3.0e11[Pa]');
-% model.material('mat2').propertyGroup('Murnaghan').set('m', '-6.2e11[Pa]');
-% model.material('mat2').propertyGroup('Murnaghan').set('n', '-7.2e11[Pa]');
-% model.material('mat2').propertyGroup('Lame').set('lambLame', '');
-% model.material('mat2').propertyGroup('Lame').set('muLame', '');
-% model.material('mat2').propertyGroup('Lame').set('lambLame', '1.15e11[Pa]');
-% model.material('mat2').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
 
 %steel
 model.material.create('mat4', 'Common', 'mod1');
@@ -112,15 +94,3 @@ model.material('mat4').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
 
 
 
-% %% pure flibe in TMSR
-% if TMSR
-%     model.material.create('mat3', 'Common', 'mod1');
-%     model.material('mat3').selection.set(domains('salt'));
-%     model.material('mat3').label('Only liquid salt(no pebbles)');
-%     model.material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-%     model.material('mat3').propertyGroup('def').set('density', '1900');
-%     model.material('mat3').propertyGroup('def').set('heatcapacity', '2300');
-%     model.material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
-%     model.material('mat3').propertyGroup('def').set('dynamicviscosity', '2'); 
-%     model.material('mat3').propertyGroup('def').set('porosity', 'ep');
-% end

@@ -8,11 +8,16 @@ function data = read_flibe(data_path, univ, unb, gnb, tot_case_nb)
     
     u=univ;
     for case_nb = 1:tot_case_nb
+        res_scat = ones(case_nb, gnb, gnb);
         res_scat(case_nb, :, :) = read_2d_array(INF_S0, u, gnb);  
+        res_rem = ones(case_nb, gnb);
         res_rem(case_nb, :)= read_1d_array(INF_REMXS, u, gnb);
-        res_nsf(case_nb, :) = read_1d_array(INF_NSF, u, gnb);   
+        res_nsf = ones(case_nb, gnb);
+        res_nsf(case_nb, :) = read_1d_array(INF_NSF, u, gnb);
+        res_tot = ones(case_nb, gnb);
         res_tot(case_nb, :) = read_1d_array(INF_TOT, u, gnb);
-        res_diff2(case_nb, :) = 9/35.0 ./read_1d_array(INF_TOT, u, gnb); 
+        %res_diff2 = eye(case_nb, gnb);
+        %res_diff2(case_nb, :) = 9/35.0 ./read_1d_array(INF_TOT, u, gnb); 
 
 %         if case_nb == 3
 %             Ref_Rem_flibe = read_array_XS(INF_REMXS, u, gnb);

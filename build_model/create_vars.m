@@ -64,7 +64,6 @@ end
  
 % model.variable.create('var16');
 % model.variable('var16').model('mod1');
-% 
 % model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
 % model.variable('var16').selection.geom('geom1', dimNb);
 % model.variable('var16').selection.set(fuel_domNb);

@@ -1,5 +1,5 @@
  function coef = fit_coef(temp_mat, data)
-    % fit a log_linear function XS = c1*log(T) + c0
+    % fit a linear function data = coef * temp_mat
         coef = containers.Map; 
         for k = keys(data)
             name = k{1};

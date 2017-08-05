@@ -11,6 +11,9 @@ function model = process_fixed(model, data_path, data_units, comsol_var_name, u_
     gnb = 8;
     xsdata = containers.Map; 
     xsdata('scat') = read_2d_array(INF_S0, u_gr, gnb);   
+    if size(size(xsdata('scat'))) ~= 2
+        error('scattering matrix size is wrong');
+    end
     xsdata('rem')= read_1d_array(INF_REMXS, u_gr, gnb);
     xsdata('nsf') = read_1d_array(INF_NSF, u_gr, gnb);
     xsdata('tot') = read_1d_array(INF_TOT, u_gr, gnb);

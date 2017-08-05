@@ -12,9 +12,10 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
                model.variable(comsol_var_name).set([XS_name, num2str(j)],  ...
                 [num2str(values(1, j),'%10.8e'), unit]);
            end 
-        else
+        else % for scattering matrix
            for i=1:var_size(1)  
                for j=1:var_size(2)
+                   values(j, i)
                    model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
                     [num2str(values(j, i),'%10.8e'), unit]); %changed
                end 
@@ -22,7 +23,6 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
         end
     else
         if var_size(1) ~= length(temp_vars)+1 
-        var_size
         length(temp_vars)
         error('coefficient value dimension doesnot match temp variables');
         end

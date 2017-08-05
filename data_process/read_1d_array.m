@@ -4,6 +4,7 @@
 function XS_array = read_1d_array(serpent_data_name, row_nb, value_nb)
 % row_nb in the serpent data matrix
 % value_nb: nb of values to be read, usually = energy group nb
+    XS_array = eye(1, value_nb);
     for i=1:value_nb
         k=i*2-1;
         XS_array(i)=serpent_data_name(row_nb, k);
