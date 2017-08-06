@@ -1,6 +1,7 @@
 function res = read_fixed(file_name, univ)
 % file_name: serpent result file that contains the data
-% univ: universe number ( row number) to read in the corresponding variable
+% univ: universe number (= row number to read in the corresponding
+% variable)
 dnb = 6;
 gnb = 8;
 run(file_name);

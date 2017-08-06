@@ -19,6 +19,9 @@ if dimNb ==2
 
 elseif dimNb ==3
     model.geom('geom1').create('wp1', 'WorkPlane');
+    model.geom('geom1').feature('wp1').set('quickplane', 'xz');
+    model.geom('geom1').feature('wp1').set('unite', 'on');
+
     model.geom('geom1').feature('wp1').geom.create('pol1', 'Polygon');
     model.geom('geom1').feature('wp1').geom.feature('pol1').label('upper_core');
     model.geom('geom1').feature('wp1').geom.feature('pol1').set('x', '0,0.675,0.675, 0.1, 0.1, 0');

@@ -8,13 +8,13 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     
     fixed_data = read_fixed([data_path, 'case_1.m'], u_fuel);
     model = set_fixed(model, comsol_var_name, fixed_data, data_units);
-
+    
+    % temperature dependent parameters
     if TMSR
-        %tot_case_nb=9;
-        tot_case_nb = 5;
-        %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % name of the comsol variable for fuel temperature
-        temp_var_pb = ["log(T_fuel)"];
-        % used to set the fuel cross-section variable in comsol
+        tot_case_nb=9;
+        temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
+%         tot_case_nb = 5;
+%         temp_var_pb = ["log(T_fuel)"]; % used to set the fuel cross-section variable in comsol
 
         %{
         For a sample of size n, temperature varaibles t1, t2, ... tm:
@@ -24,16 +24,16 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
                     1, tn1, tn2, ... tnm]
         %}
         %temp_mat = csvread([datapath, 'fuel_temp_mat.csv']);
-        fuel_temp = [300; 600; 900; 1200; 1500];
-        %fuel_temp = [300; 600; 900; 1200; 1500; 900; 900; 900; 900];
+        %fuel_temp = [300; 600; 900; 1200; 1500];
+        fuel_temp = [300; 600; 900; 1200; 1500; 900; 900; 900; 900];
         log_fuel_temp = log(fuel_temp);
 
-        %flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21];
-        %flibe_temps = (2279.92-flibe_dens*100)/0.488+273.15;
+        flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21]*100;
+        flibe_temps = (2279.92-flibe_dens)/0.488+273.15;
         
         
-        %input = [ones(9, 1) log_fuel_temp flibe_temps];
-        input = [ones(5, 1) log_fuel_temp];
+        input = [ones(9, 1) log_fuel_temp flibe_temps];
+        %input = [ones(5, 1) log_fuel_temp];
         
     else
         tot_case_nb = 50;

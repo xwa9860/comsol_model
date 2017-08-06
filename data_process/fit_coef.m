@@ -21,6 +21,8 @@ Return coefs:
 %}
 
     mat_size = size(matrix_to_fit); % caseNb*XSmatrixSize, e.g. scattering matrix: temp_case_nb*8*8
+    x_size = size(x);
+    coefs = ones([x_size(2) mat_size(2:end)]);
 
     if length(mat_size) == 3 %3D matrix, e.g. scattering matrix for different cases
         if mat_size(1) ~= length(x)  % case nb

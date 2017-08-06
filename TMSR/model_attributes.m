@@ -10,20 +10,20 @@ region_fuel_kernel=3; %termperature of fuel kernel
 
 TMSR = true;
 
-keySet = {'fuel', 'salt', 'gr'};
+domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];
 if dimNb == 2
     dvalueSet = [2, 1, 3 ];
 else %double checked in comsol
     dvalueSet = [3, 2, 1];
 end
-domains = containers.Map(keySet,dvalueSet);
-universes = containers.Map(keySet, uvalueSet);
+domains = containers.Map(domainNames,dvalueSet);
+universes = containers.Map(domainNames, uvalueSet);
 
 universe_names =["gr", "pb", "fuel", "flibe"];% the same order as in the serpent script, but called differently;
 
 % for XS definition
-temp_indep_comps = {'gr', 'fuel'};
+temp_indep_comps = {'gr'};
 % for material definition
 gr_comps = {'gr'};
 
@@ -51,7 +51,7 @@ end
 
 %% neutron diffusion module
 if dimNb ==3
-dirichelet_b = [1 2 3 4 5 6 19 20 23 24 25 26 27 29 31 33 47 48 49 50];
+dirichelet_b = [1 2 3 4 5 6 19 20 23 24 25 26 27 34 36 38 41 43 47 50];
 else
 dirichelet_b = [2 5 7 11 14];
 end

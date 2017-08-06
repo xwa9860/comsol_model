@@ -11,6 +11,15 @@ model.variable('var1').set('Acore1', 'pi*2*Hinlet*(0.9[m])', 'inlet cross-sectio
 model.variable('var1').set('Ain', '2.8743 [m^2]');
 model.variable('var1').set('Ainghost', '3.29867 [m^2]');
 
+model.variable.create('var2');
+model.variable('var2').model('mod1');
+model.variable('var2').set('Kbr', 'd^2/1012.5', 'bed permeability, Ergun/Kozeni');
+model.variable('var2').set('cF', '0.52', 'Forchheimer drag coefficient, from Ergun correlation (Beaver coefficient)');
+model.variable('var2').set('ep', '0.40', 'porosity');
+model.variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
+model.variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
+model.variable('var2').set('d', '3[cm]', 'pebble diameter');
+
 model.variable.create('var3');
 model.variable('var3').model('mod1');
 model.variable('var3').set('cpL', '2415.78[J/kg/K]', 'salt heat capacity, constant');
@@ -21,15 +30,6 @@ model.variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coef
 model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
 model.variable('var3').set('unitstest', 'betaL*To*rhoL*g');
 model.variable('var3').set('Pr', 'muL*cpL/kL');
-
-model.variable.create('var2');
-model.variable('var2').model('mod1');
-model.variable('var2').set('Kbr', 'd^2/1012.5', 'bed permeability, Ergun/Kozeni');
-model.variable('var2').set('cF', '0.52', 'Forchheimer drag coefficient, from Ergun correlation (Beaver coefficient)');
-model.variable('var2').set('ep', '0.40', 'porosity');
-model.variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
-model.variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
-model.variable('var2').set('d', '3[cm]', 'pebble diameter');
 
 
 %% fuel thermal properties
@@ -62,14 +62,17 @@ for i = 1:length(temp_indep_comps)
     model.variable(['var_xs_' name]).label(['xs_' name]);
 end
  
-% model.variable.create('var16');
-% model.variable('var16').model('mod1');
-% model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
-% model.variable('var16').selection.geom('geom1', dimNb);
-% model.variable('var16').selection.set(fuel_domNb);
-% model.variable('var16').label('XS_pb');
 
 if TMSR
+    % upper fuel region
+    model.variable.create('var16');
+    model.variable('var16').model('mod1');
+    model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
+    model.variable('var16').selection.geom('geom1', dimNb);
+    model.variable('var16').selection.set(fuel_domNb);
+    model.variable('var16').label('XS_pb');
+    
+    % lower flibe region
     model.variable.create('var17');
     model.variable('var17').model('mod1');
     model = process_flibe(model, [data_path, 'flibe\'], data_units, 'var17', unb, gnb, universes('salt'));

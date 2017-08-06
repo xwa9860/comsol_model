@@ -2,8 +2,9 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
 %{
  set cross section data to comsol model via matlab livelink for comsol
 %}
+
     var_size = size(values);  
-  
+    
     if strcmp(flag, 'fixed')
         %% for fixed(independent on temperature) cross section values
         if var_size(1) == 1 
@@ -15,7 +16,6 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
         else % for scattering matrix
            for i=1:var_size(1)  
                for j=1:var_size(2)
-                   values(j, i)
                    model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
                     [num2str(values(j, i),'%10.8e'), unit]); %changed
                end 
