@@ -95,6 +95,25 @@ lambda_eigen_new = mphglobal(model, 'lambda');
 fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+
+%% Steady state calculation
+fprintf('\nRerun steady state calculation\n');
+model.variable('var19').active(true);
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+model.sol('sol13').runAll;
+
+%% Rerun eigenvalue calculation with temperature profile from steady state
+% set to eigenvalue mode
+model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+% desable lambda
+model.variable('var19').active(false);
+model.sol('sol16').runAll;
+% get new lambda
+lambda_eigen_new = mphglobal(model, 'lambda');
+fprintf('\nThe new eigenvalue is\n');
+fprintf('%.10f ', lambda_eigen_new)
+model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+
 %% Scale the flux to power
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 run('create_scaling_study.m')
@@ -102,11 +121,11 @@ model.sol('sol15').runAll;
 
 %run('create_steady_state_results')
 
-%% Transient calculation
+% Transient calculation
 fprintf('\nRunning transient...\n');
 run('create_transient_study.m')
 model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
-%model.sol('sol4').runAll;
+model.sol('sol4').runAll;
 %run('create_transient_results')
 
 

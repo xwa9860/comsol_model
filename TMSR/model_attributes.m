@@ -1,6 +1,6 @@
 % TMSR 
 %Define input variables for the model 
-dimNb= 3; % model dimension, 2 or 3
+dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 unb = 4;
@@ -21,7 +21,7 @@ domains = containers.Map(domainNames,dvalueSet);
 universes = containers.Map(domainNames, uvalueSet);
 
 universe_names =["gr", "pb", "fuel", "flibe"];% the same order as in the serpent script, but called differently;
-
+ % {'graphiteU', 'pebbleU', 'dispPebbleU', 'flibeU'} in serpent   
 % for XS definition
 temp_indep_comps = {'gr'};
 % for material definition
@@ -42,8 +42,8 @@ main_pm_domains = pm_domains;
 %% for flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'salt', 'fuel'}));
 if dimNb == 3
-    inlet_temp_bound = [9 10 17 18 19 20 27 28 29 32 34 35];
-    out_flow_bound = [15 16 23 24 43 44 48 49];
+    inlet_temp_bound = [9, 10, 17, 18, 19, 20, 29, 33, 34, 38, 42, 44];
+    out_flow_bound = [15, 16, 23, 24, 32, 36, 41, 46];
 else
     inlet_temp_bound = [2 8];
     out_flow_bound = [5 10];
