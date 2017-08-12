@@ -1,6 +1,6 @@
 % TMSR 
 %Define input variables for the model 
-dimNb= 2; % model dimension, 2 or 3
+dimNb= 3; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 unb = 4;

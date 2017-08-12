@@ -26,9 +26,9 @@ model.param.set('T0_flibe', '672[degC]', 'initial temperature');
 
 %% plot the results
 figure;
-plot(flibe_temps, drho_flibe_comsol, 'k-*');
+plot(flibe_temps, drho_flibe_comsol, 'k-o');
 hold on;
-errorbar(flibe_temps, drho_flibe_serpent, 2E-5*ones(1, 5), 'k--+');
+errorbar(flibe_temps, drho_flibe_serpent, 2E-5*ones(1, 5), 'k--^');
 %plot(flibe_temps, drho_flibe_initial_XS, 'k:*');
 xlim([500 1600]);
 ylim([-0.015 0.025]);
@@ -40,9 +40,9 @@ legend('Diffusion', 'Monte carlo', 'Diffusion with original cross sections')
 hold off;
         
 figure;
-plot(fuel_temps, drho_fuel_comsol, 'k-*');
+plot(fuel_temps, drho_fuel_comsol, 'k-o');
 hold on;
-errorbar(fuel_temps, drho_fuel_serpent, 2E-5*ones(1,5), 'k--+');
+errorbar(fuel_temps, drho_fuel_serpent, 2E-5*ones(1,5), 'k--^');
 xlim([200 1600]);
 ylim([-0.015 0.025]);
 title('Temperature reactivity feedback for fuel');
@@ -68,7 +68,7 @@ function drho = read_keffs(folder, row, temps)
     drho = calc_delta_reactivity(keff_serpent_fuel, 3, 'SERPENT');
     
     [p, some] = polyfit(temps, drho, 1);
-    fprintf('\n The feedback coef in serpent is %4.10f\n', p[1]);
+    fprintf('\n The feedback coef in serpent is %4.10f\n', p(1));
 
 end
 

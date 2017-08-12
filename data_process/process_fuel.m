@@ -11,10 +11,10 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     
     % temperature dependent parameters
     if TMSR
-        tot_case_nb=9;
+        %tot_case_nb=9;
         %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
-         tot_case_nb = 5;
-         temp_var_pb = ["log(T_fuel[1/K])"]; % used to set the fuel cross-section variable in comsol
+        tot_case_nb = 5;
+        temp_var_pb = ["log(T_fuel[1/K])"]; % used to set the fuel cross-section variable in comsol
 
         %{
         For a sample of size n, temperature varaibles t1, t2, ... tm:
@@ -28,8 +28,8 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
         %fuel_temp = [300; 600; 900; 1200; 1500; 900; 900; 900; 900];
         log_fuel_temp = log(fuel_temp);
 
-        flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21]*100;
-        flibe_temps = (2413-flibe_dens)/0.488;
+        %flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21]*100;
+        %flibe_temps = (2413-flibe_dens)/0.488;
         
         
         %input = [ones(9, 1) log_fuel_temp flibe_temps];
