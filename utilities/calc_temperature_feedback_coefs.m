@@ -5,16 +5,24 @@
 fuel_temps = [300, 600, 900, 1200, 1500];
 drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps);
 drho_fuel_serpent = read_keffs([data_path, 'temp_coef/fuel/'], universes('fuel'), fuel_temps);
-
+% set fuel temperature back
+model.param.set('T0_fuel', '800[degC]', 'initial temperature');
+fprintf('Run eigenvalue study');
+model.sol('sol16').runAll;
+lambda_eigen = mphglobal(model, 'lambda');
+fprintf('\nThe eigenvalue with initial temperatures is\n');
+fprintf('%.10f \n', lambda_eigen);
 
 %% flibe
-flibe_density = [21, 20, 19, 18, 17];
-flibe_temps = (2279.92-flibe_density*100)/0.488+273.15;
+flibe_density = [17, 18, 19, 20, 21]*100;
+flibe_temps = (2413-flibe_density)/0.488;
 drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps);
 drho_flibe_serpent = read_keffs([data_path, 'temp_coef/flibe/'], universes('salt'), flibe_temps);
 %compute the drho with raw flibe cross sections taken directly from serpent
 %file, without data fitting
 drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;
+% set flibe temperature back
+model.param.set('T0_flibe', '672[degC]', 'initial temperature');
 
 %% plot the results
 figure;
@@ -22,7 +30,8 @@ plot(flibe_temps, drho_flibe_comsol, 'k-*');
 hold on;
 errorbar(flibe_temps, drho_flibe_serpent, 2E-5*ones(1, 5), 'k--+');
 %plot(flibe_temps, drho_flibe_initial_XS, 'k:*');
-
+xlim([500 1600]);
+ylim([-0.015 0.025]);
 title('Temperature(and void) reactivity feedback for flibe');
 ylabel('Reactivity');
 xlabel('Temperature(K)');
@@ -34,6 +43,8 @@ figure;
 plot(fuel_temps, drho_fuel_comsol, 'k-*');
 hold on;
 errorbar(fuel_temps, drho_fuel_serpent, 2E-5*ones(1,5), 'k--+');
+xlim([200 1600]);
+ylim([-0.015 0.025]);
 title('Temperature reactivity feedback for fuel');
 legend('Diffusion', 'Monte carlo')
 ylabel('Reactivity');
@@ -57,7 +68,7 @@ function drho = read_keffs(folder, row, temps)
     drho = calc_delta_reactivity(keff_serpent_fuel, 3, 'SERPENT');
     
     [p, some] = polyfit(temps, drho, 1);
-    fprintf('\n The feedback coef in serpent is %4.2f\n', p);
+    fprintf('\n The feedback coef in serpent is %4.10f\n', p[1]);
 
 end
 

@@ -4,7 +4,7 @@ function model = process_flibe(model, data_path, data_units, comsol_var_name, un
 
 % unb: total universes number used in Serpent, here is used to determine which row the needed parameter is
 % u_flibe: universe number for flibe is 4 in serpent file
-temp_var_flibe = "T_flibe";
+temp_var_flibe = "T_flibe[1/K]";
 tot_case_nb = 5;
 %% getting the serpent results into the matlab data 'Workspace'
 % array for fitting the data from serpent output in the specific folders

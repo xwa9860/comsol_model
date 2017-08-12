@@ -11,8 +11,9 @@ model.variable('var19').label('lambda');
 % change 'Flux' to 'FluxN'
 model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
+
 if sp3
-    model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'Flux21' 'Flux22' 'Flux23' 'Flux24' 'Flux25' 'Flux26' 'Flux27' 'Flux28' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
+    model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'FluxN21' 'FluxN22' 'FluxN23' 'FluxN24' 'FluxN25' 'FluxN26' 'FluxN27' 'FluxN28' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
 else
         model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
 end
@@ -20,9 +21,9 @@ end
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
 model.variable('var20').active(false);
-model.variable('var22').set('sumN', ...
-    'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
-model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
+% model.variable('var22').set('sumN', ...
+%     'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+% model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
 
 % desable ConcN
 model.variable('var23').active(false);
@@ -35,7 +36,7 @@ end
 
 if sp3
 for i=1:gnb
-    init.set(['Flux2', num2str(i)], ['Flux2', num2str(i)]);
+    init.set(['FluxN2', num2str(i)], ['FluxN2', num2str(i)]);
 end
 end
 

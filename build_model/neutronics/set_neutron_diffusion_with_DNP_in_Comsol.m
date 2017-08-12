@@ -33,7 +33,7 @@ for i = 1:NT_nb+dnb % column number
             end
         end
         if sp3 && i<=gnb && j>gnb && j<=NT_nb
-            %lower left
+            %middle left
             if i == j-gnb
                 if dimNb ==2
                     cfeq.setIndex('a', ['-2/5.0*(rem', num2str(i), '-(1-beta1)*chip', num2str(j-gnb),'*nsf', num2str(i), '*lambda)*r'], k); 
@@ -48,13 +48,17 @@ for i = 1:NT_nb+dnb % column number
                  end                  
             end             
         end
+        if i<=gnb && j>NT_nb && j<=NT_nb+dnb
+           % lower left 
+           cfeq.setIndex('a', ['-betas', num2str(j-NT_nb), '*nsf', num2str(i)], k); 
+        end
         if sp3 && j<=gnb && gnb<i && i<=NT_nb
-            %upper right
+            %upper middle
             cfeq.setIndex('a', ...
               num2str(0), k);           
         end
         if sp3 && gnb<i && i<=NT_nb && gnb<j && j<=NT_nb
-            %lower right part of the matrix
+            %center of the matrix
             if i == j
                 if dimNb ==2
                 cfeq.setIndex('a', ...
@@ -66,6 +70,16 @@ for i = 1:NT_nb+dnb % column number
             else
               cfeq.setIndex('a', ...
               num2str(0), k);
+            end
+        end
+        if i>NT_nb && j<=gnb
+            % upper right
+            if dimNb == 2
+                cfeq.setIndex('a', ...
+                ['-chid', num2str(j),'*lambda*r*lambdas', num2str(i-NT_nb)],  k);
+            elseif dimNb == 3
+                cfeq.setIndex('a', ...
+                ['-chid', num2str(j),'*lambda*lambdas', num2str(i-NT_nb)],  k);
             end
         end
         if i>NT_nb && j>NT_nb
@@ -158,24 +172,25 @@ end
 %% set matrix f and ea
 k=0;
 for i =1:NT_nb+dnb
-    if i<=gnb
-        if dimNb ==2
-            cfeq.setIndex('f', ['chid', num2str(i), '*lambda*sumDelayedN*r'], k);
-        elseif dimNb ==3
-            cfeq.setIndex('f', ['chid', num2str(i), '*lambda*sumDelayedN'], k);
-        end    
-        cfeq.setIndex('ea', num2str(0), k);
-    else
-        if sp3 && i<=NT_nb
-            cfeq.setIndex('f', num2str(0), k);
-%             cfeq.setIndex('f', ['2.0/5.0*(CS2', num2str(i-gnb), '*Flux0', num2str(i-gnb),...
-%                 '-chid', num2str(i), '*lambda*sumDelayedN*r'], k);
-            cfeq.setIndex('ea', num2str(0), k);
-        else
-        cfeq.setIndex('f', ['betas', num2str(i-NT_nb),'*sumN'], k);  
-        cfeq.setIndex('ea', num2str(0), k);
-        end
-    end
+%     if i<=gnb
+% %         if dimNb ==2
+% %             cfeq.setIndex('f', ['chid', num2str(i), '*lambda*sumDelayedN*r'], k);
+% %         elseif dimNb ==3
+% %             cfeq.setIndex('f', ['chid', num2str(i), '*lambda*sumDelayedN'], k);
+% %         end    
+%     else
+%         if sp3 && i<=NT_nb
+% %            cfeq.setIndex('f', num2str(0), k);
+% %             cfeq.setIndex('f', ['2.0/5.0*(CS2', num2str(i-gnb), '*Flux0', num2str(i-gnb),...
+% %                 '-chid', num2str(i), '*lambda*sumDelayedN*r'], k);
+% 
+%         else
+%         cfeq.setIndex('f', ['betas', num2str(i-NT_nb),'*sumN'], k);  
+%         
+%         end
+%     end
+    cfeq.setIndex('ea', num2str(0), k);
+    cfeq.setIndex('f', num2str(0), k);
     k=k+1;
 end
 

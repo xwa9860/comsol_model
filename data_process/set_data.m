@@ -40,7 +40,7 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
                         if strcmp(flag, 'log_temp_dep')
                             func = [func, '+(log(', temp_vars(m-1), '[1/K])*(', num2str(values(m, g), '%10.8e'), '))'];
                         elseif strcmp(flag, 'lin_temp_dep')
-                            func = [func, '+(', temp_vars(m-1), '[1/K]*(', num2str(values(m, g), '%10.8e'), '))'];
+                            func = [func, '+(', temp_vars(m-1), '*(', num2str(values(m, g), '%10.8e'), '))'];
                         end
                     end
                     model.variable(comsol_var_name).set(...
@@ -60,7 +60,7 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
                             if strcmp(flag, 'log_temp_dep')
                                 func = [func, '+(log(', temp_vars(m-1), '[1/K])*(', num2str(values(m, g1, g2), '%10.8e'), '))'];
                             elseif strcmp(flag, 'lin_temp_dep')
-                                func = [func, '+(',temp_vars(m-1), '[1/K]*(', num2str(values(m, g1, g2), '%10.8e'), '))'];
+                                func = [func, '+(',temp_vars(m-1), '*(', num2str(values(m, g1, g2), '%10.8e'), '))'];
                             end
                         end
                         model.variable(comsol_var_name).set(...

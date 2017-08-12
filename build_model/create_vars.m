@@ -63,15 +63,7 @@ for i = 1:length(temp_indep_comps)
 end
  
 
-if TMSR
-    % upper fuel region
-    model.variable.create('var16');
-    model.variable('var16').model('mod1');
-    model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
-    model.variable('var16').selection.geom('geom1', dimNb);
-    model.variable('var16').selection.set(fuel_domNb);
-    model.variable('var16').label('XS_pb');
-    
+if TMSR  
     % lower flibe region
     model.variable.create('var17');
     model.variable('var17').model('mod1');
@@ -80,6 +72,15 @@ if TMSR
     model.variable('var17').selection.set(domains('salt'));
     model.variable('var17').label('XS_flibe');
 end
+
+% fuel region  
+model.variable.create('var16');
+model.variable('var16').model('mod1');
+model = process_fuel(model, char(strcat(data_path, universe_names(fuel_univ), "\")), data_units, 'var16', unb, fuel_univ, TMSR);
+model.variable('var16').selection.geom('geom1', dimNb);
+model.variable('var16').selection.set(fuel_domNb);
+model.variable('var16').label('XS_pb');
+
 
 model.variable.create('var18');
 model.variable('var18').model('mod1');
@@ -93,15 +94,15 @@ model.variable('var18').selection.geom('geom1', dimNb);
 model.variable('var18').selection.set(cell2mat(values(domains)));
 model.variable('var18').label('power');
 
-model.variable.create('var22');
-model.variable('var22').model('mod1');
-% define sumDelayedN for adding delayed neutrons in the neutron diffusion eq. 
-model.variable('var22').set('sumDelayedN', 'lambdas1*Conc1+lambdas2*Conc2+lambdas3*Conc3+lambdas4*Conc4+lambdas5*Conc5+lambdas6*Conc6', 'sum of lambda*C_i, for diffusion equation');
-model.variable('var22').set('sumN', ...
-    'nsf1*Flux1+nsf2*Flux2+nsf3*Flux3+nsf4*Flux4+nsf5*Flux5+nsf6*Flux6+nsf7*Flux7+nsf8*Flux8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
-model.variable('var22').selection.geom('geom1', dimNb);
-model.variable('var22').selection.set(cell2mat(values(domains)));
-model.variable('var22').label('delayed');
+% model.variable.create('var22');
+% model.variable('var22').model('mod1');
+% % define sumDelayedN for adding delayed neutrons in the neutron diffusion eq. 
+% model.variable('var22').set('sumDelayedN', 'lambdas1*Conc1+lambdas2*Conc2+lambdas3*Conc3+lambdas4*Conc4+lambdas5*Conc5+lambdas6*Conc6', 'sum of lambda*C_i, for diffusion equation');
+% model.variable('var22').set('sumN', ...
+%     'nsf1*Flux1+nsf2*Flux2+nsf3*Flux3+nsf4*Flux4+nsf5*Flux5+nsf6*Flux6+nsf7*Flux7+nsf8*Flux8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+% model.variable('var22').selection.geom('geom1', dimNb);
+% model.variable('var22').selection.set(cell2mat(values(domains)));
+% model.variable('var22').label('delayed');
 
 % create T_fuel_i varaibles temporarily for testing
 model.variable.create('var_T_fuel');

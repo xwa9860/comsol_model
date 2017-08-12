@@ -2,4094 +2,1538 @@ function out = model
 %
 % Untitled.m
 %
-% Model exported on Aug 1 2017, 21:29 by COMSOL 5.2.1.229.
+% Model exported on Aug 11 2017, 14:28 by COMSOL 5.3.0.260.
 
 import com.comsol.model.*
 import com.comsol.model.util.*
 
 model = ModelUtil.create('Model');
 
-model.modelPath('D:\diffusion_models\model');
+model.modelPath('D:\diffusion_models\model\m_files');
 
 model.label('transient_2d.mph');
 
-model.modelNode.create('mod1');
-model.modelNode('mod1').label('FHR');
-model.modelNode('mod1').defineLocalCoord(false);
+model.comments(['Untitled\n\n']);
 
-model.param.set('OCSlope', -10);
-model.param.descr('OCSlope', 'Over cooling inlet T drop slope');
-model.param.set('OCOnset', 100);
-model.param.descr('OCOnset', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
-model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
-model.param.set('U', '0.000055[m/s]', 'upwards velocity');
-model.param.set('Po', '0 [atm]', 'pressure');
-model.param.set('Ochuteout', '0.8', 'defueling chute pressure multiplier');
-model.param.set('T0_flibe', '600[degC]', 'inlet temperature');
-model.param.set('T0_fuel', '800[degC]', 'initial temperature');
-model.param.set('T_inlet', '778[degC]', 'nominal value is 672');
-model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
+model.param.set('v_inlet', '0.13*0.4[m/s]', 'upwards velocity, uniform in the core 0.13*0.4[m/s]');
+model.param.set('T0_flibe', '672[degC]', 'initial temperature for flibe salt, 672[degC] for TMSR');
+model.param.set('T_inlet', '672[degC]', 'nominal value is 672');
+model.param.set('T0_fuel', '800[degC]', 'initial temperature for fuel pebbles, 800[degC]');
+model.param.set('pb_h', '0.4501[m]', 'a parameter for pebble height, defined as in picture ''core_dim_definition''. Calculated with MATLAB Livelink, file ''volume.m''');
+model.param.set('z0', '20[cm]-4.899[cm]', 'height of pebble boundary when pb_h =0');
+model.param.set('zin', 'z0+pb_h', 'inner height that fuel pebble regions starts');
+model.param.set('zout', '0.53+pb_h', 'outer height that fuel pebble starts');
+model.param.set('pb_diam', '0.06[m]', 'fuel pebble diameter');
+model.param.set('r1', '0[m]');
+model.param.set('r2', '0.008667015929383[m]');
+model.param.set('r3', '0.017602558504261[m]');
+model.param.set('r4', '0.020149899425206[m]');
+model.param.set('r5', '0.027500000000000[m]');
+model.param.set('r0', '0.03[m]');
+model.param.set('rfuel_zone', '0.025[m]');
+model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
+model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
 model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
-model.param.set('pb_nb', '44000', 'number of pebbles in the core');
+model.param.set('pb_nb', '11000', 'number of pebbles in the core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
-model.param.set('fuel_v', 'pb_v/0.6');
-model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');
-model.param.set('Houtlet', '1.5 [m]', 'outlet region height overlapping with active core region');
-model.param.set('Hinlet', '1.501 [m]', 'inlet region height overlapping with active core region');
-model.param.set('decay', '1', 'decay heat fraction of total power');
-model.param.set('Qcore', '249[MW]', 'total core power');
-model.param.set('Vcore', '16.99151[m^3]', 'total core volume');
-model.param.set('Q', 'Qcore/Vcore[MW/m^3]', 'core average power density');
-model.param.set('Qmax', 'Qcore*1.41/Vcore[MW/m^3]', 'core peak power density');
-model.param.set('Vplug', '11[m^3]');
-model.param.set('Qplug', 'Qcore/Vplug');
-model.param.set('mL', '976[kg/s]', 'mass flow rate of the primary coolant');
-model.param.set('mf', '1', 'fueling chute mass flowrate, fraction of total');
-model.param.set('bottomInletFraction', '0.3', 'fraction of mass flow rate going through the bottom inlet');
-model.param.set('Pci0', '1.3', 'center inlet pressure head (m) (boundary condition)');
-model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary condition)');
-model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
-model.param.set('pb_diam', '3[cm]');
-model.param.set('Pop', '236[MW]');
+model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
+model.param.set('porosity', '0.4', 'portion of coolant in the fuel region');
+model.param.set('Pop', '1E7[W]', 'operation power');
+model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
+model.param.set('OCSlope', '-10', 'Over cooling inlet T drop slope');
+model.param.set('OCOnset', '100', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
+model.param.set('lambda_critical', '0.9707385013507459', 'lambda_engeinvalue to get to criticality');
+model.param.set('reactivity_insertion', '0', 'external reactivity insertion');
 
-model.func.create('step1', 'Step');
-model.func('step1').label('step_fun');
-model.func('step1').set('funcname', 'step_fun');
-model.func('step1').set('to', 'reactivity_insertion+1');
-model.func('step1').set('smooth', '0');
-model.func('step1').set('from', '1');
-model.func('step1').set('location', '0.1');
-model.func.create('rm1', 'Ramp');
-model.func('rm1').set('cutoffactive', 'on');
-model.func('rm1').set('slope', 'OCSlope');
-model.func('rm1').set('location', 'OCOnset');
-model.func('rm1').set('cutoff', '-100');
-model.func.create('an4', 'Analytic');
-model.func('an4').label('FLiBe Density');
-model.func('an4').set('args', 'T');
-model.func('an4').set('argunit', 'K');
-model.func('an4').set('expr', '2413-0.488*T');
-model.func('an4').set('plotargs', {'T' '400' '2000'});
-model.func('an4').set('funcname', 'rho_flibe');
-model.func('an4').set('fununit', 'kg/m^3');
-model.func.create('an6', 'Analytic');
-model.func('an6').label('FLiBe Dynamic Viscosity');
-model.func('an6').set('args', 'T');
-model.func('an6').set('argunit', 'K');
-model.func('an6').set('expr', '1.16*10^(-4)*exp(3755/T)');
-model.func('an6').set('plotargs', {'T' '600' '800'});
-model.func('an6').set('funcname', 'mu_flibe');
-model.func('an6').set('fununit', 'Pa*s');
+model.component.create('mod1', false);
 
-model.geom.create('geom1', 3);
+model.component('mod1').geom.create('geom1', 2);
 
-model.mesh.create('mesh1', 'geom1');
-model.mesh('mesh1').autoMeshSize(7);
+model.component('mod1').label('FHR');
 
-model.geom('geom1').create('wp1', 'WorkPlane');
-model.geom('geom1').feature('wp1').set('quickplane', 'xz');
-model.geom('geom1').feature('wp1').set('unite', 'on');
-model.geom('geom1').feature('wp1').geom.create('pol1', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol1').label('center_ref');
-model.geom('geom1').feature('wp1').geom.feature('pol1').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol1').set('table', {'0' '0.416';  ...
-'0.45' '0.416';  ...
-'0.45' '1.275';  ...
-'0.35' '1.4482';  ...
-'0.35' '4.305';  ...
-'0.71' '4.9285';  ...
-'0.71' '5.7285';  ...
-'0' '5.7285'});
-model.geom('geom1').feature('wp1').geom.create('pol2', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol2').label('fuel');
-model.geom('geom1').feature('wp1').geom.feature('pol2').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol2').set('table', {'0.45' '0.416';  ...
-'0.7541' '0.416';  ...
-'1.05' '1.805';  ...
-'1.05' '4.305';  ...
-'0.8' '4.9285';  ...
-'0.8' '5.7285';  ...
-'0.71' '5.7285';  ...
-'0.71' '4.9285';  ...
-'0.35' '4.305';  ...
-'0.35' '1.4482';  ...
-'0.45' '1.275'});
-model.geom('geom1').feature('wp1').geom.create('pol3', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol3').label('blanket');
-model.geom('geom1').feature('wp1').geom.feature('pol3').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol3').set('table', {'0.7541' '0.416';  ...
-'0.8574' '0.416';  ...
-'1.25' '1.805';  ...
-'1.25' '4.305';  ...
-'0.89' '4.9285';  ...
-'0.89' '5.7285';  ...
-'0.8' '5.7285';  ...
-'0.8' '4.9285';  ...
-'1.05' '4.305';  ...
-'1.05' '1.805';  ...
-'0.7541' '0.416';  ...
-'0.45' '0.416'});
-model.geom('geom1').feature('wp1').geom.create('pol4', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol4').label('outer_ref');
-model.geom('geom1').feature('wp1').geom.feature('pol4').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol4').set('table', {'0.8574' '0.416';  ...
-'1.65' '0.416';  ...
-'1.65' '5.7285';  ...
-'1.35' '5.7285';  ...
-'1.35' '4.9285';  ...
-'1.35' '4.305';  ...
-'1.35' '1.805';  ...
-'1.25' '1.805';  ...
-'0.8574' '0.416';  ...
-'0.7541' '0.416'});
-model.geom('geom1').feature('wp1').geom.create('r1', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r1').label('core_barrel');
-model.geom('geom1').feature('wp1').geom.feature('r1').set('size', {'0.03' '5.7285-0.416'});
-model.geom('geom1').feature('wp1').geom.feature('r1').set('pos', {'1.65' '0.416'});
-model.geom('geom1').feature('wp1').geom.create('r2', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r2').label('downcomer');
-model.geom('geom1').feature('wp1').geom.feature('r2').set('size', {'0.028' '5.7285-0.416'});
-model.geom('geom1').feature('wp1').geom.feature('r2').set('pos', {'1.68' '0.416'});
-model.geom('geom1').feature('wp1').geom.create('r3', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r3').label('vessel');
-model.geom('geom1').feature('wp1').geom.feature('r3').set('size', {'0.06' '5.7285-0.416'});
-model.geom('geom1').feature('wp1').geom.feature('r3').set('pos', {'1.708' '0.416'});
-model.geom('geom1').feature('wp1').geom.create('r4', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r4').label('inlet');
-model.geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.01' '1'});
-model.geom('geom1').feature('wp1').geom.feature('r4').set('pos', {'0.35-0.01' '1.5'});
-model.geom('geom1').feature('wp1').geom.feature('r4').active(false);
-model.geom('geom1').feature('wp1').geom.create('ic1', 'InterpolationCurve');
-model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '0.35', 0, 0);
-model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '1.5', 0, 1);
-model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '0.35', 1, 0);
-model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '2.5', 1, 1);
-model.geom('geom1').feature('wp1').geom.run('ic1');
-model.geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r5').label('outlet_low');
-model.geom('geom1').feature('wp1').geom.feature('r5').set('size', {'0.05' '0.5'});
-model.geom('geom1').feature('wp1').geom.feature('r5').set('pos', {'1.25' '4.305-0.5'});
-model.geom('geom1').feature('wp1').geom.feature('r5').active(false);
-model.geom('geom1').feature('wp1').geom.create('pol5', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol5').label('outlet_high');
-model.geom('geom1').feature('wp1').geom.feature('pol5').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol5').set('table', {'0.89' '4.9285'; '1.25' '4.305'; '1.3' '4.305'; '0.94' '4.9285'});
-model.geom('geom1').feature('wp1').geom.feature('pol5').active(false);
-model.geom('geom1').feature('wp1').geom.create('pol6', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol6').label('ORCC');
-model.geom('geom1').feature('wp1').geom.feature('pol6').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol6').set('table', {'1.25' '1.805';  ...
-'1.35' '1.805';  ...
-'1.35' '5.7285';  ...
-'0.89' '5.7285';  ...
-'0.89' '4.9285';  ...
-'1.25' '4.305';  ...
-'1.25' '4'});
-model.geom('geom1').create('rev1', 'Revolve');
-model.geom('geom1').feature('rev1').set('angtype', 'full');
-model.geom('geom1').feature('rev1').selection('input').set({'wp1'});
-model.geom('geom1').create('wp2', 'WorkPlane');
-model.geom('geom1').feature('wp2').set('quickz', '0.416');
-model.geom('geom1').feature('wp2').set('unite', 'on');
-model.geom('geom1').feature('wp2').geom.create('c1', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('pos', {'0.275' '0'});
-model.geom('geom1').feature('wp2').geom.create('c2', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('pos', {'-0.275' '0'});
-model.geom('geom1').feature('wp2').geom.create('c3', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('pos', {'0' '-0.275'});
-model.geom('geom1').feature('wp2').geom.create('c4', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('pos', {'0' '0.275'});
-model.geom('geom1').feature('wp2').geom.create('c5', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('pos', {'-0.19445436' '0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c6', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('pos', {'0.19445436' '0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c7', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('pos', {'-0.19445436' '-0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c8', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('pos', {'0.19445436' '-0.19445436'});
-model.geom('geom1').create('ext1', 'Extrude');
-model.geom('geom1').feature('ext1').label('contro_rod_channels');
-model.geom('geom1').feature('ext1').setIndex('distance', '5.7285-0.416', 0);
-model.geom('geom1').feature('ext1').selection('input').set({'wp2'});
-model.geom('geom1').run;
-
-model.variable.create('var1');
-model.variable('var1').model('mod1');
-model.variable('var1').set('DT', '100[K]', 'core temperature rise');
-model.variable('var1').set('mL', 'Qcore*decay/cpL/DT', 'salt mass flowrate');
-model.variable('var1').set('g', '9.81[m/s^2]', 'gravitational acceleration');
-model.variable('var1').set('SA', '6/d', 'pebble specific surface area');
-model.variable('var1').set('v0in', 'mL*rhoL/Ain');
-model.variable('var1').set('v0ghost', 'mL*rhoL/Ainghost');
-model.variable('var1').set('Acore2', 'pi*2*(2.8656[m]-1.5[m])*0.9[m]', 'inlet cross-sectional area on diverging region inner reflector');
-model.variable('var1').set('Acore1', 'pi*2*Hinlet*(0.9[m])', 'inlet cross-sectional area on core plug flow region inner reflector');
-model.variable('var1').set('Ain', '2.8743 [m^2]');
-model.variable('var1').set('Ainghost', '3.29867 [m^2]');
-model.variable.create('var3');
-model.variable('var3').model('mod1');
-model.variable('var3').set('cpL', '2415.78[J/kg/K]', 'salt heat capacity, constant');
-model.variable('var3').set('rhoL', '1962.67[kg/m^3]', 'salt density, 650C');
-model.variable('var3').set('muL', '0.00678[Pa*s]', 'salt viscosity, 650C');
-model.variable('var3').set('kL', '1.091[W/m/K]', 'salt thermal conductivity, 650C');
-model.variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coefficient, constant');
-model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
-model.variable('var3').set('unitstest', 'betaL*To*rhoL*g');
-model.variable('var3').set('Pr', 'muL*cpL/kL');
-model.variable.create('var2');
-model.variable('var2').model('mod1');
-model.variable('var2').set('Kbr', 'd^2/1012.5', 'bed permeability, Ergun/Kozeni');
-model.variable('var2').set('cF', '0.52', 'Forchheimer drag coefficient, from Ergun correlation (Beaver coefficient)');
-model.variable('var2').set('ep', '0.40', 'porosity');
-model.variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
-model.variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
-model.variable('var2').set('d', '3[cm]', 'pebble diameter');
-model.variable.create('var4');
-model.variable('var4').model('mod1');
-model.variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TMSR-SF1 & SF0)');
-model.variable('var4').set('k_fuel', '15[W/m/K]');
-model.variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
-model.variable('var4').selection.geom('geom1', 3);
-model.variable('var4').selection.set([7]);
-model.variable('var4').label('fuel properties');
-model.variable.create('var_xs_CR');
-model.variable('var_xs_CR').model('mod1');
-model.variable('var_xs_CR').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CR').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CR').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CR').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CR').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CR').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CR').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CR').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CR').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CR').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CR').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CR').set('diff11', '1.85379000e+00[cm]');
-model.variable('var_xs_CR').set('diff12', '8.71233000e-01[cm]');
-model.variable('var_xs_CR').set('diff13', '6.59364000e-01[cm]');
-model.variable('var_xs_CR').set('diff14', '6.56818000e-01[cm]');
-model.variable('var_xs_CR').set('diff15', '6.53844000e-01[cm]');
-model.variable('var_xs_CR').set('diff16', '6.46231000e-01[cm]');
-model.variable('var_xs_CR').set('diff17', '6.19966000e-01[cm]');
-model.variable('var_xs_CR').set('diff18', '5.53943000e-01[cm]');
-model.variable('var_xs_CR').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('invV1', '4.82248000e-10[s/cm]');
-model.variable('var_xs_CR').set('invV2', '1.99013000e-09[s/cm]');
-model.variable('var_xs_CR').set('invV3', '3.36231000e-08[s/cm]');
-model.variable('var_xs_CR').set('invV4', '2.07731000e-07[s/cm]');
-model.variable('var_xs_CR').set('invV5', '7.21934000e-07[s/cm]');
-model.variable('var_xs_CR').set('invV6', '1.37734000e-06[s/cm]');
-model.variable('var_xs_CR').set('invV7', '2.16808000e-06[s/cm]');
-model.variable('var_xs_CR').set('invV8', '4.15949000e-06[s/cm]');
-model.variable('var_xs_CR').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CR').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CR').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CR').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CR').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CR').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CR').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CR').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('diff21', '1.25463081e+00[cm]');
-model.variable('var_xs_CR').set('diff22', '5.85064474e-01[cm]');
-model.variable('var_xs_CR').set('diff23', '4.79925899e-01[cm]');
-model.variable('var_xs_CR').set('diff24', '4.78282519e-01[cm]');
-model.variable('var_xs_CR').set('diff25', '4.77438890e-01[cm]');
-model.variable('var_xs_CR').set('diff26', '4.75198719e-01[cm]');
-model.variable('var_xs_CR').set('diff27', '4.65456531e-01[cm]');
-model.variable('var_xs_CR').set('diff28', '4.39728814e-01[cm]');
-model.variable('var_xs_CR').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('rem1', '4.51098000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem2', '2.23785000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem3', '1.50638000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem4', '3.40876000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem5', '7.95839000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem6', '1.02045000e-01[1/cm]');
-model.variable('var_xs_CR').set('rem7', '8.66221000e-02[1/cm]');
-model.variable('var_xs_CR').set('rem8', '1.06214000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat11', '1.59845000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat12', '4.49962000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat13', '2.13792000e-06[1/cm]');
-model.variable('var_xs_CR').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat22', '4.17134000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat23', '2.23783000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat24', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat33', '5.20733000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat34', '1.50606000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat44', '5.03551000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat45', '3.40673000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat54', '2.81733000e-04[1/cm]');
-model.variable('var_xs_CR').set('scat55', '4.59004000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat56', '7.80185000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat57', '1.21393000e-03[1/cm]');
-model.variable('var_xs_CR').set('scat58', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat65', '1.32968000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat66', '4.39082000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat67', '8.41623000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat68', '4.45411000e-03[1/cm]');
-model.variable('var_xs_CR').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat75', '1.58462000e-04[1/cm]');
-model.variable('var_xs_CR').set('scat76', '5.85442000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat77', '4.65831000e-01[1/cm]');
-model.variable('var_xs_CR').set('scat78', '2.77121000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat85', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CR').set('scat86', '1.00144000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat87', '9.58060000e-02[1/cm]');
-model.variable('var_xs_CR').set('scat88', '4.78562000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot1', '2.04955000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot2', '4.39512000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot3', '5.35797000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot4', '5.37638000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot5', '5.38588000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot6', '5.41127000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot7', '5.52453000e-01[1/cm]');
-model.variable('var_xs_CR').set('tot8', '5.84776000e-01[1/cm]');
-model.variable('var_xs_CR').selection.geom('geom1', 3);
-model.variable('var_xs_CR').selection.set([8]);
-model.variable('var_xs_CR').label('xs_CR');
-model.variable.create('var_xs_Blanket');
-model.variable('var_xs_Blanket').model('mod1');
-model.variable('var_xs_Blanket').set('beta1', '5.38503000e-03');
-model.variable('var_xs_Blanket').set('betas1', '1.64712000e-04');
-model.variable('var_xs_Blanket').set('betas2', '9.85399000e-04');
-model.variable('var_xs_Blanket').set('betas3', '8.56807000e-04');
-model.variable('var_xs_Blanket').set('betas4', '2.40172000e-03');
-model.variable('var_xs_Blanket').set('betas5', '7.27014000e-04');
-model.variable('var_xs_Blanket').set('betas6', '2.49379000e-04');
-model.variable('var_xs_Blanket').set('chid1', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid2', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid3', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid4', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid5', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid6', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid7', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chid8', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip1', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip2', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip3', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip4', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip5', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip6', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip7', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chip8', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit1', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit2', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit3', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit4', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit5', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit6', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit7', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('chit8', '0.00000000e+00');
-model.variable('var_xs_Blanket').set('diff11', '1.95680000e+00[cm]');
-model.variable('var_xs_Blanket').set('diff12', '9.24823000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff13', '8.19871000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff14', '8.19441000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff15', '8.16485000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff16', '8.07291000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff17', '7.78831000e-01[cm]');
-model.variable('var_xs_Blanket').set('diff18', '6.99971000e-01[cm]');
-model.variable('var_xs_Blanket').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('invV1', '4.83120000e-10[s/cm]');
-model.variable('var_xs_Blanket').set('invV2', '2.05752000e-09[s/cm]');
-model.variable('var_xs_Blanket').set('invV3', '3.30619000e-08[s/cm]');
-model.variable('var_xs_Blanket').set('invV4', '2.06919000e-07[s/cm]');
-model.variable('var_xs_Blanket').set('invV5', '6.95827000e-07[s/cm]');
-model.variable('var_xs_Blanket').set('invV6', '1.37324000e-06[s/cm]');
-model.variable('var_xs_Blanket').set('invV7', '2.16793000e-06[s/cm]');
-model.variable('var_xs_Blanket').set('invV8', '4.17694000e-06[s/cm]');
-model.variable('var_xs_Blanket').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_Blanket').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_Blanket').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_Blanket').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_Blanket').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_Blanket').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_Blanket').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_Blanket').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('diff21', '1.26151217e+00[cm]');
-model.variable('var_xs_Blanket').set('diff22', '6.25578660e-01[cm]');
-model.variable('var_xs_Blanket').set('diff23', '5.97517514e-01[cm]');
-model.variable('var_xs_Blanket').set('diff24', '5.97491135e-01[cm]');
-model.variable('var_xs_Blanket').set('diff25', '5.96462777e-01[cm]');
-model.variable('var_xs_Blanket').set('diff26', '5.93014292e-01[cm]');
-model.variable('var_xs_Blanket').set('diff27', '5.81363426e-01[cm]');
-model.variable('var_xs_Blanket').set('diff28', '5.45885961e-01[cm]');
-model.variable('var_xs_Blanket').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('rem1', '4.86907000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem2', '2.09077000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem3', '1.14461000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem4', '2.62337000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem5', '5.35459000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem6', '8.56291000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem7', '7.84862000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('rem8', '1.04706000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat11', '1.55146000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat12', '4.79885000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat13', '1.83551000e-05[1/cm]');
-model.variable('var_xs_Blanket').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat22', '3.90140000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat23', '2.08762000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat24', '1.53926000e-08[1/cm]');
-model.variable('var_xs_Blanket').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat33', '4.18905000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat34', '1.14377000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat44', '4.04137000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat45', '2.61864000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat54', '2.63871000e-04[1/cm]');
-model.variable('var_xs_Blanket').set('scat55', '3.77567000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat56', '5.23953000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat57', '7.28807000e-04[1/cm]');
-model.variable('var_xs_Blanket').set('scat58', '8.73713000e-07[1/cm]');
-model.variable('var_xs_Blanket').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat65', '1.11589000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat66', '3.47990000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat67', '7.11408000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat68', '3.01993000e-03[1/cm]');
-model.variable('var_xs_Blanket').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat75', '1.09476000e-04[1/cm]');
-model.variable('var_xs_Blanket').set('scat76', '4.95244000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat77', '3.63824000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('scat78', '2.83642000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_Blanket').set('scat85', '3.55394000e-07[1/cm]');
-model.variable('var_xs_Blanket').set('scat86', '6.83924000e-03[1/cm]');
-model.variable('var_xs_Blanket').set('scat87', '9.69274000e-02[1/cm]');
-model.variable('var_xs_Blanket').set('scat88', '3.66350000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot1', '2.03837000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot2', '4.11048000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot3', '4.30352000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot4', '4.30371000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot5', '4.31113000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot6', '4.33620000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot7', '4.42310000e-01[1/cm]');
-model.variable('var_xs_Blanket').set('tot8', '4.71056000e-01[1/cm]');
-model.variable('var_xs_Blanket').selection.geom('geom1', 3);
-model.variable('var_xs_Blanket').selection.set([6]);
-model.variable('var_xs_Blanket').label('xs_Blanket');
-model.variable.create('var_xs_ORCC');
-model.variable('var_xs_ORCC').model('mod1');
-model.variable('var_xs_ORCC').set('beta1', '5.38503000e-03');
-model.variable('var_xs_ORCC').set('betas1', '1.64712000e-04');
-model.variable('var_xs_ORCC').set('betas2', '9.85399000e-04');
-model.variable('var_xs_ORCC').set('betas3', '8.56807000e-04');
-model.variable('var_xs_ORCC').set('betas4', '2.40172000e-03');
-model.variable('var_xs_ORCC').set('betas5', '7.27014000e-04');
-model.variable('var_xs_ORCC').set('betas6', '2.49379000e-04');
-model.variable('var_xs_ORCC').set('chid1', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid2', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid3', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid4', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid5', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid6', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid7', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chid8', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip1', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip2', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip3', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip4', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip5', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip6', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip7', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chip8', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit1', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit2', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit3', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit4', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit5', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit6', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit7', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('chit8', '0.00000000e+00');
-model.variable('var_xs_ORCC').set('diff11', '2.02458000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff12', '9.95229000e-01[cm]');
-model.variable('var_xs_ORCC').set('diff13', '1.17329000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff14', '1.18700000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff15', '1.18469000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff16', '1.17367000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff17', '1.14966000e+00[cm]');
-model.variable('var_xs_ORCC').set('diff18', '1.05104000e+00[cm]');
-model.variable('var_xs_ORCC').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('invV1', '4.80958000e-10[s/cm]');
-model.variable('var_xs_ORCC').set('invV2', '2.30945000e-09[s/cm]');
-model.variable('var_xs_ORCC').set('invV3', '3.71844000e-08[s/cm]');
-model.variable('var_xs_ORCC').set('invV4', '2.11124000e-07[s/cm]');
-model.variable('var_xs_ORCC').set('invV5', '7.39574000e-07[s/cm]');
-model.variable('var_xs_ORCC').set('invV6', '1.37911000e-06[s/cm]');
-model.variable('var_xs_ORCC').set('invV7', '2.16867000e-06[s/cm]');
-model.variable('var_xs_ORCC').set('invV8', '4.18936000e-06[s/cm]');
-model.variable('var_xs_ORCC').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_ORCC').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_ORCC').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_ORCC').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_ORCC').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_ORCC').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_ORCC').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_ORCC').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('diff21', '1.18824273e+00[cm]');
-model.variable('var_xs_ORCC').set('diff22', '6.88984666e-01[cm]');
-model.variable('var_xs_ORCC').set('diff23', '8.58192713e-01[cm]');
-model.variable('var_xs_ORCC').set('diff24', '8.68640765e-01[cm]');
-model.variable('var_xs_ORCC').set('diff25', '8.67307703e-01[cm]');
-model.variable('var_xs_ORCC').set('diff26', '8.59802513e-01[cm]');
-model.variable('var_xs_ORCC').set('diff27', '8.43619634e-01[cm]');
-model.variable('var_xs_ORCC').set('diff28', '7.73278253e-01[cm]');
-model.variable('var_xs_ORCC').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('rem1', '5.94067000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem2', '2.09750000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem3', '9.46498000e-03[1/cm]');
-model.variable('var_xs_ORCC').set('rem4', '1.84947000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem5', '5.00095000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem6', '6.89700000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem7', '7.43990000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('rem8', '1.15508000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat11', '1.56999000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat12', '5.75474000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat13', '4.71965000e-05[1/cm]');
-model.variable('var_xs_ORCC').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat22', '3.52245000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat23', '2.08999000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat24', '4.93147000e-08[1/cm]');
-model.variable('var_xs_ORCC').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat33', '2.90168000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat34', '9.44562000e-03[1/cm]');
-model.variable('var_xs_ORCC').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat44', '2.77534000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat45', '1.83979000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat54', '1.67060000e-04[1/cm]');
-model.variable('var_xs_ORCC').set('scat55', '2.46475000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat56', '4.89727000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat57', '5.31137000e-04[1/cm]');
-model.variable('var_xs_ORCC').set('scat58', '4.32470000e-06[1/cm]');
-model.variable('var_xs_ORCC').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat65', '7.65262000e-03[1/cm]');
-model.variable('var_xs_ORCC').set('scat66', '2.30102000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat67', '5.95013000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat68', '1.19096000e-03[1/cm]');
-model.variable('var_xs_ORCC').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat75', '5.23184000e-05[1/cm]');
-model.variable('var_xs_ORCC').set('scat76', '4.12274000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat77', '2.30410000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat78', '3.21352000e-02[1/cm]');
-model.variable('var_xs_ORCC').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_ORCC').set('scat85', '1.71670000e-06[1/cm]');
-model.variable('var_xs_ORCC').set('scat86', '2.79580000e-03[1/cm]');
-model.variable('var_xs_ORCC').set('scat87', '1.10797000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('scat88', '2.17028000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot1', '2.16406000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot2', '3.73220000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot3', '2.99633000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot4', '2.96029000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot5', '2.96484000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot6', '2.99072000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot7', '3.04809000e-01[1/cm]');
-model.variable('var_xs_ORCC').set('tot8', '3.32536000e-01[1/cm]');
-model.variable('var_xs_ORCC').selection.geom('geom1', 3);
-model.variable('var_xs_ORCC').selection.set([5]);
-model.variable('var_xs_ORCC').label('xs_ORCC');
-model.variable.create('var_xs_OR');
-model.variable('var_xs_OR').model('mod1');
-model.variable('var_xs_OR').set('beta1', '5.38503000e-03');
-model.variable('var_xs_OR').set('betas1', '1.64712000e-04');
-model.variable('var_xs_OR').set('betas2', '9.85399000e-04');
-model.variable('var_xs_OR').set('betas3', '8.56807000e-04');
-model.variable('var_xs_OR').set('betas4', '2.40172000e-03');
-model.variable('var_xs_OR').set('betas5', '7.27014000e-04');
-model.variable('var_xs_OR').set('betas6', '2.49379000e-04');
-model.variable('var_xs_OR').set('chid1', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid2', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid3', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid4', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid5', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid6', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid7', '0.00000000e+00');
-model.variable('var_xs_OR').set('chid8', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip1', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip2', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip3', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip4', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip5', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip6', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip7', '0.00000000e+00');
-model.variable('var_xs_OR').set('chip8', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit1', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit2', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit3', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit4', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit5', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit6', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit7', '0.00000000e+00');
-model.variable('var_xs_OR').set('chit8', '0.00000000e+00');
-model.variable('var_xs_OR').set('diff11', '1.91408000e+00[cm]');
-model.variable('var_xs_OR').set('diff12', '8.52247000e-01[cm]');
-model.variable('var_xs_OR').set('diff13', '6.58974000e-01[cm]');
-model.variable('var_xs_OR').set('diff14', '6.56651000e-01[cm]');
-model.variable('var_xs_OR').set('diff15', '6.53107000e-01[cm]');
-model.variable('var_xs_OR').set('diff16', '6.46171000e-01[cm]');
-model.variable('var_xs_OR').set('diff17', '6.19859000e-01[cm]');
-model.variable('var_xs_OR').set('diff18', '5.53895000e-01[cm]');
-model.variable('var_xs_OR').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('invV1', '4.77903000e-10[s/cm]');
-model.variable('var_xs_OR').set('invV2', '2.09359000e-09[s/cm]');
-model.variable('var_xs_OR').set('invV3', '3.86037000e-08[s/cm]');
-model.variable('var_xs_OR').set('invV4', '2.12906000e-07[s/cm]');
-model.variable('var_xs_OR').set('invV5', '8.10944000e-07[s/cm]');
-model.variable('var_xs_OR').set('invV6', '1.38405000e-06[s/cm]');
-model.variable('var_xs_OR').set('invV7', '2.17033000e-06[s/cm]');
-model.variable('var_xs_OR').set('invV8', '4.16019000e-06[s/cm]');
-model.variable('var_xs_OR').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_OR').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_OR').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_OR').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_OR').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_OR').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_OR').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_OR').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('diff21', '1.26967198e+00[cm]');
-model.variable('var_xs_OR').set('diff22', '5.75353763e-01[cm]');
-model.variable('var_xs_OR').set('diff23', '4.79586660e-01[cm]');
-model.variable('var_xs_OR').set('diff24', '4.78273624e-01[cm]');
-model.variable('var_xs_OR').set('diff25', '4.77207635e-01[cm]');
-model.variable('var_xs_OR').set('diff26', '4.75171497e-01[cm]');
-model.variable('var_xs_OR').set('diff27', '4.65409355e-01[cm]');
-model.variable('var_xs_OR').set('diff28', '4.39711520e-01[cm]');
-model.variable('var_xs_OR').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('rem1', '4.57588000e-02[1/cm]');
-model.variable('var_xs_OR').set('rem2', '2.63133000e-02[1/cm]');
-model.variable('var_xs_OR').set('rem3', '1.99450000e-02[1/cm]');
-model.variable('var_xs_OR').set('rem4', '3.80198000e-02[1/cm]');
-model.variable('var_xs_OR').set('rem5', '1.25456000e-01[1/cm]');
-model.variable('var_xs_OR').set('rem6', '1.02997000e-01[1/cm]');
-model.variable('var_xs_OR').set('rem7', '8.64616000e-02[1/cm]');
-model.variable('var_xs_OR').set('rem8', '1.06180000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat11', '1.56768000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat12', '4.56348000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat13', '3.66689000e-06[1/cm]');
-model.variable('var_xs_OR').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat22', '4.20616000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat23', '2.63132000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat24', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat33', '5.16231000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat34', '1.99412000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat44', '4.99628000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat45', '3.79994000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat54', '1.57482000e-04[1/cm]');
-model.variable('var_xs_OR').set('scat55', '4.13393000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat56', '1.23270000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat57', '1.94981000e-03[1/cm]');
-model.variable('var_xs_OR').set('scat58', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat65', '1.23103000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat66', '4.38160000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat67', '8.59813000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat68', '4.57344000e-03[1/cm]');
-model.variable('var_xs_OR').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat75', '1.57137000e-04[1/cm]');
-model.variable('var_xs_OR').set('scat76', '5.82717000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat77', '4.66047000e-01[1/cm]');
-model.variable('var_xs_OR').set('scat78', '2.78258000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat85', '0.00000000e+00[1/cm]');
-model.variable('var_xs_OR').set('scat86', '1.00109000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat87', '9.57752000e-02[1/cm]');
-model.variable('var_xs_OR').set('scat88', '4.78620000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot1', '2.02527000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot2', '4.46930000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot3', '5.36176000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot4', '5.37648000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot5', '5.38849000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot6', '5.41158000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot7', '5.52509000e-01[1/cm]');
-model.variable('var_xs_OR').set('tot8', '5.84799000e-01[1/cm]');
-model.variable('var_xs_OR').selection.geom('geom1', 3);
-model.variable('var_xs_OR').selection.set([4]);
-model.variable('var_xs_OR').label('xs_OR');
-model.variable.create('var_xs_CB');
-model.variable('var_xs_CB').model('mod1');
-model.variable('var_xs_CB').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CB').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CB').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CB').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CB').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CB').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CB').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CB').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CB').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CB').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CB').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CB').set('diff11', '1.90476000e+00[cm]');
-model.variable('var_xs_CB').set('diff12', '1.13073000e+00[cm]');
-model.variable('var_xs_CB').set('diff13', '3.92131000e-01[cm]');
-model.variable('var_xs_CB').set('diff14', '3.75564000e-01[cm]');
-model.variable('var_xs_CB').set('diff15', '3.59711000e-01[cm]');
-model.variable('var_xs_CB').set('diff16', '3.48793000e-01[cm]');
-model.variable('var_xs_CB').set('diff17', '3.32095000e-01[cm]');
-model.variable('var_xs_CB').set('diff18', '2.97717000e-01[cm]');
-model.variable('var_xs_CB').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('invV1', '4.53385000e-10[s/cm]');
-model.variable('var_xs_CB').set('invV2', '2.00768000e-09[s/cm]');
-model.variable('var_xs_CB').set('invV3', '4.00640000e-08[s/cm]');
-model.variable('var_xs_CB').set('invV4', '2.20623000e-07[s/cm]');
-model.variable('var_xs_CB').set('invV5', '8.92173000e-07[s/cm]');
-model.variable('var_xs_CB').set('invV6', '1.37938000e-06[s/cm]');
-model.variable('var_xs_CB').set('invV7', '2.14021000e-06[s/cm]');
-model.variable('var_xs_CB').set('invV8', '3.98303000e-06[s/cm]');
-model.variable('var_xs_CB').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CB').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CB').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CB').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CB').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CB').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CB').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CB').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('diff21', '8.89900079e-01[cm]');
-model.variable('var_xs_CB').set('diff22', '6.80538563e-01[cm]');
-model.variable('var_xs_CB').set('diff23', '2.90461721e-01[cm]');
-model.variable('var_xs_CB').set('diff24', '2.85446283e-01[cm]');
-model.variable('var_xs_CB').set('diff25', '2.74152659e-01[cm]');
-model.variable('var_xs_CB').set('diff26', '2.65952260e-01[cm]');
-model.variable('var_xs_CB').set('diff27', '2.53350205e-01[cm]');
-model.variable('var_xs_CB').set('diff28', '2.26286438e-01[cm]');
-model.variable('var_xs_CB').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('rem1', '5.87479000e-02[1/cm]');
-model.variable('var_xs_CB').set('rem2', '6.57704000e-03[1/cm]');
-model.variable('var_xs_CB').set('rem3', '1.48596000e-02[1/cm]');
-model.variable('var_xs_CB').set('rem4', '3.45226000e-02[1/cm]');
-model.variable('var_xs_CB').set('rem5', '2.01510000e-01[1/cm]');
-model.variable('var_xs_CB').set('rem6', '1.78070000e-01[1/cm]');
-model.variable('var_xs_CB').set('rem7', '2.30818000e-01[1/cm]');
-model.variable('var_xs_CB').set('rem8', '4.07767000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat11', '2.30209000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat12', '5.68996000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat13', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat22', '3.71275000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat23', '5.82037000e-03[1/cm]');
-model.variable('var_xs_CB').set('scat24', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat33', '8.70430000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat34', '8.35681000e-03[1/cm]');
-model.variable('var_xs_CB').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat44', '8.66322000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat45', '1.82799000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat54', '2.05978000e-04[1/cm]');
-model.variable('var_xs_CB').set('scat55', '7.36446000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat56', '1.50672000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat57', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat58', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat65', '1.09994000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat66', '7.88805000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat67', '8.88560000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat68', '4.99393000e-06[1/cm]');
-model.variable('var_xs_CB').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat75', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat76', '6.54638000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat77', '7.84156000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat78', '4.24438000e-02[1/cm]');
-model.variable('var_xs_CB').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat85', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CB').set('scat86', '1.11067000e-05[1/cm]');
-model.variable('var_xs_CB').set('scat87', '1.78854000e-01[1/cm]');
-model.variable('var_xs_CB').set('scat88', '7.28597000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot1', '2.88957000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot2', '3.77852000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot3', '8.85290000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot4', '9.00845000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot5', '9.37955000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot6', '9.66876000e-01[1/cm]');
-model.variable('var_xs_CB').set('tot7', '1.01497000e+00[1/cm]');
-model.variable('var_xs_CB').set('tot8', '1.13636000e+00[1/cm]');
-model.variable('var_xs_CB').selection.geom('geom1', 3);
-model.variable('var_xs_CB').selection.set([3]);
-model.variable('var_xs_CB').label('xs_CB');
-model.variable.create('var_xs_DC');
-model.variable('var_xs_DC').model('mod1');
-model.variable('var_xs_DC').set('beta1', '5.38503000e-03');
-model.variable('var_xs_DC').set('betas1', '1.64712000e-04');
-model.variable('var_xs_DC').set('betas2', '9.85399000e-04');
-model.variable('var_xs_DC').set('betas3', '8.56807000e-04');
-model.variable('var_xs_DC').set('betas4', '2.40172000e-03');
-model.variable('var_xs_DC').set('betas5', '7.27014000e-04');
-model.variable('var_xs_DC').set('betas6', '2.49379000e-04');
-model.variable('var_xs_DC').set('chid1', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid2', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid3', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid4', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid5', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid6', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid7', '0.00000000e+00');
-model.variable('var_xs_DC').set('chid8', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip1', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip2', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip3', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip4', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip5', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip6', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip7', '0.00000000e+00');
-model.variable('var_xs_DC').set('chip8', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit1', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit2', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit3', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit4', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit5', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit6', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit7', '0.00000000e+00');
-model.variable('var_xs_DC').set('chit8', '0.00000000e+00');
-model.variable('var_xs_DC').set('diff11', '2.87437000e+00[cm]');
-model.variable('var_xs_DC').set('diff12', '1.05669000e+00[cm]');
-model.variable('var_xs_DC').set('diff13', '1.27612000e+00[cm]');
-model.variable('var_xs_DC').set('diff14', '1.28828000e+00[cm]');
-model.variable('var_xs_DC').set('diff15', '1.29013000e+00[cm]');
-model.variable('var_xs_DC').set('diff16', '1.27679000e+00[cm]');
-model.variable('var_xs_DC').set('diff17', '1.25295000e+00[cm]');
-model.variable('var_xs_DC').set('diff18', '1.16319000e+00[cm]');
-model.variable('var_xs_DC').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('invV1', '4.58986000e-10[s/cm]');
-model.variable('var_xs_DC').set('invV2', '2.03767000e-09[s/cm]');
-model.variable('var_xs_DC').set('invV3', '3.91233000e-08[s/cm]');
-model.variable('var_xs_DC').set('invV4', '2.18118000e-07[s/cm]');
-model.variable('var_xs_DC').set('invV5', '8.75578000e-07[s/cm]');
-model.variable('var_xs_DC').set('invV6', '1.37751000e-06[s/cm]');
-model.variable('var_xs_DC').set('invV7', '2.13321000e-06[s/cm]');
-model.variable('var_xs_DC').set('invV8', '4.04469000e-06[s/cm]');
-model.variable('var_xs_DC').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_DC').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_DC').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_DC').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_DC').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_DC').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_DC').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_DC').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('diff21', '1.31436750e+00[cm]');
-model.variable('var_xs_DC').set('diff22', '7.19588683e-01[cm]');
-model.variable('var_xs_DC').set('diff23', '9.30806917e-01[cm]');
-model.variable('var_xs_DC').set('diff24', '9.42775121e-01[cm]');
-model.variable('var_xs_DC').set('diff25', '9.40461474e-01[cm]');
-model.variable('var_xs_DC').set('diff26', '9.34151165e-01[cm]');
-model.variable('var_xs_DC').set('diff27', '9.19053355e-01[cm]');
-model.variable('var_xs_DC').set('diff28', '8.54238446e-01[cm]');
-model.variable('var_xs_DC').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('rem1', '5.15817000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem2', '1.30297000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem3', '1.01676000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem4', '1.92099000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem5', '8.61034000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem6', '6.19777000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem7', '6.50364000e-02[1/cm]');
-model.variable('var_xs_DC').set('rem8', '1.03747000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat11', '1.44058000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat12', '4.99402000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat13', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat22', '3.44317000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat23', '1.29797000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat24', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat33', '2.66091000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat34', '1.01676000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat44', '2.53541000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat45', '1.90885000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat54', '3.72941000e-05[1/cm]');
-model.variable('var_xs_DC').set('scat55', '1.87319000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat56', '8.48168000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat57', '8.22506000e-04[1/cm]');
-model.variable('var_xs_DC').set('scat58', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat65', '5.84943000e-03[1/cm]');
-model.variable('var_xs_DC').set('scat66', '2.13292000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat67', '5.46252000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat68', '9.23602000e-04[1/cm]');
-model.variable('var_xs_DC').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat75', '2.35259000e-05[1/cm]');
-model.variable('var_xs_DC').set('scat76', '3.70410000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat77', '2.14755000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat78', '2.70967000e-02[1/cm]');
-model.variable('var_xs_DC').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat85', '0.00000000e+00[1/cm]');
-model.variable('var_xs_DC').set('scat86', '1.90635000e-03[1/cm]');
-model.variable('var_xs_DC').set('scat87', '1.00092000e-01[1/cm]');
-model.variable('var_xs_DC').set('scat88', '1.97273000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot1', '1.95640000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot2', '3.57347000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot3', '2.76258000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot4', '2.72751000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot5', '2.73422000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot6', '2.75269000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot7', '2.79791000e-01[1/cm]');
-model.variable('var_xs_DC').set('tot8', '3.01020000e-01[1/cm]');
-model.variable('var_xs_DC').selection.geom('geom1', 3);
-model.variable('var_xs_DC').selection.set([2]);
-model.variable('var_xs_DC').label('xs_DC');
-model.variable.create('var_xs_VS');
-model.variable('var_xs_VS').model('mod1');
-model.variable('var_xs_VS').set('beta1', '5.38503000e-03');
-model.variable('var_xs_VS').set('betas1', '1.64712000e-04');
-model.variable('var_xs_VS').set('betas2', '9.85399000e-04');
-model.variable('var_xs_VS').set('betas3', '8.56807000e-04');
-model.variable('var_xs_VS').set('betas4', '2.40172000e-03');
-model.variable('var_xs_VS').set('betas5', '7.27014000e-04');
-model.variable('var_xs_VS').set('betas6', '2.49379000e-04');
-model.variable('var_xs_VS').set('chid1', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid2', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid3', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid4', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid5', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid6', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid7', '0.00000000e+00');
-model.variable('var_xs_VS').set('chid8', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip1', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip2', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip3', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip4', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip5', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip6', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip7', '0.00000000e+00');
-model.variable('var_xs_VS').set('chip8', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit1', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit2', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit3', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit4', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit5', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit6', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit7', '0.00000000e+00');
-model.variable('var_xs_VS').set('chit8', '0.00000000e+00');
-model.variable('var_xs_VS').set('diff11', '2.15542000e+00[cm]');
-model.variable('var_xs_VS').set('diff12', '1.16171000e+00[cm]');
-model.variable('var_xs_VS').set('diff13', '4.06323000e-01[cm]');
-model.variable('var_xs_VS').set('diff14', '3.73674000e-01[cm]');
-model.variable('var_xs_VS').set('diff15', '3.62030000e-01[cm]');
-model.variable('var_xs_VS').set('diff16', '3.48862000e-01[cm]');
-model.variable('var_xs_VS').set('diff17', '3.32753000e-01[cm]');
-model.variable('var_xs_VS').set('diff18', '2.99486000e-01[cm]');
-model.variable('var_xs_VS').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('invV1', '4.45359000e-10[s/cm]');
-model.variable('var_xs_VS').set('invV2', '1.99434000e-09[s/cm]');
-model.variable('var_xs_VS').set('invV3', '3.93068000e-08[s/cm]');
-model.variable('var_xs_VS').set('invV4', '2.18138000e-07[s/cm]');
-model.variable('var_xs_VS').set('invV5', '8.57651000e-07[s/cm]');
-model.variable('var_xs_VS').set('invV6', '1.37066000e-06[s/cm]');
-model.variable('var_xs_VS').set('invV7', '2.11156000e-06[s/cm]');
-model.variable('var_xs_VS').set('invV8', '3.88917000e-06[s/cm]');
-model.variable('var_xs_VS').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_VS').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_VS').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_VS').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_VS').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_VS').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_VS').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_VS').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('diff21', '8.84957057e-01[cm]');
-model.variable('var_xs_VS').set('diff22', '7.12474841e-01[cm]');
-model.variable('var_xs_VS').set('diff23', '2.98704271e-01[cm]');
-model.variable('var_xs_VS').set('diff24', '2.84994516e-01[cm]');
-model.variable('var_xs_VS').set('diff25', '2.74752280e-01[cm]');
-model.variable('var_xs_VS').set('diff26', '2.66098674e-01[cm]');
-model.variable('var_xs_VS').set('diff27', '2.53805317e-01[cm]');
-model.variable('var_xs_VS').set('diff28', '2.27604363e-01[cm]');
-model.variable('var_xs_VS').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('rem1', '5.62726000e-02[1/cm]');
-model.variable('var_xs_VS').set('rem2', '6.32849000e-03[1/cm]');
-model.variable('var_xs_VS').set('rem3', '1.42450000e-02[1/cm]');
-model.variable('var_xs_VS').set('rem4', '3.46019000e-02[1/cm]');
-model.variable('var_xs_VS').set('rem5', '1.82970000e-01[1/cm]');
-model.variable('var_xs_VS').set('rem6', '1.73300000e-01[1/cm]');
-model.variable('var_xs_VS').set('rem7', '2.31782000e-01[1/cm]');
-model.variable('var_xs_VS').set('rem8', '4.11843000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat11', '2.34299000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat12', '5.36041000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat13', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat22', '3.54586000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat23', '5.99725000e-03[1/cm]');
-model.variable('var_xs_VS').set('scat24', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat33', '8.46616000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat34', '8.97786000e-03[1/cm]');
-model.variable('var_xs_VS').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat44', '8.67671000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat45', '1.64430000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat54', '2.40011000e-04[1/cm]');
-model.variable('var_xs_VS').set('scat55', '7.52938000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat56', '1.33717000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat57', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat58', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat65', '1.20877000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat66', '7.93044000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat67', '8.36639000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat68', '8.45127000e-06[1/cm]');
-model.variable('var_xs_VS').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat75', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat76', '7.22870000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat77', '7.81365000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat78', '3.75643000e-02[1/cm]');
-model.variable('var_xs_VS').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat85', '0.00000000e+00[1/cm]');
-model.variable('var_xs_VS').set('scat86', '4.23544000e-06[1/cm]');
-model.variable('var_xs_VS').set('scat87', '1.88878000e-01[1/cm]');
-model.variable('var_xs_VS').set('scat88', '7.17939000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot1', '2.90571000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot2', '3.60915000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot3', '8.60861000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot4', '9.02273000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot5', '9.35908000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot6', '9.66344000e-01[1/cm]');
-model.variable('var_xs_VS').set('tot7', '1.01315000e+00[1/cm]');
-model.variable('var_xs_VS').set('tot8', '1.12978000e+00[1/cm]');
-model.variable('var_xs_VS').selection.geom('geom1', 3);
-model.variable('var_xs_VS').selection.set([1]);
-model.variable('var_xs_VS').label('xs_VS');
-model.variable.create('var_xs_CRCC1');
-model.variable('var_xs_CRCC1').model('mod1');
-model.variable('var_xs_CRCC1').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC1').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC1').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC1').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC1').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC1').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC1').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC1').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC1').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC1').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC1').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC1').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC1').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC1').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC1').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC1').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC1').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC1').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC1').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC1').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC1').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC1').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC1').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC1').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC1').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC1').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC1').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC1').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC1').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC1').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC1').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC1').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC1').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC1').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC1').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC1').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC1').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC1').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC1').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC1').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC1').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC1').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC1').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC1').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC1').selection.set([9]);
-model.variable('var_xs_CRCC1').label('xs_CRCC1');
-model.variable.create('var_xs_CRCC2');
-model.variable('var_xs_CRCC2').model('mod1');
-model.variable('var_xs_CRCC2').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC2').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC2').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC2').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC2').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC2').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC2').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC2').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC2').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC2').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC2').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC2').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC2').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC2').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC2').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC2').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC2').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC2').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC2').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC2').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC2').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC2').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC2').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC2').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC2').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC2').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC2').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC2').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC2').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC2').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC2').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC2').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC2').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC2').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC2').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC2').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC2').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC2').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC2').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC2').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC2').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC2').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC2').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC2').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC2').selection.set([10]);
-model.variable('var_xs_CRCC2').label('xs_CRCC2');
-model.variable.create('var_xs_CRCC3');
-model.variable('var_xs_CRCC3').model('mod1');
-model.variable('var_xs_CRCC3').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC3').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC3').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC3').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC3').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC3').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC3').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC3').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC3').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC3').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC3').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC3').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC3').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC3').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC3').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC3').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC3').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC3').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC3').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC3').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC3').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC3').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC3').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC3').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC3').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC3').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC3').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC3').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC3').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC3').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC3').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC3').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC3').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC3').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC3').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC3').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC3').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC3').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC3').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC3').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC3').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC3').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC3').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC3').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC3').selection.set([11]);
-model.variable('var_xs_CRCC3').label('xs_CRCC3');
-model.variable.create('var_xs_CRCC4');
-model.variable('var_xs_CRCC4').model('mod1');
-model.variable('var_xs_CRCC4').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC4').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC4').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC4').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC4').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC4').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC4').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC4').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC4').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC4').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC4').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC4').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC4').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC4').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC4').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC4').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC4').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC4').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC4').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC4').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC4').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC4').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC4').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC4').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC4').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC4').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC4').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC4').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC4').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC4').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC4').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC4').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC4').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC4').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC4').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC4').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC4').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC4').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC4').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC4').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC4').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC4').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC4').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC4').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC4').selection.set([12]);
-model.variable('var_xs_CRCC4').label('xs_CRCC4');
-model.variable.create('var_xs_CRCC5');
-model.variable('var_xs_CRCC5').model('mod1');
-model.variable('var_xs_CRCC5').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC5').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC5').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC5').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC5').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC5').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC5').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC5').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC5').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC5').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC5').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC5').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC5').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC5').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC5').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC5').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC5').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC5').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC5').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC5').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC5').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC5').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC5').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC5').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC5').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC5').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC5').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC5').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC5').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC5').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC5').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC5').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC5').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC5').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC5').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC5').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC5').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC5').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC5').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC5').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC5').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC5').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC5').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC5').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC5').selection.set([13]);
-model.variable('var_xs_CRCC5').label('xs_CRCC5');
-model.variable.create('var_xs_CRCC6');
-model.variable('var_xs_CRCC6').model('mod1');
-model.variable('var_xs_CRCC6').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC6').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC6').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC6').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC6').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC6').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC6').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC6').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC6').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC6').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC6').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC6').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC6').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC6').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC6').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC6').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC6').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC6').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC6').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC6').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC6').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC6').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC6').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC6').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC6').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC6').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC6').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC6').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC6').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC6').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC6').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC6').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC6').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC6').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC6').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC6').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC6').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC6').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC6').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC6').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC6').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC6').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC6').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC6').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC6').selection.set([14]);
-model.variable('var_xs_CRCC6').label('xs_CRCC6');
-model.variable.create('var_xs_CRCC7');
-model.variable('var_xs_CRCC7').model('mod1');
-model.variable('var_xs_CRCC7').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC7').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC7').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC7').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC7').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC7').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC7').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC7').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC7').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC7').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC7').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC7').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC7').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC7').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC7').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC7').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC7').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC7').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC7').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC7').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC7').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC7').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC7').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC7').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC7').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC7').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC7').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC7').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC7').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC7').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC7').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC7').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC7').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC7').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC7').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC7').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC7').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC7').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC7').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC7').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC7').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC7').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC7').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC7').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC7').selection.set([15]);
-model.variable('var_xs_CRCC7').label('xs_CRCC7');
-model.variable.create('var_xs_CRCC8_1');
-model.variable('var_xs_CRCC8_1').model('mod1');
-model.variable('var_xs_CRCC8_1').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC8_1').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC8_1').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC8_1').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC8_1').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC8_1').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC8_1').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC8_1').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_1').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC8_1').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC8_1').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_1').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC8_1').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC8_1').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC8_1').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC8_1').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC8_1').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC8_1').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC8_1').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC8_1').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC8_1').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC8_1').selection.set([16]);
-model.variable('var_xs_CRCC8_1').label('xs_CRCC8_1');
-model.variable.create('var_xs_CRCC8_2');
-model.variable('var_xs_CRCC8_2').model('mod1');
-model.variable('var_xs_CRCC8_2').set('beta1', '5.38503000e-03');
-model.variable('var_xs_CRCC8_2').set('betas1', '1.64712000e-04');
-model.variable('var_xs_CRCC8_2').set('betas2', '9.85399000e-04');
-model.variable('var_xs_CRCC8_2').set('betas3', '8.56807000e-04');
-model.variable('var_xs_CRCC8_2').set('betas4', '2.40172000e-03');
-model.variable('var_xs_CRCC8_2').set('betas5', '7.27014000e-04');
-model.variable('var_xs_CRCC8_2').set('betas6', '2.49379000e-04');
-model.variable('var_xs_CRCC8_2').set('chid1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chid8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chip8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit1', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit2', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit3', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit4', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit5', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit6', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit7', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('chit8', '0.00000000e+00');
-model.variable('var_xs_CRCC8_2').set('diff11', '2.21320000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff12', '1.09632000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff13', '1.30594000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff14', '1.32082000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff15', '1.31912000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff16', '1.30619000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff17', '1.28010000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff18', '1.17081000e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('fiss1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('fiss8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('invV1', '4.83710000e-10[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV2', '2.09094000e-09[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV3', '3.30817000e-08[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV4', '2.07368000e-07[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV5', '7.07702000e-07[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV6', '1.37468000e-06[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV7', '2.16711000e-06[s/cm]');
-model.variable('var_xs_CRCC8_2').set('invV8', '4.18483000e-06[s/cm]');
-model.variable('var_xs_CRCC8_2').set('kappa1', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa2', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa3', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa4', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa5', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa6', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa7', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('kappa8', '0.00000000e+00[MeV]');
-model.variable('var_xs_CRCC8_2').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_CRCC8_2').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_CRCC8_2').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_CRCC8_2').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_CRCC8_2').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_CRCC8_2').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_CRCC8_2').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('diff21', '1.30270151e+00[cm]');
-model.variable('var_xs_CRCC8_2').set('diff22', '7.46987152e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff23', '9.55296375e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff24', '9.66549857e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff25', '9.65428540e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff26', '9.56796391e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff27', '9.38785941e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('diff28', '8.60251232e-01[cm]');
-model.variable('var_xs_CRCC8_2').set('nsf1', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf2', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf3', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf4', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf5', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf6', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf7', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('nsf8', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem1', '5.36947000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem2', '1.49343000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem3', '6.73287000e-03[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem4', '1.53287000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem5', '3.68732000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem6', '6.16316000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem7', '6.72706000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('rem8', '1.04805000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat11', '1.43698000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat12', '5.21751000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat13', '4.43506000e-05[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat14', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat22', '3.29306000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat23', '1.48714000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat24', '1.14717000e-07[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat25', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat33', '2.62443000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat34', '6.71688000e-03[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat44', '2.50714000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat45', '1.52426000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat54', '1.78292000e-04[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat55', '2.29478000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat56', '3.60135000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat57', '3.77267000e-04[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat58', '2.96011000e-06[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat65', '7.24922000e-03[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat66', '2.07123000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat67', '5.27797000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat68', '1.02928000e-03[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat75', '4.65130000e-05[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat76', '3.73041000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat77', '2.06639000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat78', '2.90183000e-02[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat85', '1.33791000e-06[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat86', '2.48058000e-03[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat87', '1.00580000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('scat88', '1.94110000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot1', '1.97392000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot2', '3.44240000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot3', '2.69176000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot4', '2.66042000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot5', '2.66351000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot6', '2.68754000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot7', '2.73910000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').set('tot8', '2.98916000e-01[1/cm]');
-model.variable('var_xs_CRCC8_2').selection.geom('geom1', 3);
-model.variable('var_xs_CRCC8_2').selection.set([17]);
-model.variable('var_xs_CRCC8_2').label('xs_CRCC8_2');
-model.variable.create('var_xs_fuel');
-model.variable('var_xs_fuel').model('mod1');
-model.variable('var_xs_fuel').set('beta1', '5.38503000e-03');
-model.variable('var_xs_fuel').set('betas1', '1.64712000e-04');
-model.variable('var_xs_fuel').set('betas2', '9.85399000e-04');
-model.variable('var_xs_fuel').set('betas3', '8.56807000e-04');
-model.variable('var_xs_fuel').set('betas4', '2.40172000e-03');
-model.variable('var_xs_fuel').set('betas5', '7.27014000e-04');
-model.variable('var_xs_fuel').set('betas6', '2.49379000e-04');
-model.variable('var_xs_fuel').set('chid1', '3.69684000e-02');
-model.variable('var_xs_fuel').set('chid2', '9.40452000e-01');
-model.variable('var_xs_fuel').set('chid3', '2.25463000e-02');
-model.variable('var_xs_fuel').set('chid4', '2.56709000e-05');
-model.variable('var_xs_fuel').set('chid5', '3.70360000e-06');
-model.variable('var_xs_fuel').set('chid6', '3.63444000e-06');
-model.variable('var_xs_fuel').set('chid7', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chid8', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chip1', '5.76119000e-01');
-model.variable('var_xs_fuel').set('chip2', '4.22335000e-01');
-model.variable('var_xs_fuel').set('chip3', '1.54535000e-03');
-model.variable('var_xs_fuel').set('chip4', '1.18016000e-07');
-model.variable('var_xs_fuel').set('chip5', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chip6', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chip7', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chip8', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chit1', '5.73215658e-01');
-model.variable('var_xs_fuel').set('chit2', '4.25125076e-01');
-model.variable('var_xs_fuel').set('chit3', '1.65844075e-03');
-model.variable('var_xs_fuel').set('chit4', '2.55619047e-07');
-model.variable('var_xs_fuel').set('chit5', '1.99439971e-08');
-model.variable('var_xs_fuel').set('chit6', '1.95715684e-08');
-model.variable('var_xs_fuel').set('chit7', '0.00000000e+00');
-model.variable('var_xs_fuel').set('chit8', '0.00000000e+00');
-model.variable('var_xs_fuel').set('diff11', '2.31159000e+00[cm]');
-model.variable('var_xs_fuel').set('diff12', '1.12199000e+00[cm]');
-model.variable('var_xs_fuel').set('diff13', '1.00891000e+00[cm]');
-model.variable('var_xs_fuel').set('diff14', '9.89409000e-01[cm]');
-model.variable('var_xs_fuel').set('diff15', '1.00371000e+00[cm]');
-model.variable('var_xs_fuel').set('diff16', '9.80752000e-01[cm]');
-model.variable('var_xs_fuel').set('diff17', '9.51883000e-01[cm]');
-model.variable('var_xs_fuel').set('diff18', '8.52412000e-01[cm]');
-model.variable('var_xs_fuel').set('fiss1', '9.94611000e-05[1/cm]');
-model.variable('var_xs_fuel').set('fiss2', '2.71736000e-05[1/cm]');
-model.variable('var_xs_fuel').set('fiss3', '1.96695000e-04[1/cm]');
-model.variable('var_xs_fuel').set('fiss4', '7.87637000e-04[1/cm]');
-model.variable('var_xs_fuel').set('fiss5', '7.09040000e-04[1/cm]');
-model.variable('var_xs_fuel').set('fiss6', '5.00230000e-03[1/cm]');
-model.variable('var_xs_fuel').set('fiss7', '4.57511000e-03[1/cm]');
-model.variable('var_xs_fuel').set('fiss8', '8.91462000e-03[1/cm]');
-model.variable('var_xs_fuel').set('invV1', '4.78184000e-10[s/cm]');
-model.variable('var_xs_fuel').set('invV2', '1.95808000e-09[s/cm]');
-model.variable('var_xs_fuel').set('invV3', '3.02780000e-08[s/cm]');
-model.variable('var_xs_fuel').set('invV4', '2.00394000e-07[s/cm]');
-model.variable('var_xs_fuel').set('invV5', '6.56741000e-07[s/cm]');
-model.variable('var_xs_fuel').set('invV6', '1.35560000e-06[s/cm]');
-model.variable('var_xs_fuel').set('invV7', '2.16378000e-06[s/cm]');
-model.variable('var_xs_fuel').set('invV8', '4.14396000e-06[s/cm]');
-model.variable('var_xs_fuel').set('kappa1', '2.05992000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa2', '2.03329000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa3', '2.03104000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa4', '2.03627000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa5', '2.03017000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa6', '2.05503000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa7', '2.03869000e+02[MeV]');
-model.variable('var_xs_fuel').set('kappa8', '2.03334000e+02[MeV]');
-model.variable('var_xs_fuel').set('lambdas1', '1.25435000e-02[1/s]');
-model.variable('var_xs_fuel').set('lambdas2', '3.13212000e-02[1/s]');
-model.variable('var_xs_fuel').set('lambdas3', '1.09688000e-01[1/s]');
-model.variable('var_xs_fuel').set('lambdas4', '3.16554000e-01[1/s]');
-model.variable('var_xs_fuel').set('lambdas5', '1.29420000e+00[1/s]');
-model.variable('var_xs_fuel').set('lambdas6', '8.03336000e+00[1/s]');
-model.variable('var_xs_fuel').set('nsf1', '2.76849000e-04[1/cm]');
-model.variable('var_xs_fuel').set('nsf2', '6.88618000e-05[1/cm]');
-model.variable('var_xs_fuel').set('nsf3', '4.90315000e-04[1/cm]');
-model.variable('var_xs_fuel').set('nsf4', '1.98718000e-03[1/cm]');
-model.variable('var_xs_fuel').set('nsf5', '1.76569000e-03[1/cm]');
-model.variable('var_xs_fuel').set('nsf6', '1.33368000e-02[1/cm]');
-model.variable('var_xs_fuel').set('nsf7', '1.16528000e-02[1/cm]');
-model.variable('var_xs_fuel').set('nsf8', '2.23832000e-02[1/cm]');
-model.variable('var_xs_fuel').set('diff21', '1.46630433e+00[cm]');
-model.variable('var_xs_fuel').set('diff22', '7.55400484e-01[cm]');
-model.variable('var_xs_fuel').set('diff23', '7.35938665e-01[cm]');
-model.variable('var_xs_fuel').set('diff24', '7.22849473e-01[cm]');
-model.variable('var_xs_fuel').set('diff25', '7.33547448e-01[cm]');
-model.variable('var_xs_fuel').set('diff26', '7.20999016e-01[cm]');
-model.variable('var_xs_fuel').set('diff27', '7.09459420e-01[cm]');
-model.variable('var_xs_fuel').set('diff28', '6.59245998e-01[cm]');
-model.variable('var_xs_fuel').set('nsf1', '2.76849000e-04[1/cm]');
-model.variable('var_xs_fuel').set('nsf2', '6.88618000e-05[1/cm]');
-model.variable('var_xs_fuel').set('nsf3', '4.90315000e-04[1/cm]');
-model.variable('var_xs_fuel').set('nsf4', '1.98718000e-03[1/cm]');
-model.variable('var_xs_fuel').set('nsf5', '1.76569000e-03[1/cm]');
-model.variable('var_xs_fuel').set('nsf6', '1.33368000e-02[1/cm]');
-model.variable('var_xs_fuel').set('nsf7', '1.16528000e-02[1/cm]');
-model.variable('var_xs_fuel').set('nsf8', '2.23832000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem1', '3.98912000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem2', '1.47397000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem3', '8.37622000e-03[1/cm]');
-model.variable('var_xs_fuel').set('rem4', '2.46316000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem5', '3.46631000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem6', '7.49013000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem7', '6.94437000e-02[1/cm]');
-model.variable('var_xs_fuel').set('rem8', '9.69007000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat11', '1.35477000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat12', '3.90463000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat13', '2.30632000e-05[1/cm]');
-model.variable('var_xs_fuel').set('scat14', '3.19822000e-09[1/cm]');
-model.variable('var_xs_fuel').set('scat15', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat16', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat17', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat18', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat21', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat22', '3.25666000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat23', '1.46479000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat24', '8.91917000e-09[1/cm]');
-model.variable('var_xs_fuel').set('scat25', '3.73609000e-10[1/cm]');
-model.variable('var_xs_fuel').set('scat26', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat27', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat28', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat31', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat32', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat33', '3.41032000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat34', '7.51648000e-03[1/cm]');
-model.variable('var_xs_fuel').set('scat35', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat36', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat37', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat38', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat41', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat42', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat43', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat44', '3.31103000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat45', '1.78298000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat46', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat47', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat48', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat51', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat52', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat53', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat54', '2.01995000e-04[1/cm]');
-model.variable('var_xs_fuel').set('scat55', '3.15884000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat56', '3.04347000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat57', '3.68723000e-04[1/cm]');
-model.variable('var_xs_fuel').set('scat58', '2.35183000e-07[1/cm]');
-model.variable('var_xs_fuel').set('scat61', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat62', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat63', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat64', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat65', '9.90353000e-03[1/cm]');
-model.variable('var_xs_fuel').set('scat66', '2.81747000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat67', '5.49574000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat68', '2.00478000e-03[1/cm]');
-model.variable('var_xs_fuel').set('scat71', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat72', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat73', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat74', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat75', '7.71422000e-05[1/cm]');
-model.variable('var_xs_fuel').set('scat76', '3.77158000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat77', '2.93005000e-01[1/cm]');
-model.variable('var_xs_fuel').set('scat78', '2.41158000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat81', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat82', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat83', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat84', '0.00000000e+00[1/cm]');
-model.variable('var_xs_fuel').set('scat85', '2.70585000e-08[1/cm]');
-model.variable('var_xs_fuel').set('scat86', '4.69766000e-03[1/cm]');
-model.variable('var_xs_fuel').set('scat87', '7.82798000e-02[1/cm]');
-model.variable('var_xs_fuel').set('scat88', '2.93155000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot1', '1.75368000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot2', '3.40406000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot3', '3.49408000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot4', '3.55735000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot5', '3.50547000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot6', '3.56648000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot7', '3.62449000e-01[1/cm]');
-model.variable('var_xs_fuel').set('tot8', '3.90056000e-01[1/cm]');
-model.variable('var_xs_fuel').selection.geom('geom1', 3);
-model.variable('var_xs_fuel').selection.set([7]);
-model.variable('var_xs_fuel').label('xs_fuel');
-model.variable.create('var18');
-model.variable('var18').model('mod1');
-model.variable('var18').set('Pdensity', 'kappa1*fiss1*Flux1+kappa2*fiss2*Flux2+kappa3*fiss3*Flux3+kappa4*fiss4*Flux4+kappa5*fiss5*Flux5+kappa6*fiss6*Flux6+kappa7*fiss7*Flux7+kappa8*fiss8*Flux8', 'power density');
-model.variable('var18').set('PdensityN', 'Pdensity*Pop/Pint', 'power density normalized to Pop');
-model.variable('var18').set('Pint', 'intop1(Pdensity)', 'integrated total core power');
-model.variable('var18').set('PintN', 'intop1(PdensityN)', 'integrated total core power normalized to Pop, should be equal to Pop');
-model.variable('var18').selection.geom('geom1', 3);
-model.variable('var18').selection.set([6 3 8 9 10 11 12 13 14 15 16 17 2 4 5 1 7]);
-model.variable('var18').label('power');
-model.variable.create('var22');
-model.variable('var22').model('mod1');
-model.variable('var22').set('sumDelayedN', 'lambdas1*Conc1+lambdas2*Conc2+lambdas3*Conc3+lambdas4*Conc4+lambdas5*Conc5+lambdas6*Conc6', 'sum of lambda*C_i, for diffusion equation');
-model.variable('var22').set('sumN', 'nsf1*Flux1+nsf2*Flux2+nsf3*Flux3+nsf4*Flux4+nsf5*Flux5+nsf6*Flux6+nsf7*Flux7+nsf8*Flux8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
-model.variable('var22').selection.geom('geom1', 3);
-model.variable('var22').selection.set([6 3 8 9 10 11 12 13 14 15 16 17 2 4 5 1 7]);
-model.variable('var22').label('delayed');
-model.variable.create('var_T_fuel');
-model.variable('var_T_fuel').model('mod1');
-model.variable('var_T_fuel').set('T_fuel_1', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_2', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_3', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_4', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_5', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_6', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_7', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_8', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_9', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_10', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_11', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_12', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_13', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_14', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_15', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_16', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_17', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_18', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_19', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_20', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_21', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_22', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_23', 'T_fuel');
-model.variable('var_T_fuel').set('T_fuel_24', 'T_fuel');
-
-model.material.create('mat1', 'Common', 'mod1');
-model.material('mat1').selection.set([6 7]);
-model.material('mat1').label('Salt-with porosity and permeability');
-model.material('mat1').propertyGroup('def').func.label('Functions');
-model.material('mat1').propertyGroup('def').set('ratioofspecificheat', '1');
-model.material('mat1').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
-model.material('mat1').propertyGroup('def').set('hydraulicpermeability', {'Kbr' '0' '0' '0' 'Kbr' '0' '0' '0' 'Kbr'});
-model.material('mat1').propertyGroup('def').set('porosity', 'ep');
-model.material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
-model.material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
-model.material('mat1').propertyGroup('def').set('heatcapacity', '2386');
-model.material.create('mat2', 'Common', 'mod1');
-model.material('mat2').selection.set([8 5 4 3 2 1 9 10 11 12 13 14 15 16 17]);
-model.material('mat2').label('graphite based on built in steel');
-model.material('mat2').propertyGroup('def').set('porosity', '0.2');
-model.material('mat2').propertyGroup('def').set('hydraulicpermeability', {'1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)'});
-model.material('mat2').propertyGroup('def').set('ratioofspecificheat', '1');
-model.material('mat2').propertyGroup('def').set('thermalconductivity', {'640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]'});
-model.material('mat2').propertyGroup('def').set('heatcapacity', '684[J/(kg*K)]');
-model.material('mat2').propertyGroup('def').set('density', '1960[kg/m^3]');
-model.material.create('mat4', 'Common', 'mod1');
-model.material('mat4').propertyGroup.create('Enu', 'Young''s modulus and Poisson''s ratio');
-model.material('mat4').propertyGroup.create('Murnaghan', 'Murnaghan');
-model.material('mat4').propertyGroup.create('Lame', ['Lam' native2unicode(hex2dec({'00' 'e9'}), 'unicode') ' parameters']);
-model.material('mat4').label('Structural steel');
-model.material('mat4').set('ambient', 'custom');
-model.material('mat4').set('specular', 'custom');
-model.material('mat4').set('fresnel', '0.9');
-model.material('mat4').set('noise', 'on');
-model.material('mat4').set('family', 'custom');
-model.material('mat4').set('diffuse', 'custom');
-model.material('mat4').set('noisefreq', '1');
-model.material('mat4').set('customambient', {'0.6666666666666666' '0.6666666666666666' '0.6666666666666666'});
-model.material('mat4').set('lighting', 'cooktorrance');
-model.material('mat4').set('roughness', '0.3');
-model.material('mat4').set('customspecular', {'0.7843137254901961' '0.7843137254901961' '0.7843137254901961'});
-model.material('mat4').set('customdiffuse', {'0.6666666666666666' '0.6666666666666666' '0.6666666666666666'});
-model.material('mat4').set('fresnel', '0.9');
-model.material('mat4').propertyGroup('def').set('relpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.material('mat4').propertyGroup('def').set('heatcapacity', '475[J/(kg*K)]');
-model.material('mat4').propertyGroup('def').set('thermalconductivity', {'44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]'});
-model.material('mat4').propertyGroup('def').set('electricconductivity', {'4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]'});
-model.material('mat4').propertyGroup('def').set('relpermittivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.material('mat4').propertyGroup('def').set('thermalexpansioncoefficient', {'12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]'});
-model.material('mat4').propertyGroup('def').set('density', '7850[kg/m^3]');
-model.material('mat4').propertyGroup('Enu').set('youngsmodulus', '200e9[Pa]');
-model.material('mat4').propertyGroup('Enu').set('poissonsratio', '0.30');
-model.material('mat4').propertyGroup('Murnaghan').set('l', '');
-model.material('mat4').propertyGroup('Murnaghan').set('m', '');
-model.material('mat4').propertyGroup('Murnaghan').set('n', '');
-model.material('mat4').propertyGroup('Murnaghan').set('l', '-3.0e11[Pa]');
-model.material('mat4').propertyGroup('Murnaghan').set('m', '-6.2e11[Pa]');
-model.material('mat4').propertyGroup('Murnaghan').set('n', '-7.2e11[Pa]');
-model.material('mat4').propertyGroup('Lame').set('lambLame', '');
-model.material('mat4').propertyGroup('Lame').set('muLame', '');
-model.material('mat4').propertyGroup('Lame').set('lambLame', '1.15e11[Pa]');
-model.material('mat4').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
-
-model.physics.create('br', 'Brinkman', 'geom1');
-model.physics('br').label('Momentum - Porous Media Flow');
-model.physics('br').selection.set([6 7]);
-model.physics('br').prop('ShapeProperty').set('valueType', {'complex' 'complex' 'real' 'real' 'real' 'real' 'real' 'real' 'real' 'real'  ...
-'real'});
-model.physics('br').prop('PhysicalModelProperty').set('TurbulenceModel', 'keps');
-model.physics('br').prop('PhysicalModelProperty').set('StokesFlowProp', '0');
-model.physics('br').prop('AdvancedSettingProperty').set('locCFL', '1.3^min(niterCMP-1,9)+if(niterCMP>25,9*1.3^min(niterCMP-25,9),0)+if(niterCMP>50,90*1.3^min(niterCMP-50,9),0)');
-model.physics('br').prop('ConsistentStabilization').set('CrosswindDiffusionOldFormNS', '1');
-model.physics('br').feature('fmp1').create('fd1', 'Forchheimer', 3);
-model.physics('br').feature('fmp1').feature('fd1').selection.set([6 7]);
-model.physics('br').feature('fmp1').feature('fd1').set('betaF', 'bF');
-model.physics('br').feature('fmp1').set('editModelInputs', '1');
-model.physics('br').feature('fmp1').set('rho', 'rho_flibe(T_flibe)');
-model.physics('br').feature('fmp1').set('minput_strainreferencetemperature', '0');
-model.physics('br').feature('fmp1').set('kappa', {'0' '0' '0' '0' '0' '0' '0' '0' '0'});
-model.physics('br').feature('fmp1').label('Fluid and Matrix Properties');
-model.physics('br').feature('fmp1').feature('fd1').label('Forchheimer Drag');
-model.physics('br').create('out1', 'OutletBoundary', 2);
-model.physics('br').feature('out1').selection.set([39 40 41 42 51 52 57 58 126 127 132 135 165 170 174 179]);
-model.physics('br').feature('out1').set('BoundaryCondition', 'Pressure');
-model.physics('br').create('inl2', 'InletBoundary', 2);
-model.physics('br').feature('inl2').selection.set([75 76 144 159]);
-model.physics('br').feature('inl2').set('BoundaryCondition', 'MassFlow');
-model.physics('br').feature('inl2').set('mfr', 'mL*(1-bottomInletFraction)');
-model.physics('br').feature('inl2').set('U0in', '0.5');
-model.physics('br').feature('inl2').set('IT', '0.05');
-model.physics('br').feature('inl2').set('LT', '0.01[m]');
-model.physics('br').feature('inl2').set('k0', '0.005[m^2/s^2]');
-model.physics('br').feature('inl2').set('ep0', '0.005[m^2/s^3]');
-model.physics('br').feature('inl2').set('om0', '20[1/s]');
-model.physics('br').create('inl3', 'InletBoundary', 2);
-model.physics('br').feature('inl3').selection.set([53 54 59 60 133 136 163 166]);
-model.physics('br').feature('inl3').set('BoundaryCondition', 'MassFlow');
-model.physics('br').feature('inl3').set('mfr', 'mL*bottomInletFraction');
-model.physics('br').feature('inl3').set('U0in', '0.5');
-model.physics('br').feature('inl3').set('IT', '0.05');
-model.physics('br').feature('inl3').set('LT', '0.01[m]');
-model.physics('br').feature('inl3').set('k0', '0.005[m^2/s^2]');
-model.physics('br').feature('inl3').set('ep0', '0.005[m^2/s^3]');
-model.physics('br').feature('inl3').set('om0', '20[1/s]');
-model.physics('br').feature('wall1').set('BoundaryCondition', 'Slip');
-model.physics('br').feature('wall1').set('constraintType', 'symmetricConstraint');
-model.physics('br').feature('wall1').set('zeta', '-0.1[V]');
-model.physics('br').feature('wall1').label('Wall');
-model.physics('br').feature('init1').set('u_init', {'0' '0' '0.05'});
-model.physics('br').prop('PhysicalModelProperty').set('StokesFlowProp', '0');
-model.physics.create('ht', 'HeatTransferInFluids', 'geom1');
-model.physics('ht').label('Heat Transfer - Flibe');
-model.physics('ht').field('temperature').field('T_flibe');
-model.physics('ht').selection.set([6 7]);
-model.physics('ht').create('temp1', 'TemperatureBoundary', 2);
-model.physics('ht').feature('temp1').selection.set([53 54 59 60 75 76 133 136 144 159 163 166]);
-model.physics('ht').feature('temp1').set('T0', 'T_inlet');
-model.physics('ht').feature('temp1').label('Inlet Temperature');
-model.physics('ht').create('hs1', 'HeatSource', 3);
-model.physics('ht').feature('hs1').selection.set([7]);
-model.physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*T_fuel');
-model.physics('ht').feature('hs1').label('heat transfer from fuel-cst term');
-model.physics('ht').create('hs2', 'HeatSource', 3);
-model.physics('ht').feature('hs2').selection.set([7]);
-model.physics('ht').feature('hs2').set('heatSourceType', 'LinearSource');
-model.physics('ht').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
-model.physics('ht').feature('hs2').label('heat transfer from fuel - linear term');
-model.physics('ht').feature('init1').set('Tinit', 'T0_flibe');
-model.physics('ht').feature('init1').label('Initial Temperature');
-model.physics('ht').feature('ins1').label('Thermal Insulation');
-model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-model.physics('ht').prop('RadiationProperty').set('fieldName', 'root.J');
-model.physics('ht').feature('fluid1').set('k', {'0.6*' '0' '0' '0' '0.6*' '0' '0' '0' '0.6*'});
-model.physics('ht').feature('fluid1').set('minput_strainreferencetemperature', '0');
-model.physics('ht').feature('fluid1').label('Fluid');
-model.physics('ht').prop('ShapeProperty').set('valueType', 'complex');
-model.physics('ht').prop('ShapeProperty').set('order_temperature', '1');
-model.physics('ht').prop('ShapeProperty').set('boundaryFlux_temperature', '0');
-model.physics('ht').prop('ConsistentStabilization').set('glim', '0.01[K]/ht.helem');
-model.physics('ht').prop('ConsistentStabilization').set('StreamlineDiffusionOldForm', '1');
-model.physics('ht').prop('ConsistentStabilization').set('heatCrosswindDiffusion', '0');
-model.physics.create('ht3', 'HeatTransferInFluids', 'geom1');
-model.physics('ht3').identifier('ht3');
-model.physics('ht3').field('temperature').field('T_fuel');
-model.physics('ht3').selection.set([7]);
-model.physics('ht3').create('solid1', 'SolidHeatTransferModel', 3);
-model.physics('ht3').feature('solid1').selection.set([7]);
-model.physics('ht3').create('hs1', 'HeatSource', 3);
-model.physics('ht3').feature('hs1').selection.set([7]);
-model.physics('ht3').create('hs2', 'HeatSource', 3);
-model.physics('ht3').feature('hs2').selection.set([7]);
-model.physics('ht3').create('hs3', 'HeatSource', 3);
-model.physics('ht3').feature('hs3').selection.set([7]);
-model.physics('ht3').label('Heat Transfer in Fuel Pebble');
-model.physics('ht3').comments('fuel temperature');
-model.physics('ht3').prop('ConsistentStabilization').set('glim', '(0.01[K])/ht3.helem');
-model.physics('ht3').feature('fluid1').label('overridden');
-model.physics('ht3').feature('init1').set('Tinit', 'T0_fuel');
-model.physics('ht3').feature('solid1').set('k_mat', 'userdef');
-model.physics('ht3').feature('solid1').set('k', {'k_fuel' '0' '0' '0' 'k_fuel' '0' '0' '0' 'k_fuel'});
-model.physics('ht3').feature('solid1').set('rho_mat', 'userdef');
-model.physics('ht3').feature('solid1').set('rho', 'rho_fuel*(1-porosity)');
-model.physics('ht3').feature('solid1').set('Cp_mat', 'userdef');
-model.physics('ht3').feature('solid1').set('Cp', 'cp_fuel');
-model.physics('ht3').feature('solid1').label('Heat Transfer in Solids(smeared fuel pebbles)');
-model.physics('ht3').feature('hs1').set('P0', '1E7');
-model.physics('ht3').feature('hs1').set('Q0', 'Pdensity*Pop/Pint');
-model.physics('ht3').feature('hs1').label('Nuclear heat generation');
-model.physics('ht3').feature('hs3').set('Q0', 'h_conv*pb_area/fuel_v*T_flibe');
-model.physics('ht3').feature('hs3').label('heat transfer to flibe - cst term');
-model.physics('ht3').feature('hs2').set('heatSourceType', 'LinearSource');
-model.physics('ht3').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
-model.physics('ht3').feature('hs2').label('heat tranfer to flibe - linear term');
-model.physics.create('neutrondiffusion', 'CoefficientFormPDE', 'geom1');
-model.physics('neutrondiffusion').identifier('neutrondiffusion');
-model.physics('neutrondiffusion').prop('ShapeProperty').set('order', '1');
-model.physics('neutrondiffusion').field('dimensionless').field('Flux');
-model.physics('neutrondiffusion').field('dimensionless').component({'Flux1' 'Flux2' 'Flux3' 'Flux4' 'Flux5' 'Flux6' 'Flux7' 'Flux8' 'Conc1' 'Conc2'  ...
-'Conc3' 'Conc4' 'Conc5' 'Conc6'});
-model.physics('neutrondiffusion').create('dir1', 'DirichletBoundary', 2);
-model.physics('neutrondiffusion').feature('dir1').selection.set([1 2 3 4 5 6 9 10 11 12 15 16 17 18 21 22 23 24 33 34 51 52 53 54 57 58 59 60 65 66 69 70 81 82 83 84 89 90 93 94 101 102 105 106 107 108 109 111 112 114 115 117 118 123 132 133 135 136 139 141 147 148 151 152 154 155 163 165 166 170 172 175 183 185 186 188 189 191 192 193 196 197 200 201 209 210 211 212]);
-model.physics('neutrondiffusion').create('flux1', 'FluxBoundary', 2);
-model.physics('neutrondiffusion').prop('Units').set('SourceTermQuantity', 'productionrate');
-model.physics('neutrondiffusion').prop('Units').set('DependentVariableQuantity', 'particleflux');
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem1-(1-beta1)*chip1*nsf1*lambda)', 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat12-(1-beta1)*chip2*nsf1*lambda)', 1);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat13-(1-beta1)*chip3*nsf1*lambda)', 2);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat14-(1-beta1)*chip4*nsf1*lambda)', 3);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat15-(1-beta1)*chip5*nsf1*lambda)', 4);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat16-(1-beta1)*chip6*nsf1*lambda)', 5);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat17-(1-beta1)*chip7*nsf1*lambda)', 6);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat18-(1-beta1)*chip8*nsf1*lambda)', 7);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat21-(1-beta1)*chip1*nsf2*lambda)', 14);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem2-(1-beta1)*chip2*nsf2*lambda)', 15);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat23-(1-beta1)*chip3*nsf2*lambda)', 16);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat24-(1-beta1)*chip4*nsf2*lambda)', 17);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat25-(1-beta1)*chip5*nsf2*lambda)', 18);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat26-(1-beta1)*chip6*nsf2*lambda)', 19);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat27-(1-beta1)*chip7*nsf2*lambda)', 20);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat28-(1-beta1)*chip8*nsf2*lambda)', 21);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat31-(1-beta1)*chip1*nsf3*lambda)', 28);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat32-(1-beta1)*chip2*nsf3*lambda)', 29);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem3-(1-beta1)*chip3*nsf3*lambda)', 30);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat34-(1-beta1)*chip4*nsf3*lambda)', 31);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat35-(1-beta1)*chip5*nsf3*lambda)', 32);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat36-(1-beta1)*chip6*nsf3*lambda)', 33);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat37-(1-beta1)*chip7*nsf3*lambda)', 34);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat38-(1-beta1)*chip8*nsf3*lambda)', 35);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat41-(1-beta1)*chip1*nsf4*lambda)', 42);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat42-(1-beta1)*chip2*nsf4*lambda)', 43);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat43-(1-beta1)*chip3*nsf4*lambda)', 44);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem4-(1-beta1)*chip4*nsf4*lambda)', 45);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat45-(1-beta1)*chip5*nsf4*lambda)', 46);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat46-(1-beta1)*chip6*nsf4*lambda)', 47);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat47-(1-beta1)*chip7*nsf4*lambda)', 48);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat48-(1-beta1)*chip8*nsf4*lambda)', 49);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat51-(1-beta1)*chip1*nsf5*lambda)', 56);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat52-(1-beta1)*chip2*nsf5*lambda)', 57);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat53-(1-beta1)*chip3*nsf5*lambda)', 58);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat54-(1-beta1)*chip4*nsf5*lambda)', 59);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem5-(1-beta1)*chip5*nsf5*lambda)', 60);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat56-(1-beta1)*chip6*nsf5*lambda)', 61);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat57-(1-beta1)*chip7*nsf5*lambda)', 62);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat58-(1-beta1)*chip8*nsf5*lambda)', 63);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat61-(1-beta1)*chip1*nsf6*lambda)', 70);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat62-(1-beta1)*chip2*nsf6*lambda)', 71);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat63-(1-beta1)*chip3*nsf6*lambda)', 72);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat64-(1-beta1)*chip4*nsf6*lambda)', 73);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat65-(1-beta1)*chip5*nsf6*lambda)', 74);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem6-(1-beta1)*chip6*nsf6*lambda)', 75);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat67-(1-beta1)*chip7*nsf6*lambda)', 76);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat68-(1-beta1)*chip8*nsf6*lambda)', 77);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat71-(1-beta1)*chip1*nsf7*lambda)', 84);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat72-(1-beta1)*chip2*nsf7*lambda)', 85);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat73-(1-beta1)*chip3*nsf7*lambda)', 86);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat74-(1-beta1)*chip4*nsf7*lambda)', 87);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat75-(1-beta1)*chip5*nsf7*lambda)', 88);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat76-(1-beta1)*chip6*nsf7*lambda)', 89);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem7-(1-beta1)*chip7*nsf7*lambda)', 90);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat78-(1-beta1)*chip8*nsf7*lambda)', 91);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat81-(1-beta1)*chip1*nsf8*lambda)', 98);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat82-(1-beta1)*chip2*nsf8*lambda)', 99);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat83-(1-beta1)*chip3*nsf8*lambda)', 100);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat84-(1-beta1)*chip4*nsf8*lambda)', 101);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat85-(1-beta1)*chip5*nsf8*lambda)', 102);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat86-(1-beta1)*chip6*nsf8*lambda)', 103);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(-scat87-(1-beta1)*chip7*nsf8*lambda)', 104);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', '(rem8-(1-beta1)*chip8*nsf8*lambda)', 105);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas1', 120);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas2', 135);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas3', 150);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas4', 165);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas5', 180);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('a', 'lambdas6', 195);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV1*eigenMode', 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 1);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 2);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 3);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 4);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 5);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 6);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 7);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 8);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 9);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 10);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 11);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 12);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 13);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 14);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV2*eigenMode', 15);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 16);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 17);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 18);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 19);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 20);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 21);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 22);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 23);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 24);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 25);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 26);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 27);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 28);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 29);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV3*eigenMode', 30);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 31);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 32);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 33);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 34);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 35);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 36);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 37);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 38);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 39);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 40);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 41);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 42);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 43);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 44);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV4*eigenMode', 45);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 46);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 47);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 48);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 49);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 50);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 51);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 52);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 53);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 54);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 55);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 56);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 57);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 58);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 59);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV5*eigenMode', 60);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 61);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 62);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 63);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 64);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 65);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 66);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 67);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 68);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 69);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 70);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 71);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 72);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 73);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 74);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV6*eigenMode', 75);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 76);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 77);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 78);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 79);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 80);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 81);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 82);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 83);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 84);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 85);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 86);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 87);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 88);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 89);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV7*eigenMode', 90);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 91);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 92);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 93);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 94);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 95);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 96);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 97);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 98);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 99);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 100);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 101);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 102);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 103);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 104);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'invV8*eigenMode', 105);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 106);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 107);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 108);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 109);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 110);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 111);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 112);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 113);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 114);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 115);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 116);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 117);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 118);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 119);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 120);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 121);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 122);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 123);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 124);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 125);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 126);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 127);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 128);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 129);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 130);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 131);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 132);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 133);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 134);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 135);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 136);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 137);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 138);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 139);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 140);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 141);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 142);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 143);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 144);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 145);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 146);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 147);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 148);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 149);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 150);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 151);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 152);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 153);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 154);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 155);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 156);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 157);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 158);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 159);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 160);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 161);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 162);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 163);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 164);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 165);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 166);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 167);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 168);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 169);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 170);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 171);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 172);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 173);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 174);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 175);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 176);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 177);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 178);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 179);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 180);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 181);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 182);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 183);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 184);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 185);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 186);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 187);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 188);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 189);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 190);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 191);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 192);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 193);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', '0', 194);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('da', 'eigenMode', 195);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff11' 'diff11' 'diff11'}, 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 1);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 2);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 3);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 4);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 5);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 6);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 7);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 8);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 9);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 10);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 11);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 12);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 13);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 14);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 15);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff12' 'diff12' 'diff12'}, 15);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 16);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 17);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 18);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 19);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 20);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 21);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 22);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 23);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 24);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 25);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 26);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 27);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 28);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 29);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 30);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff13' 'diff13' 'diff13'}, 30);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 31);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 32);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 33);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 34);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 35);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 36);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 37);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 38);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 39);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 40);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 41);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 42);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 43);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 44);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 45);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff14' 'diff14' 'diff14'}, 45);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 46);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 47);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 48);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 49);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 50);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 51);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 52);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 53);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 54);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 55);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 56);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 57);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 58);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 59);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 60);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff15' 'diff15' 'diff15'}, 60);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 61);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 62);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 63);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 64);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 65);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 66);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 67);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 68);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 69);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 70);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 71);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 72);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 73);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 74);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 75);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff16' 'diff16' 'diff16'}, 75);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 76);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 77);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 78);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 79);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 80);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 81);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 82);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 83);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 84);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 85);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 86);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 87);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 88);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 89);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 90);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff17' 'diff17' 'diff17'}, 90);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 91);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 92);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 93);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 94);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 95);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 96);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 97);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 98);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 99);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 100);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 101);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 102);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 103);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 104);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 105);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'diff18' 'diff18' 'diff18'}, 105);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 106);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 107);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 108);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 109);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 110);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 111);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 112);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 113);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 114);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 115);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 116);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 117);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 118);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 119);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 120);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 121);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 122);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 123);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 124);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 125);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 126);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 127);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 128);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 129);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 130);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 131);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 132);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 133);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 134);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 135);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 136);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 137);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 138);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 139);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 140);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 141);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 142);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 143);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 144);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 145);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 146);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 147);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 148);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 149);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 150);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 151);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 152);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 153);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 154);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 155);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 156);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 157);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 158);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 159);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 160);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 161);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 162);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 163);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 164);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 165);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 166);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 167);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 168);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 169);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 170);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 171);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 172);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 173);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 174);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 175);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 176);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 177);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 178);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 179);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 180);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 181);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 182);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 183);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 184);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 185);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 186);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 187);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 188);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 189);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 190);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 191);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 192);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 193);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 194);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('c', {'0' '0' '0'}, 195);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid1*lambda*sumDelayedN', 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 0);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid2*lambda*sumDelayedN', 1);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 1);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid3*lambda*sumDelayedN', 2);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 2);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid4*lambda*sumDelayedN', 3);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 3);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid5*lambda*sumDelayedN', 4);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 4);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid6*lambda*sumDelayedN', 5);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 5);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid7*lambda*sumDelayedN', 6);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 6);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'chid8*lambda*sumDelayedN', 7);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 7);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas1*sumN', 8);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 8);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas2*sumN', 9);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 9);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas3*sumN', 10);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 10);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas4*sumN', 11);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 11);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas5*sumN', 12);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 12);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('f', 'betas6*sumN', 13);
-model.physics('neutrondiffusion').feature('cfeq1').setIndex('ea', '0', 13);
-model.physics('neutrondiffusion').feature('init1').set('Flux1', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux2', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux3', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux4', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux5', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux6', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux7', 1);
-model.physics('neutrondiffusion').feature('init1').set('Flux8', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc1', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc2', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc3', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc4', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc5', 1);
-model.physics('neutrondiffusion').feature('init1').set('Conc6', 1);
-
-model.cpl.create('intop1', 'Integration', 'geom1');
-model.cpl.create('aveop1', 'Average', 'geom1');
-model.cpl('intop1').selection.set([7]);
-model.cpl('aveop1').selection.set([7]);
-model.cpl('intop1').set('axisym', true);
+model.component('mod1').defineLocalCoord(false);
 
 model.result.table.create('tbl1', 'Table');
-model.result.table('tbl1').set('tablebuffersize', '100000');
 
-model.probe.create('dom1', 'Domain');
-model.probe('dom1').model('mod1');
-model.probe('dom1').label('Probe Pint');
-model.probe('dom1').set('table', 'tbl1');
-model.probe('dom1').set('descr', 'integrated total core power');
-model.probe('dom1').set('window', 'window1');
-model.probe('dom1').set('expr', 'Pint');
-model.probe('dom1').set('unit', 'W*m');
-model.probe.create('dom2', 'Domain');
-model.probe('dom2').model('mod1');
-model.probe('dom2').selection.set([7]);
-model.probe('dom2').label('average_fuel_temp_probe');
-model.probe('dom2').set('table', 'tbl1');
-model.probe('dom2').set('descr', 'T_fuel');
-model.probe('dom2').set('window', 'window2');
-model.probe('dom2').set('expr', 'T_fuel');
-model.probe('dom2').set('unit', 'degC');
-model.probe.create('dom3', 'Domain');
-model.probe('dom3').model('mod1');
-model.probe('dom3').selection.set([7]);
-model.probe('dom3').label('average_flibe_temp_probe');
-model.probe('dom3').set('table', 'tbl1');
-model.probe('dom3').set('descr', 'T_flibe');
-model.probe('dom3').set('window', 'window2');
-model.probe('dom3').set('expr', 'T_flibe');
-model.probe('dom3').set('unit', 'degC');
-model.probe.create('dom4', 'Domain');
-model.probe('dom4').model('mod1');
-model.probe('dom4').label('max fuel temp');
-model.probe('dom4').set('probename', 'T_fuel_max');
-model.probe('dom4').set('type', 'maximum');
-model.probe('dom4').selection.set([7]);
-model.probe('dom4').set('expr', 'T_fuel');
-model.probe('dom4').set('table', 'tbl1');
-model.probe('dom4').set('window', 'window3');
-model.probe('dom4').set('unit', 'degC');
-model.probe.duplicate('dom5', 'dom4');
-model.probe('dom5').set('expr', 'T_flibe');
-model.probe('dom5').label('max flibe temp');
-model.probe('dom5').set('probename', 'T_flibe_max');
-model.probe('dom5').set('table', 'tbl1');
-model.probe('dom5').set('window', 'window3');
-model.probe('dom5').set('unit', 'degC');
+model.func.create('step1', 'Step');
+model.func.create('rm1', 'Ramp');
+model.func.create('an4', 'Analytic');
+model.func.create('an6', 'Analytic');
+model.func('step1').label('step_fun');
+model.func('step1').set('funcname', 'step_fun');
+model.func('step1').set('location', '0.1');
+model.func('step1').set('from', '1');
+model.func('step1').set('to', 'reactivity_insertion+1');
+model.func('step1').set('smooth', '0');
+model.func('rm1').set('location', 'OCOnset');
+model.func('rm1').set('slope', 'OCSlope');
+model.func('rm1').set('cutoff', '-100');
+model.func('rm1').set('cutoffactive', true);
+model.func('an4').label('FLiBe Density');
+model.func('an4').set('funcname', 'rho_flibe');
+model.func('an4').set('expr', '2413-0.488*T');
+model.func('an4').set('args', {'T'});
+model.func('an4').set('argunit', 'K');
+model.func('an4').set('fununit', 'kg/m^3');
+model.func('an4').set('plotargs', {'T' '400' '2000'});
+model.func('an6').label('FLiBe Dynamic Viscosity');
+model.func('an6').set('funcname', 'mu_flibe');
+model.func('an6').set('expr', '1.16*10^(-4)*exp(3755/T)');
+model.func('an6').set('args', {'T'});
+model.func('an6').set('argunit', 'K');
+model.func('an6').set('fununit', 'Pa*s');
+model.func('an6').set('plotargs', {'T' '600' '800'});
+
+model.component('mod1').geom('geom1').axisymmetric(true);
+
+model.component('mod1').mesh.create('mesh1');
+
+model.component('mod1').geom('geom1').label('TMSR_core');
+model.component('mod1').geom('geom1').create('pol1', 'Polygon');
+model.component('mod1').geom('geom1').feature('pol1').label('upper_core');
+model.component('mod1').geom('geom1').feature('pol1').set('x', '0, 0.675, 0.675, 0.1, 0.1, 0');
+model.component('mod1').geom('geom1').feature('pol1').set('y', 'zin, zout, 2.33, 2.66, 2.86, 2.86');
+model.component('mod1').geom('geom1').create('pol2', 'Polygon');
+model.component('mod1').geom('geom1').feature('pol2').label('reflector');
+model.component('mod1').geom('geom1').feature('pol2').set('x', '0.1, 1.3, 1.3, 0.1, 0.1,0.675,0.675,0.1');
+model.component('mod1').geom('geom1').feature('pol2').set('y', '0, 0, 2.86, 2.86, 2.66,2.33,0.53,0.2');
+model.component('mod1').geom('geom1').create('pol3', 'Polygon');
+model.component('mod1').geom('geom1').feature('pol3').label('bottom_core');
+model.component('mod1').geom('geom1').feature('pol3').set('x', '0,0.1,0.1,0.675,0.675,0');
+model.component('mod1').geom('geom1').feature('pol3').set('y', '0,0,0.2,0.53,zout,zin');
+model.component('mod1').geom('geom1').run;
+
+model.component('mod1').variable.create('var1');
+model.component('mod1').variable('var1').set('DT', '100[K]', 'core temperature rise');
+model.component('mod1').variable('var1').set('mL', 'Qcore*decay/cpL/DT', 'salt mass flowrate');
+model.component('mod1').variable('var1').set('g', '9.81[m/s^2]', 'gravitational acceleration');
+model.component('mod1').variable('var1').set('SA', '6/d', 'pebble specific surface area');
+model.component('mod1').variable('var1').set('v0in', 'mL*rhoL/Ain');
+model.component('mod1').variable('var1').set('v0ghost', 'mL*rhoL/Ainghost');
+model.component('mod1').variable('var1').set('Acore2', 'pi*2*(2.8656[m]-1.5[m])*0.9[m]', 'inlet cross-sectional area on diverging region inner reflector');
+model.component('mod1').variable('var1').set('Acore1', 'pi*2*Hinlet*(0.9[m])', 'inlet cross-sectional area on core plug flow region inner reflector');
+model.component('mod1').variable('var1').set('Ain', '2.8743 [m^2]');
+model.component('mod1').variable('var1').set('Ainghost', '3.29867 [m^2]');
+model.component('mod1').variable.create('var2');
+model.component('mod1').variable('var2').set('Kbr', 'd^2/1012.5', 'bed permeability, Ergun/Kozeni');
+model.component('mod1').variable('var2').set('cF', '0.52', 'Forchheimer drag coefficient, from Ergun correlation (Beaver coefficient)');
+model.component('mod1').variable('var2').set('ep', '0.40', 'porosity');
+model.component('mod1').variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
+model.component('mod1').variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
+model.component('mod1').variable('var2').set('d', '3[cm]', 'pebble diameter');
+model.component('mod1').variable.create('var3');
+model.component('mod1').variable('var3').set('cpL', '2415.78[J/kg/K]', 'salt heat capacity, constant');
+model.component('mod1').variable('var3').set('rhoL', '1962.67[kg/m^3]', 'salt density, 650C');
+model.component('mod1').variable('var3').set('muL', '0.00678[Pa*s]', 'salt viscosity, 650C');
+model.component('mod1').variable('var3').set('kL', '1.091[W/m/K]', 'salt thermal conductivity, 650C');
+model.component('mod1').variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coefficient, constant');
+model.component('mod1').variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
+model.component('mod1').variable('var3').set('unitstest', 'betaL*To*rhoL*g');
+model.component('mod1').variable('var3').set('Pr', 'muL*cpL/kL');
+model.component('mod1').variable.create('var4');
+model.component('mod1').variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TMSR-SF1 & SF0)');
+model.component('mod1').variable('var4').set('k_fuel', '15[W/m/K]');
+model.component('mod1').variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
+model.component('mod1').variable('var4').selection.geom('geom1', 2);
+model.component('mod1').variable('var4').selection.set([2]);
+model.component('mod1').variable.create('var_xs_gr');
+model.component('mod1').variable('var_xs_gr').set('beta1', '6.74036000e-03');
+model.component('mod1').variable('var_xs_gr').set('betas1', '2.16906000e-04');
+model.component('mod1').variable('var_xs_gr').set('betas2', '1.12198000e-03');
+model.component('mod1').variable('var_xs_gr').set('betas3', '1.08332000e-03');
+model.component('mod1').variable('var_xs_gr').set('betas4', '3.09711000e-03');
+model.component('mod1').variable('var_xs_gr').set('betas5', '8.98681000e-04');
+model.component('mod1').variable('var_xs_gr').set('betas6', '3.22370000e-04');
+model.component('mod1').variable('var_xs_gr').set('chid1', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid2', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid3', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid4', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid5', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid6', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid7', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chid8', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip1', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip2', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip3', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip4', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip5', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip6', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip7', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chip8', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit1', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit2', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit3', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit4', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit5', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit6', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit7', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('chit8', '0.00000000e+00');
+model.component('mod1').variable('var_xs_gr').set('diff11', '2.40476000e+00[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff12', '1.12104000e+00[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff13', '8.51477000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff14', '8.48243000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff15', '8.44276000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff16', '8.35935000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff17', '8.05342000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff18', '7.31221000e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss1', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss2', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss3', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss4', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss5', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss6', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss7', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('fiss8', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV1', '4.83500000e-10[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV2', '1.99556000e-09[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV3', '3.44072000e-08[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV4', '2.09009000e-07[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV5', '7.48344000e-07[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV6', '1.38031000e-06[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV7', '2.16906000e-06[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('invV8', '4.15885000e-06[s/cm]');
+model.component('mod1').variable('var_xs_gr').set('kappa1', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa2', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa3', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa4', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa5', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa6', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa7', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('kappa8', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var_xs_gr').set('lambdas1', '1.24906000e-02[1/s]');
+model.component('mod1').variable('var_xs_gr').set('lambdas2', '3.18190000e-02[1/s]');
+model.component('mod1').variable('var_xs_gr').set('lambdas3', '1.09397000e-01[1/s]');
+model.component('mod1').variable('var_xs_gr').set('lambdas4', '3.17091000e-01[1/s]');
+model.component('mod1').variable('var_xs_gr').set('lambdas5', '1.35372000e+00[1/s]');
+model.component('mod1').variable('var_xs_gr').set('lambdas6', '8.64433000e+00[1/s]');
+model.component('mod1').variable('var_xs_gr').set('nsf1', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf2', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf3', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf4', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf5', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf6', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf7', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('nsf8', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('diff21', '1.62315119e+00[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff22', '7.53660277e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff23', '6.19721394e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff24', '6.17686421e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff25', '6.16491349e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff26', '6.13669488e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff27', '6.01077732e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('diff28', '5.67818508e-01[cm]');
+model.component('mod1').variable('var_xs_gr').set('rem1', '3.57202000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem2', '1.74186000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem3', '1.22520000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem4', '2.72112000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem5', '7.19732000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem6', '7.93438000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem7', '6.70170000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('rem8', '8.22232000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat11', '1.22702000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat12', '3.56405000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat13', '1.12169000e-06[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat14', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat15', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat16', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat17', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat18', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat21', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat22', '3.23773000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat23', '1.74185000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat24', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat25', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat26', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat27', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat28', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat31', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat32', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat33', '4.02681000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat34', '1.22494000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat35', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat36', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat37', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat38', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat41', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat42', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat43', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat44', '3.89089000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat45', '2.71958000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat46', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat47', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat48', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat51', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat52', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat53', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat54', '1.57048000e-04[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat55', '3.45134000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat56', '7.06557000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat57', '1.10512000e-03[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat58', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat61', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat62', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat63', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat64', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat65', '9.95842000e-03[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat66', '3.39681000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat67', '6.57933000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat68', '3.48979000e-03[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat71', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat72', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat73', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat74', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat75', '1.22436000e-04[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat76', '4.52400000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat77', '3.60786000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat78', '2.14943000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat81', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat82', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat83', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat84', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat85', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat86', '7.74910000e-03[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat87', '7.41683000e-02[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('scat88', '3.70638000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot1', '1.58422000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot2', '3.41192000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot3', '4.14933000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot4', '4.16300000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot5', '4.17107000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot6', '4.19025000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot7', '4.27803000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').set('tot8', '4.52861000e-01[1/cm]');
+model.component('mod1').variable('var_xs_gr').selection.geom('geom1', 2);
+model.component('mod1').variable('var_xs_gr').selection.set([3]);
+model.component('mod1').variable.create('var17');
+model.component('mod1').variable('var17').set('beta1', '6.74138000e-03');
+model.component('mod1').variable('var17').set('betas1', '2.16124000e-04');
+model.component('mod1').variable('var17').set('betas2', '1.12075000e-03');
+model.component('mod1').variable('var17').set('betas3', '1.08895000e-03');
+model.component('mod1').variable('var17').set('betas4', '3.09517000e-03');
+model.component('mod1').variable('var17').set('betas5', '9.02169000e-04');
+model.component('mod1').variable('var17').set('betas6', '3.18206000e-04');
+model.component('mod1').variable('var17').set('chid1', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid2', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid3', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid4', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid5', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid6', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid7', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chid8', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip1', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip2', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip3', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip4', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip5', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip6', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip7', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chip8', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit1', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit2', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit3', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit4', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit5', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit6', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit7', '0.00000000e+00');
+model.component('mod1').variable('var17').set('chit8', '0.00000000e+00');
+model.component('mod1').variable('var17').set('diff11', '2.50695000e+00[cm]');
+model.component('mod1').variable('var17').set('diff12', '1.23436000e+00[cm]');
+model.component('mod1').variable('var17').set('diff13', '1.47938000e+00[cm]');
+model.component('mod1').variable('var17').set('diff14', '1.49494000e+00[cm]');
+model.component('mod1').variable('var17').set('diff15', '1.49260000e+00[cm]');
+model.component('mod1').variable('var17').set('diff16', '1.47788000e+00[cm]');
+model.component('mod1').variable('var17').set('diff17', '1.44905000e+00[cm]');
+model.component('mod1').variable('var17').set('diff18', '1.33316000e+00[cm]');
+model.component('mod1').variable('var17').set('fiss1', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss2', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss3', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss4', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss5', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss6', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss7', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('fiss8', '0.00000000e+00[1/cm]');
+model.component('mod1').variable('var17').set('invV1', '4.81281000e-10[s/cm]');
+model.component('mod1').variable('var17').set('invV2', '1.96456000e-09[s/cm]');
+model.component('mod1').variable('var17').set('invV3', '3.07002000e-08[s/cm]');
+model.component('mod1').variable('var17').set('invV4', '2.03803000e-07[s/cm]');
+model.component('mod1').variable('var17').set('invV5', '6.76639000e-07[s/cm]');
+model.component('mod1').variable('var17').set('invV6', '1.36626000e-06[s/cm]');
+model.component('mod1').variable('var17').set('invV7', '2.16506000e-06[s/cm]');
+model.component('mod1').variable('var17').set('invV8', '4.16822000e-06[s/cm]');
+model.component('mod1').variable('var17').set('kappa1', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa2', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa3', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa4', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa5', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa6', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa7', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('kappa8', '0.00000000e+00[MeV]');
+model.component('mod1').variable('var17').set('lambdas1', '1.24906000e-02[1/s]');
+model.component('mod1').variable('var17').set('lambdas2', '3.18193000e-02[1/s]');
+model.component('mod1').variable('var17').set('lambdas3', '1.09398000e-01[1/s]');
+model.component('mod1').variable('var17').set('lambdas4', '3.17094000e-01[1/s]');
+model.component('mod1').variable('var17').set('lambdas5', '1.35372000e+00[1/s]');
+model.component('mod1').variable('var17').set('lambdas6', '8.64384000e+00[1/s]');
+model.component('mod1').variable('var17').set('nsf1', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf2', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf3', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf4', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf5', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf6', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf7', '0[1/cm]');
+model.component('mod1').variable('var17').set('nsf8', '0[1/cm]');
+model.component('mod1').variable('var17').set('diff21', '(9.67440564e-01 +( T_flibe[1/K] *( 3.41727168e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff22', '(5.51687333e-01 +( T_flibe[1/K] *( 1.87228735e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff23', '(7.09570819e-01 +( T_flibe[1/K] *( 2.51040495e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff24', '(7.17453975e-01 +( T_flibe[1/K] *( 2.53815168e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff25', '(7.16560170e-01 +( T_flibe[1/K] *( 2.53491858e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff26', '(7.09902822e-01 +( T_flibe[1/K] *( 2.51144957e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff27', '(6.96872275e-01 +( T_flibe[1/K] *( 2.46551191e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('diff28', '(6.42094837e-01 +( T_flibe[1/K] *( 2.27339541e-04 )) ) [cm]');
+model.component('mod1').variable('var17').set('rem1', '(6.45216591e-02 +( T_flibe[1/K] *( -1.30609784e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem2', '(1.80092557e-02 +( T_flibe[1/K] *( -3.61778800e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem3', '(7.27407046e-03 +( T_flibe[1/K] *( -1.49792576e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem4', '(1.80244534e-02 +( T_flibe[1/K] *( -3.68932880e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem5', '(3.58918829e-02 +( T_flibe[1/K] *( -7.13114400e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem6', '(7.52914589e-02 +( T_flibe[1/K] *( -1.52271616e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem7', '(8.05941058e-02 +( T_flibe[1/K] *( -1.62992488e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('rem8', '(1.24761841e-01 +( T_flibe[1/K] *( -2.51953424e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat11', '(1.82943497e-01 +( T_flibe[1/K] *( -3.69362320e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat21', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat31', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat41', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat51', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat61', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat71', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat81', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat12', '(6.25949998e-02 +( T_flibe[1/K] *( -1.26770200e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat22', '(4.17785532e-01 +( T_flibe[1/K] *( -8.24212480e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat32', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat42', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat52', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat62', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat72', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat82', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat13', '(5.39988978e-05 +( T_flibe[1/K] *( -1.09515984e-08 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat23', '(1.79261022e-02 +( T_flibe[1/K] *( -3.60178160e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat33', '(3.30067195e-01 +( T_flibe[1/K] *( -6.67208240e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat43', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat53', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat63', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat73', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat83', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat14', '(4.50722843e-09 +( T_flibe[1/K] *( -1.62999320e-12 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat24', '(2.73446664e-08 +( T_flibe[1/K] *( -5.87556880e-12 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat34', '(7.23801960e-03 +( T_flibe[1/K] *( -1.49062040e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat44', '(3.15611269e-01 +( T_flibe[1/K] *( -6.37772080e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat54', '(2.12422421e-04 +( T_flibe[1/K] *( -4.32470480e-08 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat64', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat74', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat84', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat15', '(3.58771495e-10 +( T_flibe[1/K] *( -1.30927472e-13 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat25', '(7.36975186e-10 +( T_flibe[1/K] *( -1.37776064e-13 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat35', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat45', '(1.78094831e-02 +( T_flibe[1/K] *( -3.64575040e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat55', '(2.98162961e-01 +( T_flibe[1/K] *( -6.04207440e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat65', '(8.65580373e-03 +( T_flibe[1/K] *( -1.75649744e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat75', '(3.06601125e-05 +( T_flibe[1/K] *( -6.20033280e-09 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat85', '(5.68413938e-07 +( T_flibe[1/K] *( -1.09990808e-10 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat16', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat26', '(3.81928624e-11 +( T_flibe[1/K] *( -1.74987040e-14 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat36', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat46', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat56', '(3.46598633e-02 +( T_flibe[1/K] *( -6.88304480e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat66', '(2.61894044e-01 +( T_flibe[1/K] *( -5.29582480e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat76', '(4.23754891e-02 +( T_flibe[1/K] *( -8.55063840e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat86', '(2.12364322e-03 +( T_flibe[1/K] *( -4.27966240e-07 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat17', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat27', '(4.47250669e-11 +( T_flibe[1/K] *( -3.37724304e-14 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat37', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat47', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat57', '(3.04901524e-04 +( T_flibe[1/K] *( -6.06335120e-08 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat67', '(6.41213892e-02 +( T_flibe[1/K] *( -1.29624024e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat77', '(2.62892882e-01 +( T_flibe[1/K] *( -5.31627200e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat87', '(1.18201874e-01 +( T_flibe[1/K] *( -2.38692024e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat18', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat28', '(-2.33614823e-11 +( T_flibe[1/K] *( 2.75893728e-14 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat38', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat48', '0[1/cm]');
+model.component('mod1').variable('var17').set('scat58', '(1.83634866e-06 +( T_flibe[1/K] *( -3.68981680e-10 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat68', '(1.07748614e-03 +( T_flibe[1/K] *( -2.17879312e-07 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat78', '(3.59096218e-02 +( T_flibe[1/K] *( -7.28174080e-06 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('scat88', '(2.48000069e-01 +( T_flibe[1/K] *( -5.02195920e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot1', '(2.47465555e-01 +( T_flibe[1/K] *( -4.99975520e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot2', '(4.35796151e-01 +( T_flibe[1/K] *( -8.60402560e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot3', '(3.37340859e-01 +( T_flibe[1/K] *( -6.82184960e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot4', '(3.33636104e-01 +( T_flibe[1/K] *( -6.74669760e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot5', '(3.34053464e-01 +( T_flibe[1/K] *( -6.75504240e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot6', '(3.37184847e-01 +( T_flibe[1/K] *( -6.81848240e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot7', '(3.43487336e-01 +( T_flibe[1/K] *( -6.94619200e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').set('tot8', '(3.72760333e-01 +( T_flibe[1/K] *( -7.54135680e-05 )) ) [1/cm]');
+model.component('mod1').variable('var17').selection.geom('geom1', 2);
+model.component('mod1').variable('var17').selection.set([1]);
+model.component('mod1').variable.create('var16');
+model.component('mod1').variable('var16').set('beta1', '6.72588000e-03');
+model.component('mod1').variable('var16').set('betas1', '2.15006000e-04');
+model.component('mod1').variable('var16').set('betas2', '1.11859000e-03');
+model.component('mod1').variable('var16').set('betas3', '1.08510000e-03');
+model.component('mod1').variable('var16').set('betas4', '3.09486000e-03');
+model.component('mod1').variable('var16').set('betas5', '8.98386000e-04');
+model.component('mod1').variable('var16').set('betas6', '3.13944000e-04');
+model.component('mod1').variable('var16').set('chid1', '3.89652000e-02');
+model.component('mod1').variable('var16').set('chid2', '9.38506000e-01');
+model.component('mod1').variable('var16').set('chid3', '2.25000000e-02');
+model.component('mod1').variable('var16').set('chid4', '2.55806000e-05');
+model.component('mod1').variable('var16').set('chid5', '3.01332000e-06');
+model.component('mod1').variable('var16').set('chid6', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chid7', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chid8', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chip1', '5.73270000e-01');
+model.component('mod1').variable('var16').set('chip2', '4.25193000e-01');
+model.component('mod1').variable('var16').set('chip3', '1.53597000e-03');
+model.component('mod1').variable('var16').set('chip4', '1.57730000e-07');
+model.component('mod1').variable('var16').set('chip5', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chip6', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chip7', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chip8', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chit1', '5.69676330e-01');
+model.component('mod1').variable('var16').set('chit2', '4.28645482e-01');
+model.component('mod1').variable('var16').set('chit3', '1.67697155e-03');
+model.component('mod1').variable('var16').set('chit4', '3.28721173e-07');
+model.component('mod1').variable('var16').set('chit5', '2.02672287e-08');
+model.component('mod1').variable('var16').set('chit6', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chit7', '0.00000000e+00');
+model.component('mod1').variable('var16').set('chit8', '0.00000000e+00');
+model.component('mod1').variable('var16').set('diff11', '2.32551000e+00[cm]');
+model.component('mod1').variable('var16').set('diff12', '1.13241000e+00[cm]');
+model.component('mod1').variable('var16').set('diff13', '1.00813000e+00[cm]');
+model.component('mod1').variable('var16').set('diff14', '1.00567000e+00[cm]');
+model.component('mod1').variable('var16').set('diff15', '1.01368000e+00[cm]');
+model.component('mod1').variable('var16').set('diff16', '1.01237000e+00[cm]');
+model.component('mod1').variable('var16').set('diff17', '9.88464000e-01[cm]');
+model.component('mod1').variable('var16').set('diff18', '8.99919000e-01[cm]');
+model.component('mod1').variable('var16').set('fiss1', '7.77677000e-05[1/cm]');
+model.component('mod1').variable('var16').set('fiss2', '2.50236000e-05[1/cm]');
+model.component('mod1').variable('var16').set('fiss3', '1.81061000e-04[1/cm]');
+model.component('mod1').variable('var16').set('fiss4', '6.38238000e-04[1/cm]');
+model.component('mod1').variable('var16').set('fiss5', '6.72148000e-04[1/cm]');
+model.component('mod1').variable('var16').set('fiss6', '2.29634000e-03[1/cm]');
+model.component('mod1').variable('var16').set('fiss7', '3.16606000e-03[1/cm]');
+model.component('mod1').variable('var16').set('fiss8', '6.53168000e-03[1/cm]');
+model.component('mod1').variable('var16').set('invV1', '4.79466000e-10[s/cm]');
+model.component('mod1').variable('var16').set('invV2', '1.94704000e-09[s/cm]');
+model.component('mod1').variable('var16').set('invV3', '3.05696000e-08[s/cm]');
+model.component('mod1').variable('var16').set('invV4', '2.03840000e-07[s/cm]');
+model.component('mod1').variable('var16').set('invV5', '6.74629000e-07[s/cm]');
+model.component('mod1').variable('var16').set('invV6', '1.36266000e-06[s/cm]');
+model.component('mod1').variable('var16').set('invV7', '2.16145000e-06[s/cm]');
+model.component('mod1').variable('var16').set('invV8', '4.14824000e-06[s/cm]');
+model.component('mod1').variable('var16').set('kappa1', '2.05166000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa2', '2.02122000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa3', '2.02024000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa4', '2.02023000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa5', '2.02023000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa6', '2.02023000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa7', '2.02023000e+02[MeV]');
+model.component('mod1').variable('var16').set('kappa8', '2.02023000e+02[MeV]');
+model.component('mod1').variable('var16').set('lambdas1', '1.24906000e-02[1/s]');
+model.component('mod1').variable('var16').set('lambdas2', '3.18199000e-02[1/s]');
+model.component('mod1').variable('var16').set('lambdas3', '1.09397000e-01[1/s]');
+model.component('mod1').variable('var16').set('lambdas4', '3.17093000e-01[1/s]');
+model.component('mod1').variable('var16').set('lambdas5', '1.35372000e+00[1/s]');
+model.component('mod1').variable('var16').set('lambdas6', '8.64270000e+00[1/s]');
+model.component('mod1').variable('var16').set('nsf1', '(2.14331713e-04 +( log(T_fuel[1/K]) *( -2.89002231e-08 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf2', '(6.16490889e-05 +( log(T_fuel[1/K]) *( 6.41484972e-09 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf3', '(4.42656421e-04 +( log(T_fuel[1/K]) *( -3.36905357e-07 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf4', '(1.52087678e-03 +( log(T_fuel[1/K]) *( 5.89964874e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf5', '(1.63940601e-03 +( log(T_fuel[1/K]) *( -2.58509848e-07 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf6', '(5.64675284e-03 +( log(T_fuel[1/K]) *( -8.84587168e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf7', '(7.79506915e-03 +( log(T_fuel[1/K]) *( -1.42307696e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('nsf8', '(1.62679390e-02 +( log(T_fuel[1/K]) *( -6.09430908e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('diff21', '(1.49172833e+00 +( log(T_fuel[1/K]) *( -4.60476347e-05 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff22', '(7.62740146e-01 +( log(T_fuel[1/K]) *( 1.07867676e-05 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff23', '(7.36190480e-01 +( log(T_fuel[1/K]) *( -1.84255990e-04 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff24', '(7.41108989e-01 +( log(T_fuel[1/K]) *( -1.21265072e-03 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff25', '(7.39146972e-01 +( log(T_fuel[1/K]) *( 2.89917993e-04 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff26', '(7.41441501e-01 +( log(T_fuel[1/K]) *( 2.58948266e-04 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff27', '(7.31291014e-01 +( log(T_fuel[1/K]) *( 3.11861344e-04 )) ) [cm]');
+model.component('mod1').variable('var16').set('diff28', '(6.81974177e-01 +( log(T_fuel[1/K]) *( 3.03975388e-04 )) ) [cm]');
+model.component('mod1').variable('var16').set('rem1', '(3.90495959e-02 +( log(T_fuel[1/K]) *( -1.36549251e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem2', '(1.45494441e-02 +( log(T_fuel[1/K]) *( -2.25543364e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem3', '(8.28458909e-03 +( log(T_fuel[1/K]) *( 5.68462959e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem4', '(2.11693677e-02 +( log(T_fuel[1/K]) *( 2.67812199e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem5', '(3.62650763e-02 +( log(T_fuel[1/K]) *( 7.96218768e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem6', '(7.07036413e-02 +( log(T_fuel[1/K]) *( 2.09957656e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem7', '(6.83730624e-02 +( log(T_fuel[1/K]) *( 7.65764970e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('rem8', '(9.70963578e-02 +( log(T_fuel[1/K]) *( 1.41078296e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat11', '(1.33327239e-01 +( log(T_fuel[1/K]) *( 7.04984400e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat21', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat31', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat41', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat51', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat61', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat71', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat81', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat12', '(3.83364433e-02 +( log(T_fuel[1/K]) *( -2.88733120e-07 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat22', '(3.22579853e-01 +( log(T_fuel[1/K]) *( -2.31977945e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat32', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat42', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat52', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat62', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat72', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat82', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat13', '(1.68954520e-05 +( log(T_fuel[1/K]) *( 4.84303269e-08 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat23', '(1.44778861e-02 +( log(T_fuel[1/K]) *( -2.42087471e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat33', '(3.41003541e-01 +( log(T_fuel[1/K]) *( 8.19450528e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat43', '(-4.43389226e-07 +( log(T_fuel[1/K]) *( 7.19123902e-08 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat53', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat63', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat73', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat83', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat14', '(-1.81206589e-09 +( log(T_fuel[1/K]) *( 5.97293522e-10 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat24', '(9.87503712e-10 +( log(T_fuel[1/K]) *( 1.28547595e-09 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat34', '(7.95448982e-03 +( log(T_fuel[1/K]) *( -2.84998976e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat44', '(3.25763091e-01 +( log(T_fuel[1/K]) *( 3.11968362e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat54', '(1.92684622e-04 +( log(T_fuel[1/K]) *( 1.13380274e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat64', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat74', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat84', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat15', '(-1.89446835e-09 +( log(T_fuel[1/K]) *( 3.07259940e-10 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat25', '(9.07774880e-10 +( log(T_fuel[1/K]) *( -1.20343324e-10 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat35', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat45', '(2.08409992e-02 +( log(T_fuel[1/K]) *( -2.19300053e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat55', '(3.11622085e-01 +( log(T_fuel[1/K]) *( -2.15166606e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat65', '(9.51518348e-03 +( log(T_fuel[1/K]) *( 1.44831779e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat75', '(7.54064805e-05 +( log(T_fuel[1/K]) *( -6.63476791e-08 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat85', '(2.05022748e-07 +( log(T_fuel[1/K]) *( 3.75078791e-09 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat16', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat26', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat36', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat46', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat56', '(3.45017716e-02 +( log(T_fuel[1/K]) *( 7.60617130e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat66', '(2.76109509e-01 +( log(T_fuel[1/K]) *( -1.41610761e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat76', '(3.91264959e-02 +( log(T_fuel[1/K]) *( 5.97008448e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat86', '(4.57746080e-03 +( log(T_fuel[1/K]) *( 8.90098378e-07 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat17', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat27', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat37', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat47', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat57', '(4.42444306e-04 +( log(T_fuel[1/K]) *( 1.24827252e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat67', '(5.56762921e-02 +( log(T_fuel[1/K]) *( 1.03565520e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat77', '(2.83250865e-01 +( log(T_fuel[1/K]) *( -2.25431850e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat87', '(8.26399854e-02 +( log(T_fuel[1/K]) *( 1.67579576e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat18', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat28', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat38', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat48', '0[1/cm]');
+model.component('mod1').variable('var16').set('scat58', '(5.40144543e-07 +( log(T_fuel[1/K]) *( 1.27415222e-08 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat68', '(2.05474411e-03 +( log(T_fuel[1/K]) *( -2.96055080e-07 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat78', '(2.43688041e-02 +( log(T_fuel[1/K]) *( 2.20041685e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('scat88', '(2.79957453e-01 +( log(T_fuel[1/K]) *( -3.08236904e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot1', '(1.72379141e-01 +( log(T_fuel[1/K]) *( 5.32322318e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot2', '(3.37130353e-01 +( log(T_fuel[1/K]) *( -4.76685935e-06 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot3', '(3.49287551e-01 +( log(T_fuel[1/K]) *( 8.77081665e-05 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot4', '(3.46930034e-01 +( log(T_fuel[1/K]) *( 5.80093587e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot5', '(3.47889133e-01 +( log(T_fuel[1/K]) *( -1.35759599e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot6', '(3.46812991e-01 +( log(T_fuel[1/K]) *( -1.20576085e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot7', '(3.51625976e-01 +( log(T_fuel[1/K]) *( -1.49126941e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').set('tot8', '(3.77053476e-01 +( log(T_fuel[1/K]) *( -1.67096332e-04 )) ) [1/cm]');
+model.component('mod1').variable('var16').selection.geom('geom1', 2);
+model.component('mod1').variable('var16').selection.set([2]);
+model.component('mod1').variable.create('var18');
+model.component('mod1').variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
+model.component('mod1').variable('var18').set('PdensityN', 'Pdensity*Pop/Pint', 'power density normalized to Pop');
+model.component('mod1').variable('var18').set('Pint', 'intop1(Pdensity)', 'integrated total core power');
+model.component('mod1').variable('var18').set('PintN', 'intop1(PdensityN)', 'integrated total core power normalized to Pop, should be equal to Pop');
+model.component('mod1').variable('var18').selection.geom('geom1', 2);
+model.component('mod1').variable('var18').selection.set([1 2 3]);
+model.component('mod1').variable.create('var22');
+model.component('mod1').variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
+model.component('mod1').variable('var22').set('sumN', 'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+model.component('mod1').variable('var22').selection.geom('geom1', 2);
+model.component('mod1').variable('var22').selection.set([1 2 3]);
+model.component('mod1').variable.create('var_T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_1', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_2', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_3', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_4', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_5', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_6', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_7', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_8', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_9', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_10', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_11', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_12', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_13', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_14', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_15', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_16', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_17', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_18', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_19', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_20', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_21', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_22', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_23', 'T_fuel');
+model.component('mod1').variable('var_T_fuel').set('T_fuel_24', 'T_fuel');
+model.component('mod1').variable.create('var19');
+model.component('mod1').variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
+model.component('mod1').variable.create('var20');
+model.component('mod1').variable('var20').set('FluxN1', 'Flux1*Pop/Pint', 'Pop is the operation power');
+model.component('mod1').variable('var20').set('FluxN2', 'Flux2*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN3', 'Flux3*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN4', 'Flux4*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN5', 'Flux5*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN6', 'Flux6*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN7', 'Flux7*Pop/Pint');
+model.component('mod1').variable('var20').set('FluxN8', 'Flux8*Pop/Pint');
+model.component('mod1').variable.create('var23');
+model.component('mod1').variable('var23').set('ConcN1', 'Conc1*Pop/Pint');
+model.component('mod1').variable('var23').set('ConcN2', 'Conc1*Pop/Pint');
+model.component('mod1').variable('var23').set('ConcN3', 'Conc1*Pop/Pint');
+model.component('mod1').variable('var23').set('ConcN4', 'Conc1*Pop/Pint');
+model.component('mod1').variable('var23').set('ConcN5', 'Conc1*Pop/Pint');
+model.component('mod1').variable('var23').set('ConcN6', 'Conc1*Pop/Pint');
+
+model.view.create('view2', 3);
+
+model.component('mod1').material.create('mat1', 'Common');
+model.component('mod1').material.create('mat3', 'Common');
+model.component('mod1').material.create('mat2', 'Common');
+model.component('mod1').material.create('mat4', 'Common');
+model.component('mod1').material('mat1').selection.set([2]);
+model.component('mod1').material('mat3').selection.set([1]);
+model.component('mod1').material('mat2').selection.set([3]);
+model.component('mod1').material('mat4').propertyGroup.create('Enu', 'Young''s modulus and Poisson''s ratio');
+model.component('mod1').material('mat4').propertyGroup.create('Murnaghan', 'Murnaghan');
+model.component('mod1').material('mat4').propertyGroup.create('Lame', ['Lam' native2unicode(hex2dec({'00' 'e9'}), 'unicode') ' parameters']);
+
+model.component('mod1').cpl.create('intop1', 'Integration');
+model.component('mod1').cpl.create('aveop1', 'Average');
+model.component('mod1').cpl('intop1').selection.set([2]);
+model.component('mod1').cpl('aveop1').selection.set([2]);
+
+model.component('mod1').physics.create('ht', 'HeatTransferInFluids', 'geom1');
+model.component('mod1').physics('ht').field('temperature').field('T_flibe');
+model.component('mod1').physics('ht').selection.set([1 2]);
+model.component('mod1').physics('ht').create('temp1', 'TemperatureBoundary', 1);
+model.component('mod1').physics('ht').feature('temp1').selection.set([2 8]);
+model.component('mod1').physics('ht').create('hs1', 'HeatSource', 2);
+model.component('mod1').physics('ht').feature('hs1').selection.set([2]);
+model.component('mod1').physics('ht').create('hs2', 'HeatSource', 2);
+model.component('mod1').physics('ht').feature('hs2').selection.set([2]);
+model.component('mod1').physics('ht').create('ofl1', 'ConvectiveOutflow', 1);
+model.component('mod1').physics('ht').feature('ofl1').selection.set([5 10]);
+model.component('mod1').physics.create('ht3', 'HeatTransferInFluids', 'geom1');
+model.component('mod1').physics('ht3').identifier('ht3');
+model.component('mod1').physics('ht3').field('temperature').field('T_fuel');
+model.component('mod1').physics('ht3').selection.set([2]);
+model.component('mod1').physics('ht3').create('solid1', 'SolidHeatTransferModel', 2);
+model.component('mod1').physics('ht3').feature('solid1').selection.set([2]);
+model.component('mod1').physics('ht3').create('hs1', 'HeatSource', 2);
+model.component('mod1').physics('ht3').feature('hs1').selection.set([2]);
+model.component('mod1').physics('ht3').create('hs2', 'HeatSource', 2);
+model.component('mod1').physics('ht3').feature('hs2').selection.set([2]);
+model.component('mod1').physics('ht3').create('hs3', 'HeatSource', 2);
+model.component('mod1').physics('ht3').feature('hs3').selection.set([2]);
+model.component('mod1').physics.create('neutrondiffusion', 'CoefficientFormPDE', 'geom1');
+model.component('mod1').physics('neutrondiffusion').identifier('neutrondiffusion');
+model.component('mod1').physics('neutrondiffusion').field('dimensionless').field('FluxN');
+model.component('mod1').physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2'  ...
+'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
+model.component('mod1').physics('neutrondiffusion').create('dir1', 'DirichletBoundary', 1);
+model.component('mod1').physics('neutrondiffusion').feature('dir1').selection.set([2 5 7 11 14]);
+model.component('mod1').physics('neutrondiffusion').create('flux1', 'FluxBoundary', 1);
+
+model.component('mod1').mesh('mesh1').autoMeshSize(7);
+
+model.component('mod1').probe.create('dom1', 'Domain');
+model.component('mod1').probe.create('dom2', 'Domain');
+model.component('mod1').probe.create('dom3', 'Domain');
+model.component('mod1').probe.create('dom4', 'Domain');
+model.component('mod1').probe.create('dom5', 'Domain');
+model.component('mod1').probe('dom2').selection.set([2]);
+model.component('mod1').probe('dom3').selection.set([2]);
+model.component('mod1').probe('dom4').selection.set([2]);
+model.component('mod1').probe('dom5').selection.set([2]);
+
+model.component('mod1').variable('var4').label('fuel properties');
+model.component('mod1').variable('var_xs_gr').label('xs_gr');
+model.component('mod1').variable('var17').label('XS_flibe');
+model.component('mod1').variable('var16').label('XS_pb');
+model.component('mod1').variable('var18').label('power');
+model.component('mod1').variable('var22').label('delayed');
+model.component('mod1').variable('var_T_fuel').label('Variables');
+model.component('mod1').variable('var19').label('lambda');
+model.component('mod1').variable('var20').active(false);
+model.component('mod1').variable('var20').label('FluxN');
+model.component('mod1').variable('var23').active(false);
+model.component('mod1').variable('var23').label('ConcN');
+
+model.component('mod1').view('view1').axis.set('xmin', -1.4514944553375244);
+model.component('mod1').view('view1').axis.set('xmax', 2.7514944076538086);
+model.component('mod1').view('view1').axis.set('ymin', -0.13467705249786377);
+model.component('mod1').view('view1').axis.set('ymax', 2.9946770668029785);
+model.component('mod1').view('view1').axis.set('abstractviewlratio', -1.5134655237197876);
+model.component('mod1').view('view1').axis.set('abstractviewrratio', 1.5134656429290771);
+model.component('mod1').view('view1').axis.set('abstractviewbratio', -0.049999963492155075);
+model.component('mod1').view('view1').axis.set('abstractviewtratio', 0.049999963492155075);
+model.component('mod1').view('view1').axis.set('abstractviewxscale', 0.008322750218212605);
+model.component('mod1').view('view1').axis.set('abstractviewyscale', 0.008322750218212605);
+
+model.component('mod1').material('mat1').label('Salt-with porosity and permeability');
+model.component('mod1').material('mat1').propertyGroup('def').set('ratioofspecificheat', '1');
+model.component('mod1').material('mat1').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
+model.component('mod1').material('mat1').propertyGroup('def').set('hydraulicpermeability', {'Kbr' '0' '0' '0' 'Kbr' '0' '0' '0' 'Kbr'});
+model.component('mod1').material('mat1').propertyGroup('def').set('porosity', 'ep');
+model.component('mod1').material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
+model.component('mod1').material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
+model.component('mod1').material('mat1').propertyGroup('def').set('heatcapacity', '2386');
+model.component('mod1').material('mat3').label('Only liquid salt(no pebbles)');
+model.component('mod1').material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+model.component('mod1').material('mat3').propertyGroup('def').set('density', '1900');
+model.component('mod1').material('mat3').propertyGroup('def').set('heatcapacity', '2300');
+model.component('mod1').material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
+model.component('mod1').material('mat3').propertyGroup('def').set('dynamicviscosity', '2');
+model.component('mod1').material('mat3').propertyGroup('def').set('porosity', 'ep');
+model.component('mod1').material('mat2').label('graphite based on built in steel');
+model.component('mod1').material('mat2').propertyGroup('def').set('porosity', '0.2');
+model.component('mod1').material('mat2').propertyGroup('def').set('hydraulicpermeability', {'1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)'});
+model.component('mod1').material('mat2').propertyGroup('def').set('ratioofspecificheat', '1');
+model.component('mod1').material('mat2').propertyGroup('def').set('thermalconductivity', {'640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]'});
+model.component('mod1').material('mat2').propertyGroup('def').set('heatcapacity', '684[J/(kg*K)]');
+model.component('mod1').material('mat2').propertyGroup('def').set('density', '1960[kg/m^3]');
+model.component('mod1').material('mat4').label('Structural steel');
+model.component('mod1').material('mat4').set('family', 'custom');
+model.component('mod1').material('mat4').set('specular', 'custom');
+model.component('mod1').material('mat4').set('customspecular', [0.7843137254901961 0.7843137254901961 0.7843137254901961]);
+model.component('mod1').material('mat4').set('diffuse', 'custom');
+model.component('mod1').material('mat4').set('customdiffuse', [0.6666666666666666 0.6666666666666666 0.6666666666666666]);
+model.component('mod1').material('mat4').set('ambient', 'custom');
+model.component('mod1').material('mat4').set('customambient', [0.6666666666666666 0.6666666666666666 0.6666666666666666]);
+model.component('mod1').material('mat4').set('noise', true);
+model.component('mod1').material('mat4').set('noisefreq', 1);
+model.component('mod1').material('mat4').set('lighting', 'cooktorrance');
+model.component('mod1').material('mat4').set('fresnel', 0.9);
+model.component('mod1').material('mat4').set('roughness', 0.3);
+model.component('mod1').material('mat4').propertyGroup('def').set('relpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+model.component('mod1').material('mat4').propertyGroup('def').set('heatcapacity', '475[J/(kg*K)]');
+model.component('mod1').material('mat4').propertyGroup('def').set('thermalconductivity', {'44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]'});
+model.component('mod1').material('mat4').propertyGroup('def').set('electricconductivity', {'4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]'});
+model.component('mod1').material('mat4').propertyGroup('def').set('relpermittivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
+model.component('mod1').material('mat4').propertyGroup('def').set('thermalexpansioncoefficient', {'12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]'});
+model.component('mod1').material('mat4').propertyGroup('def').set('density', '7850[kg/m^3]');
+model.component('mod1').material('mat4').propertyGroup('Enu').set('youngsmodulus', '200e9[Pa]');
+model.component('mod1').material('mat4').propertyGroup('Enu').set('poissonsratio', '0.30');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('l', '');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('m', '');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('n', '');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('l', '-3.0e11[Pa]');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('m', '-6.2e11[Pa]');
+model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('n', '-7.2e11[Pa]');
+model.component('mod1').material('mat4').propertyGroup('Lame').set('lambLame', '');
+model.component('mod1').material('mat4').propertyGroup('Lame').set('muLame', '');
+model.component('mod1').material('mat4').propertyGroup('Lame').set('lambLame', '1.15e11[Pa]');
+model.component('mod1').material('mat4').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
+
+model.component('mod1').cpl('intop1').set('axisym', true);
+
+model.component('mod1').physics('ht').label('Heat Transfer - Flibe');
+model.component('mod1').physics('ht').prop('ShapeProperty').set('boundaryFlux_temperature', false);
+model.component('mod1').physics('ht').prop('ShapeProperty').set('valueType', 'complex');
+model.component('mod1').physics('ht').prop('ConsistentStabilization').set('heatCrosswindDiffusion', false);
+model.component('mod1').physics('ht').prop('ConsistentStabilization').set('glim', '0.01[K]/ht.helem');
+model.component('mod1').physics('ht').prop('ConsistentStabilization').set('StreamlineDiffusionOldForm', true);
+model.component('mod1').physics('ht').prop('RadiationProperty').set('fieldName', 'root.J');
+model.component('mod1').physics('ht').feature('fluid1').set('k', {'0.6*'; '0'; '0'; '0'; '0.6*'; '0'; '0'; '0'; '0.6*'});
+model.component('mod1').physics('ht').feature('fluid1').set('minput_pressure', 0);
+model.component('mod1').physics('ht').feature('fluid1').set('minput_velocity', {'0'; '0'; 'v_inlet'});
+model.component('mod1').physics('ht').feature('fluid1').set('minput_strainreferencetemperature', 0);
+model.component('mod1').physics('ht').feature('fluid1').label('Fluid');
+model.component('mod1').physics('ht').feature('init1').set('Tinit', 'T0_flibe');
+model.component('mod1').physics('ht').feature('init1').label('Initial Temperature');
+model.component('mod1').physics('ht').feature('axi1').label('Axial Symmetry');
+model.component('mod1').physics('ht').feature('ins1').label('Thermal Insulation');
+model.component('mod1').physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+model.component('mod1').physics('ht').feature('temp1').label('Inlet Temperature');
+model.component('mod1').physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*T_fuel');
+model.component('mod1').physics('ht').feature('hs1').label('heat transfer from fuel-cst term');
+model.component('mod1').physics('ht').feature('hs2').set('heatSourceType', 'LinearSource');
+model.component('mod1').physics('ht').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
+model.component('mod1').physics('ht').feature('hs2').label('heat transfer from fuel - linear term');
+model.component('mod1').physics('ht').feature('ofl1').label('Outflow');
+model.component('mod1').physics('ht3').label('Heat Transfer in Fuel Pebble');
+model.component('mod1').physics('ht3').comments('fuel temperature');
+model.component('mod1').physics('ht3').prop('ConsistentStabilization').set('glim', '(0.01[K])/ht3.helem');
+model.component('mod1').physics('ht3').feature('fluid1').label('overridden');
+model.component('mod1').physics('ht3').feature('init1').set('Tinit', 'T0_fuel');
+model.component('mod1').physics('ht3').feature('solid1').set('rho', 'rho_fuel*(1-porosity)');
+model.component('mod1').physics('ht3').feature('solid1').set('Cp', 'cp_fuel');
+model.component('mod1').physics('ht3').feature('solid1').label('Heat Transfer in Solids(smeared fuel pebbles)');
+model.component('mod1').physics('ht3').feature('hs1').set('P0', '1E7');
+model.component('mod1').physics('ht3').feature('hs1').set('Q0', 'Pdensity');
+model.component('mod1').physics('ht3').feature('hs1').label('Nuclear heat generation');
+model.component('mod1').physics('ht3').feature('hs2').set('heatSourceType', 'LinearSource');
+model.component('mod1').physics('ht3').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
+model.component('mod1').physics('ht3').feature('hs2').label('heat tranfer to flibe - linear term');
+model.component('mod1').physics('ht3').feature('hs3').set('Q0', 'h_conv*pb_area/fuel_v*T_flibe');
+model.component('mod1').physics('ht3').feature('hs3').label('heat transfer to flibe - cst term');
+model.component('mod1').physics('neutrondiffusion').prop('ShapeProperty').set('order', 1);
+model.component('mod1').physics('neutrondiffusion').prop('Units').set('DependentVariableQuantity', 'particleflux');
+model.component('mod1').physics('neutrondiffusion').prop('Units').set('SourceTermQuantity', 'productionrate');
+model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('c', {'diff11*r' '0' '0' 'diff11*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff12*r' '0' '0' 'diff12*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff13*r' '0' '0' 'diff13*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff14*r' '0' '0' 'diff14*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff15*r' '0' '0' 'diff15*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff16*r' '0' '0' 'diff16*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff17*r' '0' '0' 'diff17*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'diff18*r' '0' '0' 'diff18*r';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0';  ...
+'0' '0' '0' '0'});
+model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('a', {'(rem1-(1-beta1)*chip1*nsf1*lambda)*r';  ...
+'(-scat12-(1-beta1)*chip2*nsf1*lambda)*r';  ...
+'(-scat13-(1-beta1)*chip3*nsf1*lambda)*r';  ...
+'(-scat14-(1-beta1)*chip4*nsf1*lambda)*r';  ...
+'(-scat15-(1-beta1)*chip5*nsf1*lambda)*r';  ...
+'(-scat16-(1-beta1)*chip6*nsf1*lambda)*r';  ...
+'(-scat17-(1-beta1)*chip7*nsf1*lambda)*r';  ...
+'(-scat18-(1-beta1)*chip8*nsf1*lambda)*r';  ...
+'-betas1*nsf1';  ...
+'-betas2*nsf1';  ...
+'-betas3*nsf1';  ...
+'-betas4*nsf1';  ...
+'-betas5*nsf1';  ...
+'-betas6*nsf1';  ...
+'(-scat21-(1-beta1)*chip1*nsf2*lambda)*r';  ...
+'(rem2-(1-beta1)*chip2*nsf2*lambda)*r';  ...
+'(-scat23-(1-beta1)*chip3*nsf2*lambda)*r';  ...
+'(-scat24-(1-beta1)*chip4*nsf2*lambda)*r';  ...
+'(-scat25-(1-beta1)*chip5*nsf2*lambda)*r';  ...
+'(-scat26-(1-beta1)*chip6*nsf2*lambda)*r';  ...
+'(-scat27-(1-beta1)*chip7*nsf2*lambda)*r';  ...
+'(-scat28-(1-beta1)*chip8*nsf2*lambda)*r';  ...
+'-betas1*nsf2';  ...
+'-betas2*nsf2';  ...
+'-betas3*nsf2';  ...
+'-betas4*nsf2';  ...
+'-betas5*nsf2';  ...
+'-betas6*nsf2';  ...
+'(-scat31-(1-beta1)*chip1*nsf3*lambda)*r';  ...
+'(-scat32-(1-beta1)*chip2*nsf3*lambda)*r';  ...
+'(rem3-(1-beta1)*chip3*nsf3*lambda)*r';  ...
+'(-scat34-(1-beta1)*chip4*nsf3*lambda)*r';  ...
+'(-scat35-(1-beta1)*chip5*nsf3*lambda)*r';  ...
+'(-scat36-(1-beta1)*chip6*nsf3*lambda)*r';  ...
+'(-scat37-(1-beta1)*chip7*nsf3*lambda)*r';  ...
+'(-scat38-(1-beta1)*chip8*nsf3*lambda)*r';  ...
+'-betas1*nsf3';  ...
+'-betas2*nsf3';  ...
+'-betas3*nsf3';  ...
+'-betas4*nsf3';  ...
+'-betas5*nsf3';  ...
+'-betas6*nsf3';  ...
+'(-scat41-(1-beta1)*chip1*nsf4*lambda)*r';  ...
+'(-scat42-(1-beta1)*chip2*nsf4*lambda)*r';  ...
+'(-scat43-(1-beta1)*chip3*nsf4*lambda)*r';  ...
+'(rem4-(1-beta1)*chip4*nsf4*lambda)*r';  ...
+'(-scat45-(1-beta1)*chip5*nsf4*lambda)*r';  ...
+'(-scat46-(1-beta1)*chip6*nsf4*lambda)*r';  ...
+'(-scat47-(1-beta1)*chip7*nsf4*lambda)*r';  ...
+'(-scat48-(1-beta1)*chip8*nsf4*lambda)*r';  ...
+'-betas1*nsf4';  ...
+'-betas2*nsf4';  ...
+'-betas3*nsf4';  ...
+'-betas4*nsf4';  ...
+'-betas5*nsf4';  ...
+'-betas6*nsf4';  ...
+'(-scat51-(1-beta1)*chip1*nsf5*lambda)*r';  ...
+'(-scat52-(1-beta1)*chip2*nsf5*lambda)*r';  ...
+'(-scat53-(1-beta1)*chip3*nsf5*lambda)*r';  ...
+'(-scat54-(1-beta1)*chip4*nsf5*lambda)*r';  ...
+'(rem5-(1-beta1)*chip5*nsf5*lambda)*r';  ...
+'(-scat56-(1-beta1)*chip6*nsf5*lambda)*r';  ...
+'(-scat57-(1-beta1)*chip7*nsf5*lambda)*r';  ...
+'(-scat58-(1-beta1)*chip8*nsf5*lambda)*r';  ...
+'-betas1*nsf5';  ...
+'-betas2*nsf5';  ...
+'-betas3*nsf5';  ...
+'-betas4*nsf5';  ...
+'-betas5*nsf5';  ...
+'-betas6*nsf5';  ...
+'(-scat61-(1-beta1)*chip1*nsf6*lambda)*r';  ...
+'(-scat62-(1-beta1)*chip2*nsf6*lambda)*r';  ...
+'(-scat63-(1-beta1)*chip3*nsf6*lambda)*r';  ...
+'(-scat64-(1-beta1)*chip4*nsf6*lambda)*r';  ...
+'(-scat65-(1-beta1)*chip5*nsf6*lambda)*r';  ...
+'(rem6-(1-beta1)*chip6*nsf6*lambda)*r';  ...
+'(-scat67-(1-beta1)*chip7*nsf6*lambda)*r';  ...
+'(-scat68-(1-beta1)*chip8*nsf6*lambda)*r';  ...
+'-betas1*nsf6';  ...
+'-betas2*nsf6';  ...
+'-betas3*nsf6';  ...
+'-betas4*nsf6';  ...
+'-betas5*nsf6';  ...
+'-betas6*nsf6';  ...
+'(-scat71-(1-beta1)*chip1*nsf7*lambda)*r';  ...
+'(-scat72-(1-beta1)*chip2*nsf7*lambda)*r';  ...
+'(-scat73-(1-beta1)*chip3*nsf7*lambda)*r';  ...
+'(-scat74-(1-beta1)*chip4*nsf7*lambda)*r';  ...
+'(-scat75-(1-beta1)*chip5*nsf7*lambda)*r';  ...
+'(-scat76-(1-beta1)*chip6*nsf7*lambda)*r';  ...
+'(rem7-(1-beta1)*chip7*nsf7*lambda)*r';  ...
+'(-scat78-(1-beta1)*chip8*nsf7*lambda)*r';  ...
+'-betas1*nsf7';  ...
+'-betas2*nsf7';  ...
+'-betas3*nsf7';  ...
+'-betas4*nsf7';  ...
+'-betas5*nsf7';  ...
+'-betas6*nsf7';  ...
+'(-scat81-(1-beta1)*chip1*nsf8*lambda)*r';  ...
+'(-scat82-(1-beta1)*chip2*nsf8*lambda)*r';  ...
+'(-scat83-(1-beta1)*chip3*nsf8*lambda)*r';  ...
+'(-scat84-(1-beta1)*chip4*nsf8*lambda)*r';  ...
+'(-scat85-(1-beta1)*chip5*nsf8*lambda)*r';  ...
+'(-scat86-(1-beta1)*chip6*nsf8*lambda)*r';  ...
+'(-scat87-(1-beta1)*chip7*nsf8*lambda)*r';  ...
+'(rem8-(1-beta1)*chip8*nsf8*lambda)*r';  ...
+'-betas1*nsf8';  ...
+'-betas2*nsf8';  ...
+'-betas3*nsf8';  ...
+'-betas4*nsf8';  ...
+'-betas5*nsf8';  ...
+'-betas6*nsf8';  ...
+'-chid1*lambda*r*lambdas1';  ...
+'-chid2*lambda*r*lambdas1';  ...
+'-chid3*lambda*r*lambdas1';  ...
+'-chid4*lambda*r*lambdas1';  ...
+'-chid5*lambda*r*lambdas1';  ...
+'-chid6*lambda*r*lambdas1';  ...
+'-chid7*lambda*r*lambdas1';  ...
+'-chid8*lambda*r*lambdas1';  ...
+'lambdas1';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'-chid1*lambda*r*lambdas2';  ...
+'-chid2*lambda*r*lambdas2';  ...
+'-chid3*lambda*r*lambdas2';  ...
+'-chid4*lambda*r*lambdas2';  ...
+'-chid5*lambda*r*lambdas2';  ...
+'-chid6*lambda*r*lambdas2';  ...
+'-chid7*lambda*r*lambdas2';  ...
+'-chid8*lambda*r*lambdas2';  ...
+'0';  ...
+'lambdas2';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'-chid1*lambda*r*lambdas3';  ...
+'-chid2*lambda*r*lambdas3';  ...
+'-chid3*lambda*r*lambdas3';  ...
+'-chid4*lambda*r*lambdas3';  ...
+'-chid5*lambda*r*lambdas3';  ...
+'-chid6*lambda*r*lambdas3';  ...
+'-chid7*lambda*r*lambdas3';  ...
+'-chid8*lambda*r*lambdas3';  ...
+'0';  ...
+'0';  ...
+'lambdas3';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'-chid1*lambda*r*lambdas4';  ...
+'-chid2*lambda*r*lambdas4';  ...
+'-chid3*lambda*r*lambdas4';  ...
+'-chid4*lambda*r*lambdas4';  ...
+'-chid5*lambda*r*lambdas4';  ...
+'-chid6*lambda*r*lambdas4';  ...
+'-chid7*lambda*r*lambdas4';  ...
+'-chid8*lambda*r*lambdas4';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'lambdas4';  ...
+'0';  ...
+'0';  ...
+'-chid1*lambda*r*lambdas5';  ...
+'-chid2*lambda*r*lambdas5';  ...
+'-chid3*lambda*r*lambdas5';  ...
+'-chid4*lambda*r*lambdas5';  ...
+'-chid5*lambda*r*lambdas5';  ...
+'-chid6*lambda*r*lambdas5';  ...
+'-chid7*lambda*r*lambdas5';  ...
+'-chid8*lambda*r*lambdas5';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'lambdas5';  ...
+'0';  ...
+'-chid1*lambda*r*lambdas6';  ...
+'-chid2*lambda*r*lambdas6';  ...
+'-chid3*lambda*r*lambdas6';  ...
+'-chid4*lambda*r*lambdas6';  ...
+'-chid5*lambda*r*lambdas6';  ...
+'-chid6*lambda*r*lambdas6';  ...
+'-chid7*lambda*r*lambdas6';  ...
+'-chid8*lambda*r*lambdas6';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'lambdas6'});
+model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('f', [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0]);
+model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('da', {'invV1*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV2*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV3*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV4*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV5*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV6*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV7*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'invV8*r*eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'0';  ...
+'eigenMode'});
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN1', 'Flux1');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN2', 'Flux2');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN3', 'Flux3');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN4', 'Flux4');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN5', 'Flux5');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN6', 'Flux6');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN7', 'Flux7');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN8', 'Flux8');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN1', 'Conc1');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN2', 'Conc2');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN3', 'Conc3');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN4', 'Conc4');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN5', 'Conc5');
+model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN6', 'Conc6');
+
+model.component('mod1').mesh('mesh1').label('Mesh');
+
+model.frame('material1').sorder(1);
+
+model.component('mod1').probe('dom1').label('Probe Pint');
+model.component('mod1').probe('dom1').set('expr', 'Pint');
+model.component('mod1').probe('dom1').set('unit', 'W*m');
+model.component('mod1').probe('dom1').set('descr', 'integrated total core power');
+model.component('mod1').probe('dom1').set('table', 'tbl1');
+model.component('mod1').probe('dom1').set('window', 'window1');
+model.component('mod1').probe('dom2').label('average_fuel_temp_probe');
+model.component('mod1').probe('dom2').set('expr', 'T_fuel');
+model.component('mod1').probe('dom2').set('unit', 'degC');
+model.component('mod1').probe('dom2').set('table', 'tbl1');
+model.component('mod1').probe('dom2').set('window', 'window2');
+model.component('mod1').probe('dom3').label('average_flibe_temp_probe');
+model.component('mod1').probe('dom3').set('unit', 'degC');
+model.component('mod1').probe('dom3').set('table', 'tbl1');
+model.component('mod1').probe('dom3').set('window', 'window2');
+model.component('mod1').probe('dom4').label('max fuel temp');
+model.component('mod1').probe('dom4').set('type', 'maximum');
+model.component('mod1').probe('dom4').set('probename', 'T_fuel_max');
+model.component('mod1').probe('dom4').set('expr', 'T_fuel');
+model.component('mod1').probe('dom4').set('unit', 'degC');
+model.component('mod1').probe('dom4').set('table', 'tbl1');
+model.component('mod1').probe('dom4').set('window', 'window3');
+model.component('mod1').probe('dom5').label('max flibe temp');
+model.component('mod1').probe('dom5').set('type', 'maximum');
+model.component('mod1').probe('dom5').set('probename', 'T_flibe_max');
+model.component('mod1').probe('dom5').set('unit', 'degC');
+model.component('mod1').probe('dom5').set('table', 'tbl1');
+model.component('mod1').probe('dom5').set('window', 'window3');
+
+model.component('mod1').physics('ht3').feature('solid1').set('k_mat', 'userdef');
+model.component('mod1').physics('ht3').feature('solid1').set('rho_mat', 'userdef');
+model.component('mod1').physics('ht3').feature('solid1').set('Cp_mat', 'userdef');
 
 model.study.create('std2');
 model.study('std2').create('eigv', 'Eigenvalue');
-model.study('std2').feature('eigv').set('initstudyhide', 'on');
-model.study('std2').feature('eigv').set('initsolhide', 'on');
-model.study('std2').feature('eigv').set('solnumhide', 'on');
-model.study('std2').feature('eigv').set('notstudyhide', 'on');
-model.study('std2').feature('eigv').set('notsolhide', 'on');
-model.study('std2').feature('eigv').set('notsolnumhide', 'on');
+model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
+model.study.create('std5');
+model.study('std5').create('stat', 'Stationary');
+model.study.create('std6');
+model.study('std6').create('stat', 'Stationary');
+model.study('std6').feature('stat').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'off'});
+model.study.create('std4');
+model.study('std4').create('time', 'Transient');
 
 model.sol.create('sol16');
 model.sol('sol16').study('std2');
@@ -4097,68 +1541,6 @@ model.sol('sol16').attach('std2');
 model.sol('sol16').create('st1', 'StudyStep');
 model.sol('sol16').create('v1', 'Variables');
 model.sol('sol16').create('e1', 'Eigenvalue');
-model.sol('sol16').feature('e1').create('d1', 'Direct');
-model.sol('sol16').feature('e1').create('i1', 'Iterative');
-
-model.study('std2').label('Eigenvalue study');
-model.study('std2').feature('eigv').set('eigwhich', 'sr');
-model.study('std2').feature('eigv').set('shift', '1');
-model.study('std2').feature('eigv').set('neigs', '1');
-model.study('std2').feature('eigv').set('activate', {'br' 'off' 'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
-model.study('std2').feature('eigv').set('useinitsol', 'on');
-
-model.sol('sol16').attach('std2');
-model.sol('sol16').feature('e1').set('neigs', '1');
-model.sol('sol16').feature('e1').set('maxeigit', '100');
-model.sol('sol16').feature('e1').set('keeplog', true);
-model.sol('sol16').feature('e1').set('eigwhich', 'sr');
-model.sol('sol16').feature('e1').set('shift', '1');
-model.sol('sol16').feature('e1').set('krylovdim', '5');
-model.sol('sol16').feature('e1').feature('i1').set('maxlinit', '1000');
-model.sol('sol16').feature('e1').feature('i1').feature('ilDef').set('prefun', 'spooles');
-
-model.physics('ht3').active(false);
-model.physics('ht').active(false);
-model.physics('br').active(false);
-
-model.sol('sol16').runAll;
-
-model.result.numerical.remove('global_internal');
-model.result.numerical.create('global_internal', 'Global');
-model.result.numerical('global_internal').set('expr', 'lambda');
-model.result.numerical('global_internal').set('matherr', 'off');
-model.result.numerical('global_internal').set('phase', 0);
-model.result.numerical('global_internal').set('outersolnum', 1);
-model.result.numerical('global_internal').set('solnum', {'1'});
-model.result.numerical('global_internal').set('outersolnum', 1);
-model.result.numerical('global_internal').set('solnum', '1');
-model.result.numerical('global_internal').set('outersolnum', '1');
-model.result.numerical('global_internal').set('timeinterp', 'off');
-model.result.numerical('global_internal').getData;
-
-model.physics('ht3').active(true);
-model.physics('ht').active(true);
-model.physics('br').active(true);
-
-model.param.set('lambda_critical', 0.9998383034922432, 'lambda_engeinvalue to get to criticality');
-
-model.variable.create('var19');
-model.variable('var19').model('mod1');
-model.variable('var19').set('lambda', 'lambda_critical');
-model.variable('var19').label('lambda');
-
-model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-
-model.study.create('std5');
-model.study('std5').create('stat', 'Stationary');
-model.study('std5').label('Steady state study');
-model.study('std5').feature('stat').set('initstudyhide', 'on');
-model.study('std5').feature('stat').set('initsolhide', 'on');
-model.study('std5').feature('stat').set('solnumhide', 'on');
-model.study('std5').feature('stat').set('notstudyhide', 'on');
-model.study('std5').feature('stat').set('notsolhide', 'on');
-model.study('std5').feature('stat').set('notsolnumhide', 'on');
-
 model.sol.create('sol13');
 model.sol('sol13').study('std5');
 model.sol('sol13').attach('std5');
@@ -4168,25 +1550,267 @@ model.sol('sol13').create('s1', 'Stationary');
 model.sol('sol13').feature('s1').create('fc1', 'FullyCoupled');
 model.sol('sol13').feature('s1').create('d1', 'Direct');
 model.sol('sol13').feature('s1').feature.remove('fcDef');
-model.sol('sol13').feature('v1').set('notsolnum', 'auto');
+model.sol.create('sol15');
+model.sol('sol15').study('std6');
+model.sol('sol15').attach('std6');
+model.sol('sol15').create('st1', 'StudyStep');
+model.sol('sol15').create('v1', 'Variables');
+model.sol('sol15').create('s1', 'Stationary');
+model.sol.create('sol4');
+model.sol('sol4').study('std4');
+model.sol('sol4').attach('std4');
+model.sol('sol4').create('st1', 'StudyStep');
+model.sol('sol4').create('v1', 'Variables');
+model.sol('sol4').create('t1', 'Time');
+model.sol('sol4').feature('t1').create('fc1', 'FullyCoupled');
+model.sol('sol4').feature('t1').create('d1', 'Direct');
+model.sol('sol4').feature('t1').create('i1', 'Iterative');
+model.sol('sol4').feature('t1').feature.remove('fcDef');
+
+model.result.dataset.create('rev1', 'Revolve2D');
+model.result.dataset.create('dset5', 'Solution');
+model.result.dataset.create('avh1', 'Average');
+model.result.dataset.create('avh2', 'Average');
+model.result.dataset.create('avh3', 'Average');
+model.result.dataset.create('max1', 'Maximum');
+model.result.dataset.create('max2', 'Maximum');
+model.result.dataset('rev1').set('data', 'dset4');
+model.result.dataset('dset5').set('probetag', 'dom5');
+model.result.dataset('dset5').set('solution', 'sol4');
+model.result.dataset('avh1').set('probetag', 'dom1');
+model.result.dataset('avh1').set('data', 'dset5');
+model.result.dataset('avh1').selection.geom('geom1', 2);
+model.result.dataset('avh1').selection.set([1 2 3]);
+model.result.dataset('avh2').set('probetag', 'dom2');
+model.result.dataset('avh2').set('data', 'dset5');
+model.result.dataset('avh2').selection.geom('geom1', 2);
+model.result.dataset('avh2').selection.set([2]);
+model.result.dataset('avh3').set('probetag', 'dom3');
+model.result.dataset('avh3').set('data', 'dset5');
+model.result.dataset('avh3').selection.geom('geom1', 2);
+model.result.dataset('avh3').selection.set([2]);
+model.result.dataset('max1').set('probetag', 'dom4');
+model.result.dataset('max1').set('data', 'dset5');
+model.result.dataset('max1').selection.geom('geom1', 2);
+model.result.dataset('max1').selection.set([2]);
+model.result.dataset('max2').set('probetag', 'dom5');
+model.result.dataset('max2').set('data', 'dset5');
+model.result.dataset('max2').selection.geom('geom1', 2);
+model.result.dataset('max2').selection.set([2]);
+model.result.numerical.create('pev1', 'EvalPoint');
+model.result.numerical.create('pev2', 'EvalPoint');
+model.result.numerical.create('pev3', 'EvalPoint');
+model.result.numerical.create('pev4', 'EvalPoint');
+model.result.numerical.create('pev5', 'EvalPoint');
+model.result.numerical('pev1').set('probetag', 'dom1');
+model.result.numerical('pev2').set('probetag', 'dom2');
+model.result.numerical('pev3').set('probetag', 'dom3');
+model.result.numerical('pev4').set('probetag', 'dom4');
+model.result.numerical('pev5').set('probetag', 'dom5');
+model.result.create('pg1', 'PlotGroup3D');
+model.result.create('pg7', 'PlotGroup1D');
+model.result.create('pg8', 'PlotGroup1D');
+model.result.create('pg9', 'PlotGroup1D');
+model.result('pg1').create('surf1', 'Surface');
+model.result('pg7').set('probetag', 'window1');
+model.result('pg7').create('tblp1', 'Table');
+model.result('pg7').feature('tblp1').set('probetag', 'dom1');
+model.result('pg8').set('probetag', 'window2');
+model.result('pg8').create('tblp1', 'Table');
+model.result('pg8').feature('tblp1').set('probetag', 'dom2,dom3');
+model.result('pg9').set('probetag', 'window3');
+model.result('pg9').create('tblp1', 'Table');
+model.result('pg9').feature('tblp1').set('probetag', 'dom4,dom5');
+
+model.component('mod1').probe('dom1').genResult([]);
+model.component('mod1').probe('dom2').genResult([]);
+model.component('mod1').probe('dom3').genResult([]);
+model.component('mod1').probe('dom4').genResult([]);
+model.component('mod1').probe('dom5').genResult([]);
+
+model.study('std2').label('Eigenvalue study');
+model.study('std2').feature('eigv').set('neigs', 1);
+model.study('std2').feature('eigv').set('eigunit', '');
+model.study('std2').feature('eigv').set('shift', '1');
+model.study('std2').feature('eigv').set('shiftactive', true);
+model.study('std2').feature('eigv').set('eigwhich', 'sr');
+model.study('std2').feature('eigv').set('useinitsol', true);
+model.study('std2').feature('eigv').set('usesol', true);
+model.study('std2').feature('eigv').set('notsolmethod', 'sol');
+model.study('std2').feature('eigv').set('notstudy', 'std5');
+model.study('std2').feature('eigv').set('notsolnum', 'auto');
+model.study('std2').feature('eigv').set('neigsactive', false);
+model.study('std5').label('Steady state study');
+model.study('std6').label('Scaling');
+model.study('std6').feature('stat').label('scaling');
+model.study('std6').feature('stat').set('useinitsol', true);
+model.study('std6').feature('stat').set('initmethod', 'sol');
+model.study('std6').feature('stat').set('initstudy', 'std5');
+model.study('std6').feature('stat').set('solnum', 'auto');
+model.study('std6').feature('stat').set('usesol', true);
+model.study('std6').feature('stat').set('notsolmethod', 'sol');
+model.study('std6').feature('stat').set('notstudy', 'std5');
+model.study('std6').feature('stat').set('notsolnum', 'auto');
+model.study('std4').label('Transient study');
+model.study('std4').feature('time').set('tlist', 'range(0,0.1,20)');
+model.study('std4').feature('time').set('plot', true);
+model.study('std4').feature('time').set('probefreq', 'tout');
+model.study('std4').feature('time').set('useinitsol', true);
+model.study('std4').feature('time').set('initmethod', 'sol');
+model.study('std4').feature('time').set('initstudy', 'std6');
+model.study('std4').feature('time').set('solnum', 'auto');
+
+model.sol('sol16').attach('std2');
+model.sol('sol16').feature('v1').set('notsolmethod', 'sol');
+model.sol('sol16').feature('v1').set('notsol', 'sol13');
+model.sol('sol16').feature('v1').set('notsolnum', 'auto');
+model.sol('sol16').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
+model.sol('sol16').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
+model.sol('sol16').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
+model.sol('sol16').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
+model.sol('sol16').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
+model.sol('sol16').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
+model.sol('sol16').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
+model.sol('sol16').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
+model.sol('sol16').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
+model.sol('sol16').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
+model.sol('sol16').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
+model.sol('sol16').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
+model.sol('sol16').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
+model.sol('sol16').feature('e1').set('neigs', 1);
+model.sol('sol16').feature('e1').set('eigwhich', 'sr');
+model.sol('sol16').feature('e1').set('shift', '1');
+model.sol('sol16').feature('e1').set('maxeigit', 100);
+model.sol('sol16').feature('e1').set('krylovdim', 10);
+model.sol('sol16').feature('e1').set('keeplog', true);
+model.sol('sol16').runAll;
+model.sol('sol13').attach('std5');
+model.sol('sol13').feature('v1').set('control', 'user');
 model.sol('sol13').feature('v1').set('notsolmethod', 'sol');
 model.sol('sol13').feature('v1').set('notsol', 'sol16');
-model.sol('sol13').feature('v1').set('control', 'user');
-model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux6').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
-model.sol('sol13').feature('s1').feature('fc1').set('initstep', '0.01');
-model.sol('sol13').feature('s1').feature('fc1').set('maxiter', '500');
-model.sol('sol13').feature('s1').feature('fc1').set('minstep', '1.0E-6');
+model.sol('sol13').feature('v1').set('notsolnum', 'auto');
+model.sol('sol13').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
+model.sol('sol13').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
+model.sol('sol13').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
+model.sol('sol13').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
+model.sol('sol13').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
+model.sol('sol13').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
+model.sol('sol13').feature('v1').feature('mod1_FluxN1').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
+model.sol('sol13').feature('v1').feature('mod1_FluxN2').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
+model.sol('sol13').feature('v1').feature('mod1_FluxN3').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
+model.sol('sol13').feature('v1').feature('mod1_FluxN4').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
+model.sol('sol13').feature('v1').feature('mod1_FluxN5').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
+model.sol('sol13').feature('v1').feature('mod1_FluxN6').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
+model.sol('sol13').feature('v1').feature('mod1_FluxN7').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
+model.sol('sol13').feature('v1').feature('mod1_FluxN8').set('solvefor', false);
+model.sol('sol13').feature('s1').feature('fc1').set('initstep', 0.01);
+model.sol('sol13').feature('s1').feature('fc1').set('minstep', 1.0E-6);
+model.sol('sol13').feature('s1').feature('fc1').set('maxiter', 500);
+model.sol('sol13').runAll;
+model.sol('sol15').attach('std6');
+model.sol('sol15').feature('v1').set('initmethod', 'sol');
+model.sol('sol15').feature('v1').set('initsol', 'sol13');
+model.sol('sol15').feature('v1').set('solnum', 'auto');
+model.sol('sol15').feature('v1').set('notsolmethod', 'sol');
+model.sol('sol15').feature('v1').set('notsol', 'sol13');
+model.sol('sol15').feature('v1').set('notsolnum', 'auto');
+model.sol('sol15').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
+model.sol('sol15').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
+model.sol('sol15').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
+model.sol('sol15').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
+model.sol('sol15').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
+model.sol('sol15').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
+model.sol('sol15').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
+model.sol('sol15').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
+model.sol('sol15').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
+model.sol('sol15').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
+model.sol('sol15').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
+model.sol('sol15').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
+model.sol('sol15').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
+model.sol('sol15').runAll;
+model.sol('sol4').attach('std4');
+model.sol('sol4').feature('v1').set('control', 'user');
+model.sol('sol4').feature('v1').set('initmethod', 'sol');
+model.sol('sol4').feature('v1').set('initsol', 'sol15');
+model.sol('sol4').feature('v1').set('solnum', 'auto');
+model.sol('sol4').feature('v1').set('notsolmethod', 'sol');
+model.sol('sol4').feature('v1').set('notsol', 'sol15');
+model.sol('sol4').feature('v1').set('notsolnum', 'auto');
+model.sol('sol4').feature('v1').set('clist', {'range(0,0.1,20)'});
+model.sol('sol4').feature('v1').feature('mod1_FluxN1').label('mod1.FluxN1');
+model.sol('sol4').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
+model.sol('sol4').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
+model.sol('sol4').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
+model.sol('sol4').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
+model.sol('sol4').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
+model.sol('sol4').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
+model.sol('sol4').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
+model.sol('sol4').feature('t1').set('tlist', 'range(0,0.1,20)');
+model.sol('sol4').feature('t1').set('atolmethod', {'mod1_FluxN7' 'global' 'mod1_FluxN8' 'global' 'mod1_FluxN5' 'global' 'mod1_FluxN6' 'global' 'mod1_FluxN3' 'global'  ...
+'mod1_FluxN4' 'global' 'mod1_FluxN1' 'global' 'mod1_FluxN2' 'global' 'mod1_T_flibe' 'global' 'mod1_T_fuel' 'global'});
+model.sol('sol4').feature('t1').set('atol', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
+'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
+model.sol('sol4').feature('t1').set('atoludot', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
+'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
+model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
+model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
+model.sol('sol4').feature('t1').set('maxstepbdfactive', true);
+model.sol('sol4').feature('t1').set('maxorder', 1);
+model.sol('sol4').feature('t1').set('eventtol', 2);
+model.sol('sol4').feature('t1').set('stabcntrl', true);
+model.sol('sol4').feature('t1').set('bwinitstepfrac', 0.1);
+model.sol('sol4').feature('t1').set('estrat', 'exclude');
+model.sol('sol4').feature('t1').set('plot', true);
+model.sol('sol4').feature('t1').set('probefreq', 'tout');
+model.sol('sol4').feature('t1').set('reacf', false);
+model.sol('sol4').feature('t1').set('keeplog', true);
+model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
+model.sol('sol4').feature('t1').feature('fc1').set('damp', 0.9);
+model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'onevery');
+model.sol('sol4').feature('t1').feature('fc1').set('ntermconst', 'itertol');
+model.sol('sol4').feature('t1').feature('i1').set('maxlinit', 100);
+model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('relax', 0.8);
+model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridization', 'multi');
+model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridvar', {'mod1_FluxN7' 'mod1_FluxN8' 'mod1_FluxN5' 'mod1_FluxN6' 'mod1_FluxN3' 'mod1_FluxN4' 'mod1_FluxN1' 'mod1_FluxN2'});
+model.sol('sol4').runAll;
 
-model.comments(['Untitled\n\n']);
-
-model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+model.result.dataset('rev1').label('Revolution 2D');
+model.result.dataset('rev1').set('startangle', -90);
+model.result.dataset('rev1').set('revangle', 225);
+model.result.dataset('dset5').label('Probe Solution 5');
+model.result.create('pg7', 'PlotGroup1D');
+model.result('pg1').label('Temperature, 3D (ht)');
+model.result('pg1').feature('surf1').label('Surface');
+model.result('pg1').feature('surf1').set('colortable', 'ThermalLight');
+model.result('pg1').feature('surf1').set('resolution', 'normal');
+model.result('pg7').label('Probe Plot Group 7');
+model.result('pg7').set('data', 'none');
+model.result('pg7').set('xlabel', 'Time (s)');
+model.result('pg7').set('ylabel', 'Temperature (W), Probe Pint');
+model.result('pg7').set('window', 'window1');
+model.result('pg7').set('windowtitle', 'Probe Plot 1');
+model.result('pg7').set('xlabelactive', false);
+model.result('pg7').set('ylabelactive', false);
+model.result('pg7').create('tblp1', 'Table');
+model.result('pg7').feature('tblp1').label('Probe Table Graph 1');
+model.result('pg7').feature('tblp1').set('plotcolumninput', 'manual');
+model.result('pg8').label('Probe Plot Group 8');
+model.result('pg8').set('xlabel', 'Time (s)');
+model.result('pg8').set('windowtitle', 'Probe Plot 2');
+model.result('pg8').set('xlabelactive', false);
+model.result('pg8').feature('tblp1').label('Probe Table Graph 1');
+model.result('pg9').label('Probe Plot Group 9');
+model.result('pg9').set('xlabel', 'Time (s)');
+model.result('pg9').set('windowtitle', 'Probe Plot 3');
+model.result('pg9').set('xlabelactive', false);
+model.result('pg9').feature('tblp1').label('Probe Table Graph 1');
+model.result.remove('pg10');
 
 out = model;

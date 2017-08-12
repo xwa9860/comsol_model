@@ -87,12 +87,12 @@ model.geom('geom1').feature('wp1').geom.feature('r3').label('vessel');
 model.geom('geom1').feature('wp1').geom.feature('r3').set('size', {'0.06' '5.7285-0.416'});
 model.geom('geom1').feature('wp1').geom.feature('r3').set('pos', {'1.708' '0.416'});
 
-%inlet 1
-model.geom('geom1').feature('wp1').geom.create('r4', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r4').label('inlet');
-model.geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.01' '1'});
-model.geom('geom1').feature('wp1').geom.feature('r4').set('pos', {'0.35-0.01' '1.5'});
-model.geom('geom1').feature('wp1').geom.feature('r4').active(false);
+% %inlet 1
+% model.geom('geom1').feature('wp1').geom.create('r4', 'Rectangle');
+% model.geom('geom1').feature('wp1').geom.feature('r4').label('inlet');
+% model.geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.01' '1'});
+% model.geom('geom1').feature('wp1').geom.feature('r4').set('pos', {'0.35-0.01' '1.5'});
+% model.geom('geom1').feature('wp1').geom.feature('r4').active(false);
 model.geom('geom1').feature('wp1').geom.create('ic1', 'InterpolationCurve');
 model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '0.35', 0, 0);
 model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '1.5', 0, 1);
@@ -101,18 +101,19 @@ model.geom('geom1').feature('wp1').geom.feature('ic1').setIndex('table', '2.5', 
 model.geom('geom1').feature('wp1').geom.run('ic1');
 
 % outlet low
-model.geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
-model.geom('geom1').feature('wp1').geom.feature('r5').label('outlet_low');
-model.geom('geom1').feature('wp1').geom.feature('r5').set('size', {'0.05' '0.5'});
-model.geom('geom1').feature('wp1').geom.feature('r5').set('pos', {'1.25' '4.305-0.5'});
-model.geom('geom1').feature('wp1').geom.feature('r5').active(false);
+% model.geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
+% model.geom('geom1').feature('wp1').geom.feature('r5').label('outlet_low');
+% model.geom('geom1').feature('wp1').geom.feature('r5').set('size', {'0.05' '0.5'});
+% model.geom('geom1').feature('wp1').geom.feature('r5').set('pos', {'1.25' '4.305-0.5'});
+% model.geom('geom1').feature('wp1').geom.feature('r5').active(false);
 
 % outlet high
-model.geom('geom1').feature('wp1').geom.create('pol5', 'Polygon');
-model.geom('geom1').feature('wp1').geom.feature('pol5').label('outlet_high');
-model.geom('geom1').feature('wp1').geom.feature('pol5').set('source', 'table');
-model.geom('geom1').feature('wp1').geom.feature('pol5').set('table', {'0.89' '4.9285'; '1.25' '4.305'; '1.3' '4.305'; '0.94' '4.9285'});
-model.geom('geom1').feature('wp1').geom.feature('pol5').active(false);
+% model.geom('geom1').feature('wp1').geom.create('pol5', 'Polygon');
+% model.geom('geom1').feature('wp1').geom.feature('pol5').label('outlet_high');
+% model.geom('geom1').feature('wp1').geom.feature('pol5').set('source', 'table');
+% model.geom('geom1').feature('wp1').geom.feature('pol5').set('table', {'0.89' '4.9285'; '1.25' '4.305'; '1.3' '4.305'; '0.94' '4.9285'});
+% model.geom('geom1').feature('wp1').geom.feature('pol5').active(false);
+
 %ORCC
 model.geom('geom1').feature('wp1').geom.create('pol6', 'Polygon');
 model.geom('geom1').feature('wp1').geom.feature('pol6').label('ORCC');

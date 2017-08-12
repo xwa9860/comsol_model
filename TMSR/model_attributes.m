@@ -7,7 +7,8 @@ unb = 4;
 region=5; % temperature group number
 region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
-
+MultiScale= false;
+sp3 = true;
 TMSR = true;
 
 domainNames = {'fuel', 'salt', 'gr'};
@@ -56,8 +57,7 @@ else
 dirichelet_b = [2 5 7 11 14];
 end
 
-MultiScale= false;
-sp3 = false;
+
 
 OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
 

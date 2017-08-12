@@ -42,7 +42,7 @@ fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f \n', lambda_eigen);
 
 % run the following line only if needed
-% run('calc_temperature_feedback_coefs.m'); 
+%run('calc_temperature_feedback_coefs.m'); 
 
 %% steady state calculation
 fprintf('\nRun steady state study\n');
@@ -113,6 +113,11 @@ lambda_eigen_new = mphglobal(model, 'lambda');
 fprintf('\nThe new eigenvalue is\n');
 fprintf('%.10f ', lambda_eigen_new)
 model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+%% Steady state calculation
+fprintf('\nRerun steady state calculation\n');
+model.variable('var19').active(true);
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+model.sol('sol13').runAll;
 
 %% Scale the flux to power
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
@@ -125,7 +130,7 @@ model.sol('sol15').runAll;
 fprintf('\nRunning transient...\n');
 run('create_transient_study.m')
 model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
-model.sol('sol4').runAll;
+%model.sol('sol4').runAll;
 %run('create_transient_results')
 
 
