@@ -11,27 +11,27 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     
     % temperature dependent parameters
     if TMSR
-        if MultiScale
-            tot_case_nb = 2*3*3;
-            temp_var_pb = [];
-            for pnb = 1:3
-                for tnb = 1:3
-                        temp_var_pb = [temp_var_pb sprintf("Tp%d%d", pnb, tnb)];
-                end
-            end
-            
-            input =[ones(tot_case_nb, 1) ones(tot_case_nb, 9)*900];
-            k=1;
-            for pbn = 1:3
-                for tnb = 1:3
-                        input(k, pnb*tnb) = 600;
-                        input(k+1, pnb*tnb)= 1200;
-                        k = k+2;
-                end
-            end
+%         if MultiScale
+%             tot_case_nb = 2*3*3;
+%             temp_var_pb = [];
+%             for pnb = 1:3
+%                 for tnb = 1:3
+%                         temp_var_pb = [temp_var_pb sprintf("Tp%d%d", pnb, tnb)];
+%                 end
+%             end
+%             
+%             input =[ones(tot_case_nb, 1) ones(tot_case_nb, 9)*900];
+%             k=1;
+%             for pbn = 1:3
+%                 for tnb = 1:3
+%                         input(k, pnb*tnb) = 600;
+%                         input(k+1, pnb*tnb)= 1200;
+%                         k = k+2;
+%                 end
+%             end
                         
             
-        else % not multiscale
+%        else % not multiscale
             %tot_case_nb=9;
             %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
             tot_case_nb = 5;
@@ -55,7 +55,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
 
             %input = [ones(9, 1) log_fuel_temp flibe_temps];
             input = [ones(5, 1) log_fuel_temp];
-        end
+%        end
         
     else
         tot_case_nb = 50;

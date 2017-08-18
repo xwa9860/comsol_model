@@ -5,9 +5,10 @@ dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 unb = 4;
 region=5; % temperature group number
-region_coated=4; %temperature of TRISTO coat
+region_coated=1; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
-MultiScale= false;
+
+MultiScale= true;
 sp3 = false;
 TMSR = true;
 

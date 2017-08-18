@@ -19,7 +19,7 @@ model.param.set('r5', '0.027500000000000[m]');
 model.param.set('r0', '0.03[m]');
 model.param.set('rfuel_zone','0.025[m]')
 model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
-model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
+model.param.set('pb_zone', '4', 'number of radial zones in the pebbles');
 
 model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
 model.param.set('pb_nb', '11000', 'number of pebbles in the core');
