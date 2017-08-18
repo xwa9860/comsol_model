@@ -10,7 +10,7 @@ model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area betwe
 model.param.set('pb_nb', '44000', 'number of pebbles in the core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
 model.param.set('fuel_v', 'pb_v/0.6');
-
+model.param.set('porosity', '0.4');
 
 model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');
 

@@ -58,9 +58,8 @@ porous_media = {'Blanket', 'fuel'};
 
 %% porous media module
 in_bound1= [75 76 144 159];
-out_bound = [39 40 41 42 51 52 57 58 126 127 132 135 165 170 174 179];
+out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
 in_bound2 = [53 54 59 60 133 136 163 166];
-
 
 valueSet = values(domains, porous_media);
 pm_domains = cell2mat(valueSet);

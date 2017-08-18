@@ -4326,7 +4326,8 @@ model.result.numerical('int1').setResult;
 model.result.numerical('int2').appendResult;
 model.result.numerical('int3').appendResult;
 model.result.numerical('gev1').setResult;
-model.result.create('pg2', 'PlotGroup1D');
+
+
 model.result('pg1').label('Temperature (ht)');
 model.result('pg1').feature('surf1').label('Surface');
 model.result('pg1').feature('surf1').set('expr', 'T_flibe');
@@ -4334,6 +4335,8 @@ model.result('pg1').feature('surf1').set('unit', 'degC');
 model.result('pg1').feature('surf1').set('descr', 'Temperature');
 model.result('pg1').feature('surf1').set('colortable', 'ThermalLight');
 model.result('pg1').feature('surf1').set('resolution', 'normal');
+
+model.result.create('pg2', 'PlotGroup1D');
 model.result('pg2').label('Probe Plot Group 2');
 model.result('pg2').set('data', 'none');
 model.result('pg2').set('xlabel', 'Temperature (W), Probe Pint');
@@ -4345,16 +4348,19 @@ model.result('pg2').set('ylabelactive', false);
 model.result('pg2').create('tblp1', 'Table');
 model.result('pg2').feature('tblp1').label('Probe Table Graph 1');
 model.result('pg2').feature('tblp1').set('plotcolumninput', 'manual');
+
 model.result('pg3').label('Probe Plot Group 3');
 model.result('pg3').set('xlabel', 'Temperature (W), Probe Pint');
 model.result('pg3').set('windowtitle', 'Probe Plot 2');
 model.result('pg3').set('xlabelactive', false);
 model.result('pg3').feature('tblp1').label('Probe Table Graph 1');
+
 model.result('pg4').label('Probe Plot Group 4');
 model.result('pg4').set('xlabel', 'Temperature (W), Probe Pint');
 model.result('pg4').set('windowtitle', 'Probe Plot 3');
 model.result('pg4').set('xlabelactive', false);
 model.result('pg4').feature('tblp1').label('Probe Table Graph 1');
+
 model.result('pg5').feature('str1').set('descractive', true);
 model.result('pg5').feature('str1').set('posmethod', 'magnitude');
 model.result('pg5').feature('str1').set('mdist', [0.001 0.1]);
@@ -4362,30 +4368,37 @@ model.result('pg5').feature('str1').set('linetype', 'tube');
 model.result('pg5').feature('str1').set('tuberadiusscale', 0.021250000000000015);
 model.result('pg5').feature('str1').set('tuberadiusscaleactive', false);
 model.result('pg5').feature('str1').set('resolution', 'normal');
+
 model.result('pg6').feature('surf1').active(false);
 model.result('pg6').feature('surf1').set('expr', 'T_flibe');
 model.result('pg6').feature('surf1').set('unit', 'degC');
 model.result('pg6').feature('surf1').set('descr', 'Temperature');
 model.result('pg6').feature('surf1').set('resolution', 'normal');
+
 model.result('pg6').feature('con1').set('expr', 'T_flibe');
 model.result('pg6').feature('con1').set('unit', 'K');
 model.result('pg6').feature('con1').set('descr', 'Temperature');
 model.result('pg6').feature('con1').set('resolution', 'normal');
+
 model.result('pg7').feature('surf1').set('expr', 'T_fuel');
 model.result('pg7').feature('surf1').set('unit', 'degC');
 model.result('pg7').feature('surf1').set('descr', 'Temperature');
 model.result('pg7').feature('surf1').set('resolution', 'normal');
+
 model.result('pg8').feature('surf1').set('expr', 'PdensityN');
 model.result('pg8').feature('surf1').set('unit', 'W/m^3');
 model.result('pg8').feature('surf1').set('descr', 'power density normalized to Pop');
+
 model.result('pg8').feature('surf1').set('resolution', 'normal');
 model.result('pg9').feature('surf1').set('expr', 'PintN');
 model.result('pg9').feature('surf1').set('unit', 'W');
 model.result('pg9').feature('surf1').set('descr', 'integrated total core power normalized to Pop, should be equal to Pop');
 model.result('pg9').feature('surf1').set('resolution', 'normal');
+
 model.result('pg10').feature('surf1').set('expr', 'w');
 model.result('pg10').feature('surf1').set('descr', 'Velocity field, z component');
 model.result('pg10').feature('surf1').set('resolution', 'normal');
+
 model.result('pg11').feature('str1').set('data', 'cpl1');
 model.result('pg11').feature('str1').set('planecoordsys', 'cartesian');
 model.result('pg11').feature('str1').set('showzexpr', true);

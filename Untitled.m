@@ -1,1626 +1,110 @@
-function out = model
-%
-% Untitled.m
-%
-% Model exported on Aug 11 2017, 14:28 by COMSOL 5.3.0.260.
-
-import com.comsol.model.*
-import com.comsol.model.util.*
-
-model = ModelUtil.create('Model');
-
-model.modelPath('D:\diffusion_models\model\m_files');
-
-model.label('transient_2d.mph');
-
-model.comments(['Untitled\n\n']);
-
-model.param.set('v_inlet', '0.13*0.4[m/s]', 'upwards velocity, uniform in the core 0.13*0.4[m/s]');
-model.param.set('T0_flibe', '672[degC]', 'initial temperature for flibe salt, 672[degC] for TMSR');
-model.param.set('T_inlet', '672[degC]', 'nominal value is 672');
-model.param.set('T0_fuel', '800[degC]', 'initial temperature for fuel pebbles, 800[degC]');
-model.param.set('pb_h', '0.4501[m]', 'a parameter for pebble height, defined as in picture ''core_dim_definition''. Calculated with MATLAB Livelink, file ''volume.m''');
-model.param.set('z0', '20[cm]-4.899[cm]', 'height of pebble boundary when pb_h =0');
-model.param.set('zin', 'z0+pb_h', 'inner height that fuel pebble regions starts');
-model.param.set('zout', '0.53+pb_h', 'outer height that fuel pebble starts');
-model.param.set('pb_diam', '0.06[m]', 'fuel pebble diameter');
-model.param.set('r1', '0[m]');
-model.param.set('r2', '0.008667015929383[m]');
-model.param.set('r3', '0.017602558504261[m]');
-model.param.set('r4', '0.020149899425206[m]');
-model.param.set('r5', '0.027500000000000[m]');
-model.param.set('r0', '0.03[m]');
-model.param.set('rfuel_zone', '0.025[m]');
-model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
-model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
-model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
-model.param.set('pb_nb', '11000', 'number of pebbles in the core');
-model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
-model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
-model.param.set('porosity', '0.4', 'portion of coolant in the fuel region');
-model.param.set('Pop', '1E7[W]', 'operation power');
-model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
-model.param.set('OCSlope', '-10', 'Over cooling inlet T drop slope');
-model.param.set('OCOnset', '100', 'Over cooling start time, a very large time means it''s not triggered during the simulation');
-model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
-model.param.set('lambda_critical', '0.9707385013507459', 'lambda_engeinvalue to get to criticality');
-model.param.set('reactivity_insertion', '0', 'external reactivity insertion');
-
-model.component.create('mod1', false);
-
-model.component('mod1').geom.create('geom1', 2);
-
-model.component('mod1').label('FHR');
-
-model.component('mod1').defineLocalCoord(false);
-
-model.result.table.create('tbl1', 'Table');
-
-model.func.create('step1', 'Step');
-model.func.create('rm1', 'Ramp');
-model.func.create('an4', 'Analytic');
-model.func.create('an6', 'Analytic');
-model.func('step1').label('step_fun');
-model.func('step1').set('funcname', 'step_fun');
-model.func('step1').set('location', '0.1');
-model.func('step1').set('from', '1');
-model.func('step1').set('to', 'reactivity_insertion+1');
-model.func('step1').set('smooth', '0');
-model.func('rm1').set('location', 'OCOnset');
-model.func('rm1').set('slope', 'OCSlope');
-model.func('rm1').set('cutoff', '-100');
-model.func('rm1').set('cutoffactive', true);
-model.func('an4').label('FLiBe Density');
-model.func('an4').set('funcname', 'rho_flibe');
-model.func('an4').set('expr', '2413-0.488*T');
-model.func('an4').set('args', {'T'});
-model.func('an4').set('argunit', 'K');
-model.func('an4').set('fununit', 'kg/m^3');
-model.func('an4').set('plotargs', {'T' '400' '2000'});
-model.func('an6').label('FLiBe Dynamic Viscosity');
-model.func('an6').set('funcname', 'mu_flibe');
-model.func('an6').set('expr', '1.16*10^(-4)*exp(3755/T)');
-model.func('an6').set('args', {'T'});
-model.func('an6').set('argunit', 'K');
-model.func('an6').set('fununit', 'Pa*s');
-model.func('an6').set('plotargs', {'T' '600' '800'});
-
-model.component('mod1').geom('geom1').axisymmetric(true);
-
-model.component('mod1').mesh.create('mesh1');
-
-model.component('mod1').geom('geom1').label('TMSR_core');
-model.component('mod1').geom('geom1').create('pol1', 'Polygon');
-model.component('mod1').geom('geom1').feature('pol1').label('upper_core');
-model.component('mod1').geom('geom1').feature('pol1').set('x', '0, 0.675, 0.675, 0.1, 0.1, 0');
-model.component('mod1').geom('geom1').feature('pol1').set('y', 'zin, zout, 2.33, 2.66, 2.86, 2.86');
-model.component('mod1').geom('geom1').create('pol2', 'Polygon');
-model.component('mod1').geom('geom1').feature('pol2').label('reflector');
-model.component('mod1').geom('geom1').feature('pol2').set('x', '0.1, 1.3, 1.3, 0.1, 0.1,0.675,0.675,0.1');
-model.component('mod1').geom('geom1').feature('pol2').set('y', '0, 0, 2.86, 2.86, 2.66,2.33,0.53,0.2');
-model.component('mod1').geom('geom1').create('pol3', 'Polygon');
-model.component('mod1').geom('geom1').feature('pol3').label('bottom_core');
-model.component('mod1').geom('geom1').feature('pol3').set('x', '0,0.1,0.1,0.675,0.675,0');
-model.component('mod1').geom('geom1').feature('pol3').set('y', '0,0,0.2,0.53,zout,zin');
-model.component('mod1').geom('geom1').run;
-
-model.component('mod1').variable.create('var1');
-model.component('mod1').variable('var1').set('DT', '100[K]', 'core temperature rise');
-model.component('mod1').variable('var1').set('mL', 'Qcore*decay/cpL/DT', 'salt mass flowrate');
-model.component('mod1').variable('var1').set('g', '9.81[m/s^2]', 'gravitational acceleration');
-model.component('mod1').variable('var1').set('SA', '6/d', 'pebble specific surface area');
-model.component('mod1').variable('var1').set('v0in', 'mL*rhoL/Ain');
-model.component('mod1').variable('var1').set('v0ghost', 'mL*rhoL/Ainghost');
-model.component('mod1').variable('var1').set('Acore2', 'pi*2*(2.8656[m]-1.5[m])*0.9[m]', 'inlet cross-sectional area on diverging region inner reflector');
-model.component('mod1').variable('var1').set('Acore1', 'pi*2*Hinlet*(0.9[m])', 'inlet cross-sectional area on core plug flow region inner reflector');
-model.component('mod1').variable('var1').set('Ain', '2.8743 [m^2]');
-model.component('mod1').variable('var1').set('Ainghost', '3.29867 [m^2]');
-model.component('mod1').variable.create('var2');
-model.component('mod1').variable('var2').set('Kbr', 'd^2/1012.5', 'bed permeability, Ergun/Kozeni');
-model.component('mod1').variable('var2').set('cF', '0.52', 'Forchheimer drag coefficient, from Ergun correlation (Beaver coefficient)');
-model.component('mod1').variable('var2').set('ep', '0.40', 'porosity');
-model.component('mod1').variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
-model.component('mod1').variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
-model.component('mod1').variable('var2').set('d', '3[cm]', 'pebble diameter');
-model.component('mod1').variable.create('var3');
-model.component('mod1').variable('var3').set('cpL', '2415.78[J/kg/K]', 'salt heat capacity, constant');
-model.component('mod1').variable('var3').set('rhoL', '1962.67[kg/m^3]', 'salt density, 650C');
-model.component('mod1').variable('var3').set('muL', '0.00678[Pa*s]', 'salt viscosity, 650C');
-model.component('mod1').variable('var3').set('kL', '1.091[W/m/K]', 'salt thermal conductivity, 650C');
-model.component('mod1').variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coefficient, constant');
-model.component('mod1').variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
-model.component('mod1').variable('var3').set('unitstest', 'betaL*To*rhoL*g');
-model.component('mod1').variable('var3').set('Pr', 'muL*cpL/kL');
-model.component('mod1').variable.create('var4');
-model.component('mod1').variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TMSR-SF1 & SF0)');
-model.component('mod1').variable('var4').set('k_fuel', '15[W/m/K]');
-model.component('mod1').variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
-model.component('mod1').variable('var4').selection.geom('geom1', 2);
-model.component('mod1').variable('var4').selection.set([2]);
-model.component('mod1').variable.create('var_xs_gr');
-model.component('mod1').variable('var_xs_gr').set('beta1', '6.74036000e-03');
-model.component('mod1').variable('var_xs_gr').set('betas1', '2.16906000e-04');
-model.component('mod1').variable('var_xs_gr').set('betas2', '1.12198000e-03');
-model.component('mod1').variable('var_xs_gr').set('betas3', '1.08332000e-03');
-model.component('mod1').variable('var_xs_gr').set('betas4', '3.09711000e-03');
-model.component('mod1').variable('var_xs_gr').set('betas5', '8.98681000e-04');
-model.component('mod1').variable('var_xs_gr').set('betas6', '3.22370000e-04');
-model.component('mod1').variable('var_xs_gr').set('chid1', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid2', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid3', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid4', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid5', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid6', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid7', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chid8', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip1', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip2', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip3', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip4', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip5', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip6', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip7', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chip8', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit1', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit2', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit3', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit4', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit5', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit6', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit7', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('chit8', '0.00000000e+00');
-model.component('mod1').variable('var_xs_gr').set('diff11', '2.40476000e+00[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff12', '1.12104000e+00[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff13', '8.51477000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff14', '8.48243000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff15', '8.44276000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff16', '8.35935000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff17', '8.05342000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff18', '7.31221000e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss1', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss2', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss3', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss4', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss5', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss6', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss7', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('fiss8', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV1', '4.83500000e-10[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV2', '1.99556000e-09[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV3', '3.44072000e-08[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV4', '2.09009000e-07[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV5', '7.48344000e-07[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV6', '1.38031000e-06[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV7', '2.16906000e-06[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('invV8', '4.15885000e-06[s/cm]');
-model.component('mod1').variable('var_xs_gr').set('kappa1', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa2', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa3', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa4', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa5', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa6', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa7', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('kappa8', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var_xs_gr').set('lambdas1', '1.24906000e-02[1/s]');
-model.component('mod1').variable('var_xs_gr').set('lambdas2', '3.18190000e-02[1/s]');
-model.component('mod1').variable('var_xs_gr').set('lambdas3', '1.09397000e-01[1/s]');
-model.component('mod1').variable('var_xs_gr').set('lambdas4', '3.17091000e-01[1/s]');
-model.component('mod1').variable('var_xs_gr').set('lambdas5', '1.35372000e+00[1/s]');
-model.component('mod1').variable('var_xs_gr').set('lambdas6', '8.64433000e+00[1/s]');
-model.component('mod1').variable('var_xs_gr').set('nsf1', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf2', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf3', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf4', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf5', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf6', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf7', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('nsf8', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('diff21', '1.62315119e+00[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff22', '7.53660277e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff23', '6.19721394e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff24', '6.17686421e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff25', '6.16491349e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff26', '6.13669488e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff27', '6.01077732e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('diff28', '5.67818508e-01[cm]');
-model.component('mod1').variable('var_xs_gr').set('rem1', '3.57202000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem2', '1.74186000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem3', '1.22520000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem4', '2.72112000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem5', '7.19732000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem6', '7.93438000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem7', '6.70170000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('rem8', '8.22232000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat11', '1.22702000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat12', '3.56405000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat13', '1.12169000e-06[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat14', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat15', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat16', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat17', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat18', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat21', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat22', '3.23773000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat23', '1.74185000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat24', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat25', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat26', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat27', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat28', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat31', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat32', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat33', '4.02681000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat34', '1.22494000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat35', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat36', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat37', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat38', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat41', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat42', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat43', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat44', '3.89089000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat45', '2.71958000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat46', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat47', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat48', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat51', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat52', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat53', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat54', '1.57048000e-04[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat55', '3.45134000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat56', '7.06557000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat57', '1.10512000e-03[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat58', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat61', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat62', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat63', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat64', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat65', '9.95842000e-03[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat66', '3.39681000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat67', '6.57933000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat68', '3.48979000e-03[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat71', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat72', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat73', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat74', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat75', '1.22436000e-04[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat76', '4.52400000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat77', '3.60786000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat78', '2.14943000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat81', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat82', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat83', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat84', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat85', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat86', '7.74910000e-03[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat87', '7.41683000e-02[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('scat88', '3.70638000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot1', '1.58422000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot2', '3.41192000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot3', '4.14933000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot4', '4.16300000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot5', '4.17107000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot6', '4.19025000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot7', '4.27803000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').set('tot8', '4.52861000e-01[1/cm]');
-model.component('mod1').variable('var_xs_gr').selection.geom('geom1', 2);
-model.component('mod1').variable('var_xs_gr').selection.set([3]);
-model.component('mod1').variable.create('var17');
-model.component('mod1').variable('var17').set('beta1', '6.74138000e-03');
-model.component('mod1').variable('var17').set('betas1', '2.16124000e-04');
-model.component('mod1').variable('var17').set('betas2', '1.12075000e-03');
-model.component('mod1').variable('var17').set('betas3', '1.08895000e-03');
-model.component('mod1').variable('var17').set('betas4', '3.09517000e-03');
-model.component('mod1').variable('var17').set('betas5', '9.02169000e-04');
-model.component('mod1').variable('var17').set('betas6', '3.18206000e-04');
-model.component('mod1').variable('var17').set('chid1', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid2', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid3', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid4', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid5', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid6', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid7', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chid8', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip1', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip2', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip3', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip4', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip5', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip6', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip7', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chip8', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit1', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit2', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit3', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit4', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit5', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit6', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit7', '0.00000000e+00');
-model.component('mod1').variable('var17').set('chit8', '0.00000000e+00');
-model.component('mod1').variable('var17').set('diff11', '2.50695000e+00[cm]');
-model.component('mod1').variable('var17').set('diff12', '1.23436000e+00[cm]');
-model.component('mod1').variable('var17').set('diff13', '1.47938000e+00[cm]');
-model.component('mod1').variable('var17').set('diff14', '1.49494000e+00[cm]');
-model.component('mod1').variable('var17').set('diff15', '1.49260000e+00[cm]');
-model.component('mod1').variable('var17').set('diff16', '1.47788000e+00[cm]');
-model.component('mod1').variable('var17').set('diff17', '1.44905000e+00[cm]');
-model.component('mod1').variable('var17').set('diff18', '1.33316000e+00[cm]');
-model.component('mod1').variable('var17').set('fiss1', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss2', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss3', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss4', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss5', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss6', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss7', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('fiss8', '0.00000000e+00[1/cm]');
-model.component('mod1').variable('var17').set('invV1', '4.81281000e-10[s/cm]');
-model.component('mod1').variable('var17').set('invV2', '1.96456000e-09[s/cm]');
-model.component('mod1').variable('var17').set('invV3', '3.07002000e-08[s/cm]');
-model.component('mod1').variable('var17').set('invV4', '2.03803000e-07[s/cm]');
-model.component('mod1').variable('var17').set('invV5', '6.76639000e-07[s/cm]');
-model.component('mod1').variable('var17').set('invV6', '1.36626000e-06[s/cm]');
-model.component('mod1').variable('var17').set('invV7', '2.16506000e-06[s/cm]');
-model.component('mod1').variable('var17').set('invV8', '4.16822000e-06[s/cm]');
-model.component('mod1').variable('var17').set('kappa1', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa2', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa3', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa4', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa5', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa6', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa7', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('kappa8', '0.00000000e+00[MeV]');
-model.component('mod1').variable('var17').set('lambdas1', '1.24906000e-02[1/s]');
-model.component('mod1').variable('var17').set('lambdas2', '3.18193000e-02[1/s]');
-model.component('mod1').variable('var17').set('lambdas3', '1.09398000e-01[1/s]');
-model.component('mod1').variable('var17').set('lambdas4', '3.17094000e-01[1/s]');
-model.component('mod1').variable('var17').set('lambdas5', '1.35372000e+00[1/s]');
-model.component('mod1').variable('var17').set('lambdas6', '8.64384000e+00[1/s]');
-model.component('mod1').variable('var17').set('nsf1', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf2', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf3', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf4', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf5', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf6', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf7', '0[1/cm]');
-model.component('mod1').variable('var17').set('nsf8', '0[1/cm]');
-model.component('mod1').variable('var17').set('diff21', '(9.67440564e-01 +( T_flibe[1/K] *( 3.41727168e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff22', '(5.51687333e-01 +( T_flibe[1/K] *( 1.87228735e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff23', '(7.09570819e-01 +( T_flibe[1/K] *( 2.51040495e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff24', '(7.17453975e-01 +( T_flibe[1/K] *( 2.53815168e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff25', '(7.16560170e-01 +( T_flibe[1/K] *( 2.53491858e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff26', '(7.09902822e-01 +( T_flibe[1/K] *( 2.51144957e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff27', '(6.96872275e-01 +( T_flibe[1/K] *( 2.46551191e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('diff28', '(6.42094837e-01 +( T_flibe[1/K] *( 2.27339541e-04 )) ) [cm]');
-model.component('mod1').variable('var17').set('rem1', '(6.45216591e-02 +( T_flibe[1/K] *( -1.30609784e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem2', '(1.80092557e-02 +( T_flibe[1/K] *( -3.61778800e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem3', '(7.27407046e-03 +( T_flibe[1/K] *( -1.49792576e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem4', '(1.80244534e-02 +( T_flibe[1/K] *( -3.68932880e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem5', '(3.58918829e-02 +( T_flibe[1/K] *( -7.13114400e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem6', '(7.52914589e-02 +( T_flibe[1/K] *( -1.52271616e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem7', '(8.05941058e-02 +( T_flibe[1/K] *( -1.62992488e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('rem8', '(1.24761841e-01 +( T_flibe[1/K] *( -2.51953424e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat11', '(1.82943497e-01 +( T_flibe[1/K] *( -3.69362320e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat21', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat31', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat41', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat51', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat61', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat71', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat81', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat12', '(6.25949998e-02 +( T_flibe[1/K] *( -1.26770200e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat22', '(4.17785532e-01 +( T_flibe[1/K] *( -8.24212480e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat32', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat42', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat52', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat62', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat72', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat82', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat13', '(5.39988978e-05 +( T_flibe[1/K] *( -1.09515984e-08 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat23', '(1.79261022e-02 +( T_flibe[1/K] *( -3.60178160e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat33', '(3.30067195e-01 +( T_flibe[1/K] *( -6.67208240e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat43', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat53', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat63', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat73', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat83', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat14', '(4.50722843e-09 +( T_flibe[1/K] *( -1.62999320e-12 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat24', '(2.73446664e-08 +( T_flibe[1/K] *( -5.87556880e-12 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat34', '(7.23801960e-03 +( T_flibe[1/K] *( -1.49062040e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat44', '(3.15611269e-01 +( T_flibe[1/K] *( -6.37772080e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat54', '(2.12422421e-04 +( T_flibe[1/K] *( -4.32470480e-08 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat64', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat74', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat84', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat15', '(3.58771495e-10 +( T_flibe[1/K] *( -1.30927472e-13 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat25', '(7.36975186e-10 +( T_flibe[1/K] *( -1.37776064e-13 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat35', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat45', '(1.78094831e-02 +( T_flibe[1/K] *( -3.64575040e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat55', '(2.98162961e-01 +( T_flibe[1/K] *( -6.04207440e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat65', '(8.65580373e-03 +( T_flibe[1/K] *( -1.75649744e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat75', '(3.06601125e-05 +( T_flibe[1/K] *( -6.20033280e-09 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat85', '(5.68413938e-07 +( T_flibe[1/K] *( -1.09990808e-10 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat16', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat26', '(3.81928624e-11 +( T_flibe[1/K] *( -1.74987040e-14 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat36', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat46', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat56', '(3.46598633e-02 +( T_flibe[1/K] *( -6.88304480e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat66', '(2.61894044e-01 +( T_flibe[1/K] *( -5.29582480e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat76', '(4.23754891e-02 +( T_flibe[1/K] *( -8.55063840e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat86', '(2.12364322e-03 +( T_flibe[1/K] *( -4.27966240e-07 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat17', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat27', '(4.47250669e-11 +( T_flibe[1/K] *( -3.37724304e-14 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat37', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat47', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat57', '(3.04901524e-04 +( T_flibe[1/K] *( -6.06335120e-08 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat67', '(6.41213892e-02 +( T_flibe[1/K] *( -1.29624024e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat77', '(2.62892882e-01 +( T_flibe[1/K] *( -5.31627200e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat87', '(1.18201874e-01 +( T_flibe[1/K] *( -2.38692024e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat18', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat28', '(-2.33614823e-11 +( T_flibe[1/K] *( 2.75893728e-14 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat38', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat48', '0[1/cm]');
-model.component('mod1').variable('var17').set('scat58', '(1.83634866e-06 +( T_flibe[1/K] *( -3.68981680e-10 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat68', '(1.07748614e-03 +( T_flibe[1/K] *( -2.17879312e-07 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat78', '(3.59096218e-02 +( T_flibe[1/K] *( -7.28174080e-06 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('scat88', '(2.48000069e-01 +( T_flibe[1/K] *( -5.02195920e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot1', '(2.47465555e-01 +( T_flibe[1/K] *( -4.99975520e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot2', '(4.35796151e-01 +( T_flibe[1/K] *( -8.60402560e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot3', '(3.37340859e-01 +( T_flibe[1/K] *( -6.82184960e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot4', '(3.33636104e-01 +( T_flibe[1/K] *( -6.74669760e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot5', '(3.34053464e-01 +( T_flibe[1/K] *( -6.75504240e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot6', '(3.37184847e-01 +( T_flibe[1/K] *( -6.81848240e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot7', '(3.43487336e-01 +( T_flibe[1/K] *( -6.94619200e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').set('tot8', '(3.72760333e-01 +( T_flibe[1/K] *( -7.54135680e-05 )) ) [1/cm]');
-model.component('mod1').variable('var17').selection.geom('geom1', 2);
-model.component('mod1').variable('var17').selection.set([1]);
-model.component('mod1').variable.create('var16');
-model.component('mod1').variable('var16').set('beta1', '6.72588000e-03');
-model.component('mod1').variable('var16').set('betas1', '2.15006000e-04');
-model.component('mod1').variable('var16').set('betas2', '1.11859000e-03');
-model.component('mod1').variable('var16').set('betas3', '1.08510000e-03');
-model.component('mod1').variable('var16').set('betas4', '3.09486000e-03');
-model.component('mod1').variable('var16').set('betas5', '8.98386000e-04');
-model.component('mod1').variable('var16').set('betas6', '3.13944000e-04');
-model.component('mod1').variable('var16').set('chid1', '3.89652000e-02');
-model.component('mod1').variable('var16').set('chid2', '9.38506000e-01');
-model.component('mod1').variable('var16').set('chid3', '2.25000000e-02');
-model.component('mod1').variable('var16').set('chid4', '2.55806000e-05');
-model.component('mod1').variable('var16').set('chid5', '3.01332000e-06');
-model.component('mod1').variable('var16').set('chid6', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chid7', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chid8', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chip1', '5.73270000e-01');
-model.component('mod1').variable('var16').set('chip2', '4.25193000e-01');
-model.component('mod1').variable('var16').set('chip3', '1.53597000e-03');
-model.component('mod1').variable('var16').set('chip4', '1.57730000e-07');
-model.component('mod1').variable('var16').set('chip5', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chip6', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chip7', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chip8', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chit1', '5.69676330e-01');
-model.component('mod1').variable('var16').set('chit2', '4.28645482e-01');
-model.component('mod1').variable('var16').set('chit3', '1.67697155e-03');
-model.component('mod1').variable('var16').set('chit4', '3.28721173e-07');
-model.component('mod1').variable('var16').set('chit5', '2.02672287e-08');
-model.component('mod1').variable('var16').set('chit6', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chit7', '0.00000000e+00');
-model.component('mod1').variable('var16').set('chit8', '0.00000000e+00');
-model.component('mod1').variable('var16').set('diff11', '2.32551000e+00[cm]');
-model.component('mod1').variable('var16').set('diff12', '1.13241000e+00[cm]');
-model.component('mod1').variable('var16').set('diff13', '1.00813000e+00[cm]');
-model.component('mod1').variable('var16').set('diff14', '1.00567000e+00[cm]');
-model.component('mod1').variable('var16').set('diff15', '1.01368000e+00[cm]');
-model.component('mod1').variable('var16').set('diff16', '1.01237000e+00[cm]');
-model.component('mod1').variable('var16').set('diff17', '9.88464000e-01[cm]');
-model.component('mod1').variable('var16').set('diff18', '8.99919000e-01[cm]');
-model.component('mod1').variable('var16').set('fiss1', '7.77677000e-05[1/cm]');
-model.component('mod1').variable('var16').set('fiss2', '2.50236000e-05[1/cm]');
-model.component('mod1').variable('var16').set('fiss3', '1.81061000e-04[1/cm]');
-model.component('mod1').variable('var16').set('fiss4', '6.38238000e-04[1/cm]');
-model.component('mod1').variable('var16').set('fiss5', '6.72148000e-04[1/cm]');
-model.component('mod1').variable('var16').set('fiss6', '2.29634000e-03[1/cm]');
-model.component('mod1').variable('var16').set('fiss7', '3.16606000e-03[1/cm]');
-model.component('mod1').variable('var16').set('fiss8', '6.53168000e-03[1/cm]');
-model.component('mod1').variable('var16').set('invV1', '4.79466000e-10[s/cm]');
-model.component('mod1').variable('var16').set('invV2', '1.94704000e-09[s/cm]');
-model.component('mod1').variable('var16').set('invV3', '3.05696000e-08[s/cm]');
-model.component('mod1').variable('var16').set('invV4', '2.03840000e-07[s/cm]');
-model.component('mod1').variable('var16').set('invV5', '6.74629000e-07[s/cm]');
-model.component('mod1').variable('var16').set('invV6', '1.36266000e-06[s/cm]');
-model.component('mod1').variable('var16').set('invV7', '2.16145000e-06[s/cm]');
-model.component('mod1').variable('var16').set('invV8', '4.14824000e-06[s/cm]');
-model.component('mod1').variable('var16').set('kappa1', '2.05166000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa2', '2.02122000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa3', '2.02024000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa4', '2.02023000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa5', '2.02023000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa6', '2.02023000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa7', '2.02023000e+02[MeV]');
-model.component('mod1').variable('var16').set('kappa8', '2.02023000e+02[MeV]');
-model.component('mod1').variable('var16').set('lambdas1', '1.24906000e-02[1/s]');
-model.component('mod1').variable('var16').set('lambdas2', '3.18199000e-02[1/s]');
-model.component('mod1').variable('var16').set('lambdas3', '1.09397000e-01[1/s]');
-model.component('mod1').variable('var16').set('lambdas4', '3.17093000e-01[1/s]');
-model.component('mod1').variable('var16').set('lambdas5', '1.35372000e+00[1/s]');
-model.component('mod1').variable('var16').set('lambdas6', '8.64270000e+00[1/s]');
-model.component('mod1').variable('var16').set('nsf1', '(2.14331713e-04 +( log(T_fuel[1/K]) *( -2.89002231e-08 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf2', '(6.16490889e-05 +( log(T_fuel[1/K]) *( 6.41484972e-09 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf3', '(4.42656421e-04 +( log(T_fuel[1/K]) *( -3.36905357e-07 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf4', '(1.52087678e-03 +( log(T_fuel[1/K]) *( 5.89964874e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf5', '(1.63940601e-03 +( log(T_fuel[1/K]) *( -2.58509848e-07 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf6', '(5.64675284e-03 +( log(T_fuel[1/K]) *( -8.84587168e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf7', '(7.79506915e-03 +( log(T_fuel[1/K]) *( -1.42307696e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('nsf8', '(1.62679390e-02 +( log(T_fuel[1/K]) *( -6.09430908e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('diff21', '(1.49172833e+00 +( log(T_fuel[1/K]) *( -4.60476347e-05 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff22', '(7.62740146e-01 +( log(T_fuel[1/K]) *( 1.07867676e-05 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff23', '(7.36190480e-01 +( log(T_fuel[1/K]) *( -1.84255990e-04 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff24', '(7.41108989e-01 +( log(T_fuel[1/K]) *( -1.21265072e-03 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff25', '(7.39146972e-01 +( log(T_fuel[1/K]) *( 2.89917993e-04 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff26', '(7.41441501e-01 +( log(T_fuel[1/K]) *( 2.58948266e-04 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff27', '(7.31291014e-01 +( log(T_fuel[1/K]) *( 3.11861344e-04 )) ) [cm]');
-model.component('mod1').variable('var16').set('diff28', '(6.81974177e-01 +( log(T_fuel[1/K]) *( 3.03975388e-04 )) ) [cm]');
-model.component('mod1').variable('var16').set('rem1', '(3.90495959e-02 +( log(T_fuel[1/K]) *( -1.36549251e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem2', '(1.45494441e-02 +( log(T_fuel[1/K]) *( -2.25543364e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem3', '(8.28458909e-03 +( log(T_fuel[1/K]) *( 5.68462959e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem4', '(2.11693677e-02 +( log(T_fuel[1/K]) *( 2.67812199e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem5', '(3.62650763e-02 +( log(T_fuel[1/K]) *( 7.96218768e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem6', '(7.07036413e-02 +( log(T_fuel[1/K]) *( 2.09957656e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem7', '(6.83730624e-02 +( log(T_fuel[1/K]) *( 7.65764970e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('rem8', '(9.70963578e-02 +( log(T_fuel[1/K]) *( 1.41078296e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat11', '(1.33327239e-01 +( log(T_fuel[1/K]) *( 7.04984400e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat21', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat31', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat41', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat51', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat61', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat71', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat81', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat12', '(3.83364433e-02 +( log(T_fuel[1/K]) *( -2.88733120e-07 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat22', '(3.22579853e-01 +( log(T_fuel[1/K]) *( -2.31977945e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat32', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat42', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat52', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat62', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat72', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat82', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat13', '(1.68954520e-05 +( log(T_fuel[1/K]) *( 4.84303269e-08 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat23', '(1.44778861e-02 +( log(T_fuel[1/K]) *( -2.42087471e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat33', '(3.41003541e-01 +( log(T_fuel[1/K]) *( 8.19450528e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat43', '(-4.43389226e-07 +( log(T_fuel[1/K]) *( 7.19123902e-08 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat53', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat63', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat73', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat83', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat14', '(-1.81206589e-09 +( log(T_fuel[1/K]) *( 5.97293522e-10 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat24', '(9.87503712e-10 +( log(T_fuel[1/K]) *( 1.28547595e-09 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat34', '(7.95448982e-03 +( log(T_fuel[1/K]) *( -2.84998976e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat44', '(3.25763091e-01 +( log(T_fuel[1/K]) *( 3.11968362e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat54', '(1.92684622e-04 +( log(T_fuel[1/K]) *( 1.13380274e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat64', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat74', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat84', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat15', '(-1.89446835e-09 +( log(T_fuel[1/K]) *( 3.07259940e-10 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat25', '(9.07774880e-10 +( log(T_fuel[1/K]) *( -1.20343324e-10 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat35', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat45', '(2.08409992e-02 +( log(T_fuel[1/K]) *( -2.19300053e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat55', '(3.11622085e-01 +( log(T_fuel[1/K]) *( -2.15166606e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat65', '(9.51518348e-03 +( log(T_fuel[1/K]) *( 1.44831779e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat75', '(7.54064805e-05 +( log(T_fuel[1/K]) *( -6.63476791e-08 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat85', '(2.05022748e-07 +( log(T_fuel[1/K]) *( 3.75078791e-09 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat16', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat26', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat36', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat46', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat56', '(3.45017716e-02 +( log(T_fuel[1/K]) *( 7.60617130e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat66', '(2.76109509e-01 +( log(T_fuel[1/K]) *( -1.41610761e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat76', '(3.91264959e-02 +( log(T_fuel[1/K]) *( 5.97008448e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat86', '(4.57746080e-03 +( log(T_fuel[1/K]) *( 8.90098378e-07 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat17', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat27', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat37', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat47', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat57', '(4.42444306e-04 +( log(T_fuel[1/K]) *( 1.24827252e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat67', '(5.56762921e-02 +( log(T_fuel[1/K]) *( 1.03565520e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat77', '(2.83250865e-01 +( log(T_fuel[1/K]) *( -2.25431850e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat87', '(8.26399854e-02 +( log(T_fuel[1/K]) *( 1.67579576e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat18', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat28', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat38', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat48', '0[1/cm]');
-model.component('mod1').variable('var16').set('scat58', '(5.40144543e-07 +( log(T_fuel[1/K]) *( 1.27415222e-08 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat68', '(2.05474411e-03 +( log(T_fuel[1/K]) *( -2.96055080e-07 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat78', '(2.43688041e-02 +( log(T_fuel[1/K]) *( 2.20041685e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('scat88', '(2.79957453e-01 +( log(T_fuel[1/K]) *( -3.08236904e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot1', '(1.72379141e-01 +( log(T_fuel[1/K]) *( 5.32322318e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot2', '(3.37130353e-01 +( log(T_fuel[1/K]) *( -4.76685935e-06 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot3', '(3.49287551e-01 +( log(T_fuel[1/K]) *( 8.77081665e-05 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot4', '(3.46930034e-01 +( log(T_fuel[1/K]) *( 5.80093587e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot5', '(3.47889133e-01 +( log(T_fuel[1/K]) *( -1.35759599e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot6', '(3.46812991e-01 +( log(T_fuel[1/K]) *( -1.20576085e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot7', '(3.51625976e-01 +( log(T_fuel[1/K]) *( -1.49126941e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').set('tot8', '(3.77053476e-01 +( log(T_fuel[1/K]) *( -1.67096332e-04 )) ) [1/cm]');
-model.component('mod1').variable('var16').selection.geom('geom1', 2);
-model.component('mod1').variable('var16').selection.set([2]);
-model.component('mod1').variable.create('var18');
-model.component('mod1').variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
-model.component('mod1').variable('var18').set('PdensityN', 'Pdensity*Pop/Pint', 'power density normalized to Pop');
-model.component('mod1').variable('var18').set('Pint', 'intop1(Pdensity)', 'integrated total core power');
-model.component('mod1').variable('var18').set('PintN', 'intop1(PdensityN)', 'integrated total core power normalized to Pop, should be equal to Pop');
-model.component('mod1').variable('var18').selection.geom('geom1', 2);
-model.component('mod1').variable('var18').selection.set([1 2 3]);
-model.component('mod1').variable.create('var22');
-model.component('mod1').variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
-model.component('mod1').variable('var22').set('sumN', 'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
-model.component('mod1').variable('var22').selection.geom('geom1', 2);
-model.component('mod1').variable('var22').selection.set([1 2 3]);
-model.component('mod1').variable.create('var_T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_1', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_2', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_3', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_4', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_5', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_6', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_7', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_8', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_9', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_10', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_11', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_12', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_13', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_14', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_15', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_16', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_17', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_18', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_19', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_20', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_21', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_22', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_23', 'T_fuel');
-model.component('mod1').variable('var_T_fuel').set('T_fuel_24', 'T_fuel');
-model.component('mod1').variable.create('var19');
-model.component('mod1').variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
-model.component('mod1').variable.create('var20');
-model.component('mod1').variable('var20').set('FluxN1', 'Flux1*Pop/Pint', 'Pop is the operation power');
-model.component('mod1').variable('var20').set('FluxN2', 'Flux2*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN3', 'Flux3*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN4', 'Flux4*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN5', 'Flux5*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN6', 'Flux6*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN7', 'Flux7*Pop/Pint');
-model.component('mod1').variable('var20').set('FluxN8', 'Flux8*Pop/Pint');
-model.component('mod1').variable.create('var23');
-model.component('mod1').variable('var23').set('ConcN1', 'Conc1*Pop/Pint');
-model.component('mod1').variable('var23').set('ConcN2', 'Conc1*Pop/Pint');
-model.component('mod1').variable('var23').set('ConcN3', 'Conc1*Pop/Pint');
-model.component('mod1').variable('var23').set('ConcN4', 'Conc1*Pop/Pint');
-model.component('mod1').variable('var23').set('ConcN5', 'Conc1*Pop/Pint');
-model.component('mod1').variable('var23').set('ConcN6', 'Conc1*Pop/Pint');
-
-model.view.create('view2', 3);
-
-model.component('mod1').material.create('mat1', 'Common');
-model.component('mod1').material.create('mat3', 'Common');
-model.component('mod1').material.create('mat2', 'Common');
-model.component('mod1').material.create('mat4', 'Common');
-model.component('mod1').material('mat1').selection.set([2]);
-model.component('mod1').material('mat3').selection.set([1]);
-model.component('mod1').material('mat2').selection.set([3]);
-model.component('mod1').material('mat4').propertyGroup.create('Enu', 'Young''s modulus and Poisson''s ratio');
-model.component('mod1').material('mat4').propertyGroup.create('Murnaghan', 'Murnaghan');
-model.component('mod1').material('mat4').propertyGroup.create('Lame', ['Lam' native2unicode(hex2dec({'00' 'e9'}), 'unicode') ' parameters']);
-
-model.component('mod1').cpl.create('intop1', 'Integration');
-model.component('mod1').cpl.create('aveop1', 'Average');
-model.component('mod1').cpl('intop1').selection.set([2]);
-model.component('mod1').cpl('aveop1').selection.set([2]);
-
-model.component('mod1').physics.create('ht', 'HeatTransferInFluids', 'geom1');
-model.component('mod1').physics('ht').field('temperature').field('T_flibe');
-model.component('mod1').physics('ht').selection.set([1 2]);
-model.component('mod1').physics('ht').create('temp1', 'TemperatureBoundary', 1);
-model.component('mod1').physics('ht').feature('temp1').selection.set([2 8]);
-model.component('mod1').physics('ht').create('hs1', 'HeatSource', 2);
-model.component('mod1').physics('ht').feature('hs1').selection.set([2]);
-model.component('mod1').physics('ht').create('hs2', 'HeatSource', 2);
-model.component('mod1').physics('ht').feature('hs2').selection.set([2]);
-model.component('mod1').physics('ht').create('ofl1', 'ConvectiveOutflow', 1);
-model.component('mod1').physics('ht').feature('ofl1').selection.set([5 10]);
-model.component('mod1').physics.create('ht3', 'HeatTransferInFluids', 'geom1');
-model.component('mod1').physics('ht3').identifier('ht3');
-model.component('mod1').physics('ht3').field('temperature').field('T_fuel');
-model.component('mod1').physics('ht3').selection.set([2]);
-model.component('mod1').physics('ht3').create('solid1', 'SolidHeatTransferModel', 2);
-model.component('mod1').physics('ht3').feature('solid1').selection.set([2]);
-model.component('mod1').physics('ht3').create('hs1', 'HeatSource', 2);
-model.component('mod1').physics('ht3').feature('hs1').selection.set([2]);
-model.component('mod1').physics('ht3').create('hs2', 'HeatSource', 2);
-model.component('mod1').physics('ht3').feature('hs2').selection.set([2]);
-model.component('mod1').physics('ht3').create('hs3', 'HeatSource', 2);
-model.component('mod1').physics('ht3').feature('hs3').selection.set([2]);
-model.component('mod1').physics.create('neutrondiffusion', 'CoefficientFormPDE', 'geom1');
-model.component('mod1').physics('neutrondiffusion').identifier('neutrondiffusion');
-model.component('mod1').physics('neutrondiffusion').field('dimensionless').field('FluxN');
-model.component('mod1').physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2'  ...
-'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
-model.component('mod1').physics('neutrondiffusion').create('dir1', 'DirichletBoundary', 1);
-model.component('mod1').physics('neutrondiffusion').feature('dir1').selection.set([2 5 7 11 14]);
-model.component('mod1').physics('neutrondiffusion').create('flux1', 'FluxBoundary', 1);
-
-model.component('mod1').mesh('mesh1').autoMeshSize(7);
-
-model.component('mod1').probe.create('dom1', 'Domain');
-model.component('mod1').probe.create('dom2', 'Domain');
-model.component('mod1').probe.create('dom3', 'Domain');
-model.component('mod1').probe.create('dom4', 'Domain');
-model.component('mod1').probe.create('dom5', 'Domain');
-model.component('mod1').probe('dom2').selection.set([2]);
-model.component('mod1').probe('dom3').selection.set([2]);
-model.component('mod1').probe('dom4').selection.set([2]);
-model.component('mod1').probe('dom5').selection.set([2]);
-
-model.component('mod1').variable('var4').label('fuel properties');
-model.component('mod1').variable('var_xs_gr').label('xs_gr');
-model.component('mod1').variable('var17').label('XS_flibe');
-model.component('mod1').variable('var16').label('XS_pb');
-model.component('mod1').variable('var18').label('power');
-model.component('mod1').variable('var22').label('delayed');
-model.component('mod1').variable('var_T_fuel').label('Variables');
-model.component('mod1').variable('var19').label('lambda');
-model.component('mod1').variable('var20').active(false);
-model.component('mod1').variable('var20').label('FluxN');
-model.component('mod1').variable('var23').active(false);
-model.component('mod1').variable('var23').label('ConcN');
-
-model.component('mod1').view('view1').axis.set('xmin', -1.4514944553375244);
-model.component('mod1').view('view1').axis.set('xmax', 2.7514944076538086);
-model.component('mod1').view('view1').axis.set('ymin', -0.13467705249786377);
-model.component('mod1').view('view1').axis.set('ymax', 2.9946770668029785);
-model.component('mod1').view('view1').axis.set('abstractviewlratio', -1.5134655237197876);
-model.component('mod1').view('view1').axis.set('abstractviewrratio', 1.5134656429290771);
-model.component('mod1').view('view1').axis.set('abstractviewbratio', -0.049999963492155075);
-model.component('mod1').view('view1').axis.set('abstractviewtratio', 0.049999963492155075);
-model.component('mod1').view('view1').axis.set('abstractviewxscale', 0.008322750218212605);
-model.component('mod1').view('view1').axis.set('abstractviewyscale', 0.008322750218212605);
-
-model.component('mod1').material('mat1').label('Salt-with porosity and permeability');
-model.component('mod1').material('mat1').propertyGroup('def').set('ratioofspecificheat', '1');
-model.component('mod1').material('mat1').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_flibe)');
-model.component('mod1').material('mat1').propertyGroup('def').set('hydraulicpermeability', {'Kbr' '0' '0' '0' 'Kbr' '0' '0' '0' 'Kbr'});
-model.component('mod1').material('mat1').propertyGroup('def').set('porosity', 'ep');
-model.component('mod1').material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
-model.component('mod1').material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)');
-model.component('mod1').material('mat1').propertyGroup('def').set('heatcapacity', '2386');
-model.component('mod1').material('mat3').label('Only liquid salt(no pebbles)');
-model.component('mod1').material('mat3').propertyGroup('def').set('thermalconductivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.component('mod1').material('mat3').propertyGroup('def').set('density', '1900');
-model.component('mod1').material('mat3').propertyGroup('def').set('heatcapacity', '2300');
-model.component('mod1').material('mat3').propertyGroup('def').set('ratioofspecificheat', '1');
-model.component('mod1').material('mat3').propertyGroup('def').set('dynamicviscosity', '2');
-model.component('mod1').material('mat3').propertyGroup('def').set('porosity', 'ep');
-model.component('mod1').material('mat2').label('graphite based on built in steel');
-model.component('mod1').material('mat2').propertyGroup('def').set('porosity', '0.2');
-model.component('mod1').material('mat2').propertyGroup('def').set('hydraulicpermeability', {'1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)' '0' '0' '0' '1.55*10^(-13)'});
-model.component('mod1').material('mat2').propertyGroup('def').set('ratioofspecificheat', '1');
-model.component('mod1').material('mat2').propertyGroup('def').set('thermalconductivity', {'640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]' '0' '0' '0' '640[W/(m*K)]'});
-model.component('mod1').material('mat2').propertyGroup('def').set('heatcapacity', '684[J/(kg*K)]');
-model.component('mod1').material('mat2').propertyGroup('def').set('density', '1960[kg/m^3]');
-model.component('mod1').material('mat4').label('Structural steel');
-model.component('mod1').material('mat4').set('family', 'custom');
-model.component('mod1').material('mat4').set('specular', 'custom');
-model.component('mod1').material('mat4').set('customspecular', [0.7843137254901961 0.7843137254901961 0.7843137254901961]);
-model.component('mod1').material('mat4').set('diffuse', 'custom');
-model.component('mod1').material('mat4').set('customdiffuse', [0.6666666666666666 0.6666666666666666 0.6666666666666666]);
-model.component('mod1').material('mat4').set('ambient', 'custom');
-model.component('mod1').material('mat4').set('customambient', [0.6666666666666666 0.6666666666666666 0.6666666666666666]);
-model.component('mod1').material('mat4').set('noise', true);
-model.component('mod1').material('mat4').set('noisefreq', 1);
-model.component('mod1').material('mat4').set('lighting', 'cooktorrance');
-model.component('mod1').material('mat4').set('fresnel', 0.9);
-model.component('mod1').material('mat4').set('roughness', 0.3);
-model.component('mod1').material('mat4').propertyGroup('def').set('relpermeability', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.component('mod1').material('mat4').propertyGroup('def').set('heatcapacity', '475[J/(kg*K)]');
-model.component('mod1').material('mat4').propertyGroup('def').set('thermalconductivity', {'44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]' '0' '0' '0' '44.5[W/(m*K)]'});
-model.component('mod1').material('mat4').propertyGroup('def').set('electricconductivity', {'4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]' '0' '0' '0' '4.032e6[S/m]'});
-model.component('mod1').material('mat4').propertyGroup('def').set('relpermittivity', {'1' '0' '0' '0' '1' '0' '0' '0' '1'});
-model.component('mod1').material('mat4').propertyGroup('def').set('thermalexpansioncoefficient', {'12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]' '0' '0' '0' '12.3e-6[1/K]'});
-model.component('mod1').material('mat4').propertyGroup('def').set('density', '7850[kg/m^3]');
-model.component('mod1').material('mat4').propertyGroup('Enu').set('youngsmodulus', '200e9[Pa]');
-model.component('mod1').material('mat4').propertyGroup('Enu').set('poissonsratio', '0.30');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('l', '');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('m', '');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('n', '');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('l', '-3.0e11[Pa]');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('m', '-6.2e11[Pa]');
-model.component('mod1').material('mat4').propertyGroup('Murnaghan').set('n', '-7.2e11[Pa]');
-model.component('mod1').material('mat4').propertyGroup('Lame').set('lambLame', '');
-model.component('mod1').material('mat4').propertyGroup('Lame').set('muLame', '');
-model.component('mod1').material('mat4').propertyGroup('Lame').set('lambLame', '1.15e11[Pa]');
-model.component('mod1').material('mat4').propertyGroup('Lame').set('muLame', '7.69e10[Pa]');
-
-model.component('mod1').cpl('intop1').set('axisym', true);
-
-model.component('mod1').physics('ht').label('Heat Transfer - Flibe');
-model.component('mod1').physics('ht').prop('ShapeProperty').set('boundaryFlux_temperature', false);
-model.component('mod1').physics('ht').prop('ShapeProperty').set('valueType', 'complex');
-model.component('mod1').physics('ht').prop('ConsistentStabilization').set('heatCrosswindDiffusion', false);
-model.component('mod1').physics('ht').prop('ConsistentStabilization').set('glim', '0.01[K]/ht.helem');
-model.component('mod1').physics('ht').prop('ConsistentStabilization').set('StreamlineDiffusionOldForm', true);
-model.component('mod1').physics('ht').prop('RadiationProperty').set('fieldName', 'root.J');
-model.component('mod1').physics('ht').feature('fluid1').set('k', {'0.6*'; '0'; '0'; '0'; '0.6*'; '0'; '0'; '0'; '0.6*'});
-model.component('mod1').physics('ht').feature('fluid1').set('minput_pressure', 0);
-model.component('mod1').physics('ht').feature('fluid1').set('minput_velocity', {'0'; '0'; 'v_inlet'});
-model.component('mod1').physics('ht').feature('fluid1').set('minput_strainreferencetemperature', 0);
-model.component('mod1').physics('ht').feature('fluid1').label('Fluid');
-model.component('mod1').physics('ht').feature('init1').set('Tinit', 'T0_flibe');
-model.component('mod1').physics('ht').feature('init1').label('Initial Temperature');
-model.component('mod1').physics('ht').feature('axi1').label('Axial Symmetry');
-model.component('mod1').physics('ht').feature('ins1').label('Thermal Insulation');
-model.component('mod1').physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
-model.component('mod1').physics('ht').feature('temp1').label('Inlet Temperature');
-model.component('mod1').physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*T_fuel');
-model.component('mod1').physics('ht').feature('hs1').label('heat transfer from fuel-cst term');
-model.component('mod1').physics('ht').feature('hs2').set('heatSourceType', 'LinearSource');
-model.component('mod1').physics('ht').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
-model.component('mod1').physics('ht').feature('hs2').label('heat transfer from fuel - linear term');
-model.component('mod1').physics('ht').feature('ofl1').label('Outflow');
-model.component('mod1').physics('ht3').label('Heat Transfer in Fuel Pebble');
-model.component('mod1').physics('ht3').comments('fuel temperature');
-model.component('mod1').physics('ht3').prop('ConsistentStabilization').set('glim', '(0.01[K])/ht3.helem');
-model.component('mod1').physics('ht3').feature('fluid1').label('overridden');
-model.component('mod1').physics('ht3').feature('init1').set('Tinit', 'T0_fuel');
-model.component('mod1').physics('ht3').feature('solid1').set('rho', 'rho_fuel*(1-porosity)');
-model.component('mod1').physics('ht3').feature('solid1').set('Cp', 'cp_fuel');
-model.component('mod1').physics('ht3').feature('solid1').label('Heat Transfer in Solids(smeared fuel pebbles)');
-model.component('mod1').physics('ht3').feature('hs1').set('P0', '1E7');
-model.component('mod1').physics('ht3').feature('hs1').set('Q0', 'Pdensity');
-model.component('mod1').physics('ht3').feature('hs1').label('Nuclear heat generation');
-model.component('mod1').physics('ht3').feature('hs2').set('heatSourceType', 'LinearSource');
-model.component('mod1').physics('ht3').feature('hs2').set('qs', '-h_conv*pb_area/fuel_v');
-model.component('mod1').physics('ht3').feature('hs2').label('heat tranfer to flibe - linear term');
-model.component('mod1').physics('ht3').feature('hs3').set('Q0', 'h_conv*pb_area/fuel_v*T_flibe');
-model.component('mod1').physics('ht3').feature('hs3').label('heat transfer to flibe - cst term');
-model.component('mod1').physics('neutrondiffusion').prop('ShapeProperty').set('order', 1);
-model.component('mod1').physics('neutrondiffusion').prop('Units').set('DependentVariableQuantity', 'particleflux');
-model.component('mod1').physics('neutrondiffusion').prop('Units').set('SourceTermQuantity', 'productionrate');
-model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('c', {'diff11*r' '0' '0' 'diff11*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff12*r' '0' '0' 'diff12*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff13*r' '0' '0' 'diff13*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff14*r' '0' '0' 'diff14*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff15*r' '0' '0' 'diff15*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff16*r' '0' '0' 'diff16*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff17*r' '0' '0' 'diff17*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'diff18*r' '0' '0' 'diff18*r';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0';  ...
-'0' '0' '0' '0'});
-model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('a', {'(rem1-(1-beta1)*chip1*nsf1*lambda)*r';  ...
-'(-scat12-(1-beta1)*chip2*nsf1*lambda)*r';  ...
-'(-scat13-(1-beta1)*chip3*nsf1*lambda)*r';  ...
-'(-scat14-(1-beta1)*chip4*nsf1*lambda)*r';  ...
-'(-scat15-(1-beta1)*chip5*nsf1*lambda)*r';  ...
-'(-scat16-(1-beta1)*chip6*nsf1*lambda)*r';  ...
-'(-scat17-(1-beta1)*chip7*nsf1*lambda)*r';  ...
-'(-scat18-(1-beta1)*chip8*nsf1*lambda)*r';  ...
-'-betas1*nsf1';  ...
-'-betas2*nsf1';  ...
-'-betas3*nsf1';  ...
-'-betas4*nsf1';  ...
-'-betas5*nsf1';  ...
-'-betas6*nsf1';  ...
-'(-scat21-(1-beta1)*chip1*nsf2*lambda)*r';  ...
-'(rem2-(1-beta1)*chip2*nsf2*lambda)*r';  ...
-'(-scat23-(1-beta1)*chip3*nsf2*lambda)*r';  ...
-'(-scat24-(1-beta1)*chip4*nsf2*lambda)*r';  ...
-'(-scat25-(1-beta1)*chip5*nsf2*lambda)*r';  ...
-'(-scat26-(1-beta1)*chip6*nsf2*lambda)*r';  ...
-'(-scat27-(1-beta1)*chip7*nsf2*lambda)*r';  ...
-'(-scat28-(1-beta1)*chip8*nsf2*lambda)*r';  ...
-'-betas1*nsf2';  ...
-'-betas2*nsf2';  ...
-'-betas3*nsf2';  ...
-'-betas4*nsf2';  ...
-'-betas5*nsf2';  ...
-'-betas6*nsf2';  ...
-'(-scat31-(1-beta1)*chip1*nsf3*lambda)*r';  ...
-'(-scat32-(1-beta1)*chip2*nsf3*lambda)*r';  ...
-'(rem3-(1-beta1)*chip3*nsf3*lambda)*r';  ...
-'(-scat34-(1-beta1)*chip4*nsf3*lambda)*r';  ...
-'(-scat35-(1-beta1)*chip5*nsf3*lambda)*r';  ...
-'(-scat36-(1-beta1)*chip6*nsf3*lambda)*r';  ...
-'(-scat37-(1-beta1)*chip7*nsf3*lambda)*r';  ...
-'(-scat38-(1-beta1)*chip8*nsf3*lambda)*r';  ...
-'-betas1*nsf3';  ...
-'-betas2*nsf3';  ...
-'-betas3*nsf3';  ...
-'-betas4*nsf3';  ...
-'-betas5*nsf3';  ...
-'-betas6*nsf3';  ...
-'(-scat41-(1-beta1)*chip1*nsf4*lambda)*r';  ...
-'(-scat42-(1-beta1)*chip2*nsf4*lambda)*r';  ...
-'(-scat43-(1-beta1)*chip3*nsf4*lambda)*r';  ...
-'(rem4-(1-beta1)*chip4*nsf4*lambda)*r';  ...
-'(-scat45-(1-beta1)*chip5*nsf4*lambda)*r';  ...
-'(-scat46-(1-beta1)*chip6*nsf4*lambda)*r';  ...
-'(-scat47-(1-beta1)*chip7*nsf4*lambda)*r';  ...
-'(-scat48-(1-beta1)*chip8*nsf4*lambda)*r';  ...
-'-betas1*nsf4';  ...
-'-betas2*nsf4';  ...
-'-betas3*nsf4';  ...
-'-betas4*nsf4';  ...
-'-betas5*nsf4';  ...
-'-betas6*nsf4';  ...
-'(-scat51-(1-beta1)*chip1*nsf5*lambda)*r';  ...
-'(-scat52-(1-beta1)*chip2*nsf5*lambda)*r';  ...
-'(-scat53-(1-beta1)*chip3*nsf5*lambda)*r';  ...
-'(-scat54-(1-beta1)*chip4*nsf5*lambda)*r';  ...
-'(rem5-(1-beta1)*chip5*nsf5*lambda)*r';  ...
-'(-scat56-(1-beta1)*chip6*nsf5*lambda)*r';  ...
-'(-scat57-(1-beta1)*chip7*nsf5*lambda)*r';  ...
-'(-scat58-(1-beta1)*chip8*nsf5*lambda)*r';  ...
-'-betas1*nsf5';  ...
-'-betas2*nsf5';  ...
-'-betas3*nsf5';  ...
-'-betas4*nsf5';  ...
-'-betas5*nsf5';  ...
-'-betas6*nsf5';  ...
-'(-scat61-(1-beta1)*chip1*nsf6*lambda)*r';  ...
-'(-scat62-(1-beta1)*chip2*nsf6*lambda)*r';  ...
-'(-scat63-(1-beta1)*chip3*nsf6*lambda)*r';  ...
-'(-scat64-(1-beta1)*chip4*nsf6*lambda)*r';  ...
-'(-scat65-(1-beta1)*chip5*nsf6*lambda)*r';  ...
-'(rem6-(1-beta1)*chip6*nsf6*lambda)*r';  ...
-'(-scat67-(1-beta1)*chip7*nsf6*lambda)*r';  ...
-'(-scat68-(1-beta1)*chip8*nsf6*lambda)*r';  ...
-'-betas1*nsf6';  ...
-'-betas2*nsf6';  ...
-'-betas3*nsf6';  ...
-'-betas4*nsf6';  ...
-'-betas5*nsf6';  ...
-'-betas6*nsf6';  ...
-'(-scat71-(1-beta1)*chip1*nsf7*lambda)*r';  ...
-'(-scat72-(1-beta1)*chip2*nsf7*lambda)*r';  ...
-'(-scat73-(1-beta1)*chip3*nsf7*lambda)*r';  ...
-'(-scat74-(1-beta1)*chip4*nsf7*lambda)*r';  ...
-'(-scat75-(1-beta1)*chip5*nsf7*lambda)*r';  ...
-'(-scat76-(1-beta1)*chip6*nsf7*lambda)*r';  ...
-'(rem7-(1-beta1)*chip7*nsf7*lambda)*r';  ...
-'(-scat78-(1-beta1)*chip8*nsf7*lambda)*r';  ...
-'-betas1*nsf7';  ...
-'-betas2*nsf7';  ...
-'-betas3*nsf7';  ...
-'-betas4*nsf7';  ...
-'-betas5*nsf7';  ...
-'-betas6*nsf7';  ...
-'(-scat81-(1-beta1)*chip1*nsf8*lambda)*r';  ...
-'(-scat82-(1-beta1)*chip2*nsf8*lambda)*r';  ...
-'(-scat83-(1-beta1)*chip3*nsf8*lambda)*r';  ...
-'(-scat84-(1-beta1)*chip4*nsf8*lambda)*r';  ...
-'(-scat85-(1-beta1)*chip5*nsf8*lambda)*r';  ...
-'(-scat86-(1-beta1)*chip6*nsf8*lambda)*r';  ...
-'(-scat87-(1-beta1)*chip7*nsf8*lambda)*r';  ...
-'(rem8-(1-beta1)*chip8*nsf8*lambda)*r';  ...
-'-betas1*nsf8';  ...
-'-betas2*nsf8';  ...
-'-betas3*nsf8';  ...
-'-betas4*nsf8';  ...
-'-betas5*nsf8';  ...
-'-betas6*nsf8';  ...
-'-chid1*lambda*r*lambdas1';  ...
-'-chid2*lambda*r*lambdas1';  ...
-'-chid3*lambda*r*lambdas1';  ...
-'-chid4*lambda*r*lambdas1';  ...
-'-chid5*lambda*r*lambdas1';  ...
-'-chid6*lambda*r*lambdas1';  ...
-'-chid7*lambda*r*lambdas1';  ...
-'-chid8*lambda*r*lambdas1';  ...
-'lambdas1';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'-chid1*lambda*r*lambdas2';  ...
-'-chid2*lambda*r*lambdas2';  ...
-'-chid3*lambda*r*lambdas2';  ...
-'-chid4*lambda*r*lambdas2';  ...
-'-chid5*lambda*r*lambdas2';  ...
-'-chid6*lambda*r*lambdas2';  ...
-'-chid7*lambda*r*lambdas2';  ...
-'-chid8*lambda*r*lambdas2';  ...
-'0';  ...
-'lambdas2';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'-chid1*lambda*r*lambdas3';  ...
-'-chid2*lambda*r*lambdas3';  ...
-'-chid3*lambda*r*lambdas3';  ...
-'-chid4*lambda*r*lambdas3';  ...
-'-chid5*lambda*r*lambdas3';  ...
-'-chid6*lambda*r*lambdas3';  ...
-'-chid7*lambda*r*lambdas3';  ...
-'-chid8*lambda*r*lambdas3';  ...
-'0';  ...
-'0';  ...
-'lambdas3';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'-chid1*lambda*r*lambdas4';  ...
-'-chid2*lambda*r*lambdas4';  ...
-'-chid3*lambda*r*lambdas4';  ...
-'-chid4*lambda*r*lambdas4';  ...
-'-chid5*lambda*r*lambdas4';  ...
-'-chid6*lambda*r*lambdas4';  ...
-'-chid7*lambda*r*lambdas4';  ...
-'-chid8*lambda*r*lambdas4';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'lambdas4';  ...
-'0';  ...
-'0';  ...
-'-chid1*lambda*r*lambdas5';  ...
-'-chid2*lambda*r*lambdas5';  ...
-'-chid3*lambda*r*lambdas5';  ...
-'-chid4*lambda*r*lambdas5';  ...
-'-chid5*lambda*r*lambdas5';  ...
-'-chid6*lambda*r*lambdas5';  ...
-'-chid7*lambda*r*lambdas5';  ...
-'-chid8*lambda*r*lambdas5';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'lambdas5';  ...
-'0';  ...
-'-chid1*lambda*r*lambdas6';  ...
-'-chid2*lambda*r*lambdas6';  ...
-'-chid3*lambda*r*lambdas6';  ...
-'-chid4*lambda*r*lambdas6';  ...
-'-chid5*lambda*r*lambdas6';  ...
-'-chid6*lambda*r*lambdas6';  ...
-'-chid7*lambda*r*lambdas6';  ...
-'-chid8*lambda*r*lambdas6';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'lambdas6'});
-model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('f', [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0]);
-model.component('mod1').physics('neutrondiffusion').feature('cfeq1').set('da', {'invV1*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV2*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV3*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV4*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV5*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV6*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV7*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'invV8*r*eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'0';  ...
-'eigenMode'});
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN1', 'Flux1');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN2', 'Flux2');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN3', 'Flux3');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN4', 'Flux4');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN5', 'Flux5');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN6', 'Flux6');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN7', 'Flux7');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('FluxN8', 'Flux8');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN1', 'Conc1');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN2', 'Conc2');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN3', 'Conc3');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN4', 'Conc4');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN5', 'Conc5');
-model.component('mod1').physics('neutrondiffusion').feature('init1').set('ConcN6', 'Conc6');
-
-model.component('mod1').mesh('mesh1').label('Mesh');
-
-model.frame('material1').sorder(1);
-
-model.component('mod1').probe('dom1').label('Probe Pint');
-model.component('mod1').probe('dom1').set('expr', 'Pint');
-model.component('mod1').probe('dom1').set('unit', 'W*m');
-model.component('mod1').probe('dom1').set('descr', 'integrated total core power');
-model.component('mod1').probe('dom1').set('table', 'tbl1');
-model.component('mod1').probe('dom1').set('window', 'window1');
-model.component('mod1').probe('dom2').label('average_fuel_temp_probe');
-model.component('mod1').probe('dom2').set('expr', 'T_fuel');
-model.component('mod1').probe('dom2').set('unit', 'degC');
-model.component('mod1').probe('dom2').set('table', 'tbl1');
-model.component('mod1').probe('dom2').set('window', 'window2');
-model.component('mod1').probe('dom3').label('average_flibe_temp_probe');
-model.component('mod1').probe('dom3').set('unit', 'degC');
-model.component('mod1').probe('dom3').set('table', 'tbl1');
-model.component('mod1').probe('dom3').set('window', 'window2');
-model.component('mod1').probe('dom4').label('max fuel temp');
-model.component('mod1').probe('dom4').set('type', 'maximum');
-model.component('mod1').probe('dom4').set('probename', 'T_fuel_max');
-model.component('mod1').probe('dom4').set('expr', 'T_fuel');
-model.component('mod1').probe('dom4').set('unit', 'degC');
-model.component('mod1').probe('dom4').set('table', 'tbl1');
-model.component('mod1').probe('dom4').set('window', 'window3');
-model.component('mod1').probe('dom5').label('max flibe temp');
-model.component('mod1').probe('dom5').set('type', 'maximum');
-model.component('mod1').probe('dom5').set('probename', 'T_flibe_max');
-model.component('mod1').probe('dom5').set('unit', 'degC');
-model.component('mod1').probe('dom5').set('table', 'tbl1');
-model.component('mod1').probe('dom5').set('window', 'window3');
-
-model.component('mod1').physics('ht3').feature('solid1').set('k_mat', 'userdef');
-model.component('mod1').physics('ht3').feature('solid1').set('rho_mat', 'userdef');
-model.component('mod1').physics('ht3').feature('solid1').set('Cp_mat', 'userdef');
-
-model.study.create('std2');
-model.study('std2').create('eigv', 'Eigenvalue');
-model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
-model.study.create('std5');
-model.study('std5').create('stat', 'Stationary');
-model.study.create('std6');
-model.study('std6').create('stat', 'Stationary');
-model.study('std6').feature('stat').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'off'});
-model.study.create('std4');
-model.study('std4').create('time', 'Transient');
-
-model.sol.create('sol16');
-model.sol('sol16').study('std2');
-model.sol('sol16').attach('std2');
-model.sol('sol16').create('st1', 'StudyStep');
-model.sol('sol16').create('v1', 'Variables');
-model.sol('sol16').create('e1', 'Eigenvalue');
-model.sol.create('sol13');
-model.sol('sol13').study('std5');
-model.sol('sol13').attach('std5');
-model.sol('sol13').create('st1', 'StudyStep');
-model.sol('sol13').create('v1', 'Variables');
-model.sol('sol13').create('s1', 'Stationary');
-model.sol('sol13').feature('s1').create('fc1', 'FullyCoupled');
-model.sol('sol13').feature('s1').create('d1', 'Direct');
-model.sol('sol13').feature('s1').feature.remove('fcDef');
-model.sol.create('sol15');
-model.sol('sol15').study('std6');
-model.sol('sol15').attach('std6');
-model.sol('sol15').create('st1', 'StudyStep');
-model.sol('sol15').create('v1', 'Variables');
-model.sol('sol15').create('s1', 'Stationary');
-model.sol.create('sol4');
-model.sol('sol4').study('std4');
-model.sol('sol4').attach('std4');
-model.sol('sol4').create('st1', 'StudyStep');
-model.sol('sol4').create('v1', 'Variables');
-model.sol('sol4').create('t1', 'Time');
-model.sol('sol4').feature('t1').create('fc1', 'FullyCoupled');
-model.sol('sol4').feature('t1').create('d1', 'Direct');
-model.sol('sol4').feature('t1').create('i1', 'Iterative');
-model.sol('sol4').feature('t1').feature.remove('fcDef');
-
-model.result.dataset.create('rev1', 'Revolve2D');
 model.result.dataset.create('dset5', 'Solution');
+model.result.dataset('dset5').set('probetag', 'dom5');
+model.result.dataset('dset5').set('solution', 'sol13');
+
 model.result.dataset.create('avh1', 'Average');
 model.result.dataset.create('avh2', 'Average');
 model.result.dataset.create('avh3', 'Average');
 model.result.dataset.create('max1', 'Maximum');
 model.result.dataset.create('max2', 'Maximum');
-model.result.dataset('rev1').set('data', 'dset4');
-model.result.dataset('dset5').set('probetag', 'dom5');
-model.result.dataset('dset5').set('solution', 'sol4');
+
 model.result.dataset('avh1').set('probetag', 'dom1');
 model.result.dataset('avh1').set('data', 'dset5');
-model.result.dataset('avh1').selection.geom('geom1', 2);
-model.result.dataset('avh1').selection.set([1 2 3]);
+model.result.dataset('avh1').selection.geom('geom1', 3);
+model.result.dataset('avh1').selection.set([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17]);
 model.result.dataset('avh2').set('probetag', 'dom2');
 model.result.dataset('avh2').set('data', 'dset5');
-model.result.dataset('avh2').selection.geom('geom1', 2);
-model.result.dataset('avh2').selection.set([2]);
+model.result.dataset('avh2').selection.geom('geom1', 3);
+model.result.dataset('avh2').selection.set([7]);
 model.result.dataset('avh3').set('probetag', 'dom3');
 model.result.dataset('avh3').set('data', 'dset5');
-model.result.dataset('avh3').selection.geom('geom1', 2);
-model.result.dataset('avh3').selection.set([2]);
+model.result.dataset('avh3').selection.geom('geom1', 3);
+model.result.dataset('avh3').selection.set([7]);
 model.result.dataset('max1').set('probetag', 'dom4');
 model.result.dataset('max1').set('data', 'dset5');
-model.result.dataset('max1').selection.geom('geom1', 2);
-model.result.dataset('max1').selection.set([2]);
+model.result.dataset('max1').selection.geom('geom1', 3);
+model.result.dataset('max1').selection.set([7]);
 model.result.dataset('max2').set('probetag', 'dom5');
 model.result.dataset('max2').set('data', 'dset5');
-model.result.dataset('max2').selection.geom('geom1', 2);
-model.result.dataset('max2').selection.set([2]);
+model.result.dataset('max2').selection.geom('geom1', 3);
+model.result.dataset('max2').selection.set([7]);
+
+% cut plane
+model.result.dataset.create('cpl1', 'CutPlane');
+model.result.dataset('cpl1').set('data', 'dset2');
+
+model.result.numerical.create('int1', 'IntSurface');
+model.result.numerical.create('int2', 'IntSurface');
+model.result.numerical.create('int3', 'IntSurface');
+model.result.numerical.create('gev1', 'EvalGlobal');
 model.result.numerical.create('pev1', 'EvalPoint');
 model.result.numerical.create('pev2', 'EvalPoint');
 model.result.numerical.create('pev3', 'EvalPoint');
 model.result.numerical.create('pev4', 'EvalPoint');
 model.result.numerical.create('pev5', 'EvalPoint');
+model.result.numerical('int1').set('data', 'dset2');
+model.result.numerical('int1').selection.set([42 52 58]);
+model.result.numerical('int1').set('probetag', 'none');
+model.result.numerical('int2').set('data', 'dset2');
+model.result.numerical('int2').selection.set([54 60]);
+model.result.numerical('int2').set('probetag', 'none');
+model.result.numerical('int3').set('data', 'dset2');
+model.result.numerical('int3').selection.set([75]);
+model.result.numerical('int3').set('probetag', 'none');
+model.result.numerical('gev1').set('data', 'dset2');
+model.result.numerical('gev1').set('probetag', 'none');
 model.result.numerical('pev1').set('probetag', 'dom1');
 model.result.numerical('pev2').set('probetag', 'dom2');
 model.result.numerical('pev3').set('probetag', 'dom3');
 model.result.numerical('pev4').set('probetag', 'dom4');
 model.result.numerical('pev5').set('probetag', 'dom5');
+
+
 model.result.create('pg1', 'PlotGroup3D');
-model.result.create('pg7', 'PlotGroup1D');
-model.result.create('pg8', 'PlotGroup1D');
-model.result.create('pg9', 'PlotGroup1D');
+model.result('pg1').set('data', 'dset5');
 model.result('pg1').create('surf1', 'Surface');
-model.result('pg7').set('probetag', 'window1');
-model.result('pg7').create('tblp1', 'Table');
-model.result('pg7').feature('tblp1').set('probetag', 'dom1');
-model.result('pg8').set('probetag', 'window2');
-model.result('pg8').create('tblp1', 'Table');
-model.result('pg8').feature('tblp1').set('probetag', 'dom2,dom3');
-model.result('pg9').set('probetag', 'window3');
-model.result('pg9').create('tblp1', 'Table');
-model.result('pg9').feature('tblp1').set('probetag', 'dom4,dom5');
+
+% probes
+model.result.create('pg2', 'PlotGroup1D');
+
+model.result.create('pg3', 'PlotGroup1D');
+model.result.create('pg4', 'PlotGroup1D');
+
+model.result('pg2').set('probetag', 'window1');
+model.result('pg2').create('tblp1', 'Table');
+model.result('pg2').feature('tblp1').set('probetag', 'dom1');
+model.result('pg3').set('probetag', 'window2');
+model.result('pg3').create('tblp1', 'Table');
+model.result('pg3').feature('tblp1').set('probetag', 'dom2,dom3');
+model.result('pg4').set('probetag', 'window3');
+model.result('pg4').create('tblp1', 'Table');
+model.result('pg4').feature('tblp1').set('probetag', 'dom4,dom5');
+
+% 3D streamline
+model.result.create('pg5', 'PlotGroup3D');
+model.result('pg5').set('data', 'dset2');
+model.result('pg5').create('str1', 'Streamline');
+model.result('pg5').feature('str1').selection.set([133 136 144]);
+model.result('pg5').feature('str1').create('col1', 'Color');
+
+model.result.create('pg6', 'PlotGroup2D');
+model.result('pg6').create('surf1', 'Surface');
+model.result('pg6').create('con1', 'Contour');
+
+% 2D plots for T, P, ...
+model.result.create('pg7', 'PlotGroup2D');
+model.result.create('pg8', 'PlotGroup2D');
+model.result.create('pg9', 'PlotGroup2D');
+model.result.create('pg10', 'PlotGroup2D');
+model.result.create('pg11', 'PlotGroup2D');
+model.result('pg7').create('surf1', 'Surface');
+
+model.result('pg8').create('surf1', 'Surface');
+model.result('pg9').create('surf1', 'Surface');
+model.result('pg10').create('surf1', 'Surface');
+model.result('pg11').create('str1', 'Streamline');
+model.result('pg11').create('con1', 'Contour');
+model.result('pg11').feature('str1').create('col1', 'Color');
 
 model.component('mod1').probe('dom1').genResult([]);
 model.component('mod1').probe('dom2').genResult([]);
@@ -1628,189 +112,152 @@ model.component('mod1').probe('dom3').genResult([]);
 model.component('mod1').probe('dom4').genResult([]);
 model.component('mod1').probe('dom5').genResult([]);
 
-model.study('std2').label('Eigenvalue study');
-model.study('std2').feature('eigv').set('neigs', 1);
-model.study('std2').feature('eigv').set('eigunit', '');
-model.study('std2').feature('eigv').set('shift', '1');
-model.study('std2').feature('eigv').set('shiftactive', true);
-model.study('std2').feature('eigv').set('eigwhich', 'sr');
-model.study('std2').feature('eigv').set('useinitsol', true);
-model.study('std2').feature('eigv').set('usesol', true);
-model.study('std2').feature('eigv').set('notsolmethod', 'sol');
-model.study('std2').feature('eigv').set('notstudy', 'std5');
-model.study('std2').feature('eigv').set('notsolnum', 'auto');
-model.study('std2').feature('eigv').set('neigsactive', false);
-model.study('std5').label('Steady state study');
-model.study('std6').label('Scaling');
-model.study('std6').feature('stat').label('scaling');
-model.study('std6').feature('stat').set('useinitsol', true);
-model.study('std6').feature('stat').set('initmethod', 'sol');
-model.study('std6').feature('stat').set('initstudy', 'std5');
-model.study('std6').feature('stat').set('solnum', 'auto');
-model.study('std6').feature('stat').set('usesol', true);
-model.study('std6').feature('stat').set('notsolmethod', 'sol');
-model.study('std6').feature('stat').set('notstudy', 'std5');
-model.study('std6').feature('stat').set('notsolnum', 'auto');
-model.study('std4').label('Transient study');
-model.study('std4').feature('time').set('tlist', 'range(0,0.1,20)');
-model.study('std4').feature('time').set('plot', true);
-model.study('std4').feature('time').set('probefreq', 'tout');
-model.study('std4').feature('time').set('useinitsol', true);
-model.study('std4').feature('time').set('initmethod', 'sol');
-model.study('std4').feature('time').set('initstudy', 'std6');
-model.study('std4').feature('time').set('solnum', 'auto');
-
-model.sol('sol16').attach('std2');
-model.sol('sol16').feature('v1').set('notsolmethod', 'sol');
-model.sol('sol16').feature('v1').set('notsol', 'sol13');
-model.sol('sol16').feature('v1').set('notsolnum', 'auto');
-model.sol('sol16').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
-model.sol('sol16').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
-model.sol('sol16').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
-model.sol('sol16').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
-model.sol('sol16').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
-model.sol('sol16').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
-model.sol('sol16').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
-model.sol('sol16').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
-model.sol('sol16').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
-model.sol('sol16').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
-model.sol('sol16').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
-model.sol('sol16').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
-model.sol('sol16').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
-model.sol('sol16').feature('e1').set('neigs', 1);
-model.sol('sol16').feature('e1').set('eigwhich', 'sr');
-model.sol('sol16').feature('e1').set('shift', '1');
-model.sol('sol16').feature('e1').set('maxeigit', 100);
-model.sol('sol16').feature('e1').set('krylovdim', 10);
-model.sol('sol16').feature('e1').set('keeplog', true);
-model.sol('sol16').runAll;
-model.sol('sol13').attach('std5');
-model.sol('sol13').feature('v1').set('control', 'user');
-model.sol('sol13').feature('v1').set('notsolmethod', 'sol');
-model.sol('sol13').feature('v1').set('notsol', 'sol16');
-model.sol('sol13').feature('v1').set('notsolnum', 'auto');
-model.sol('sol13').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
-model.sol('sol13').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
-model.sol('sol13').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
-model.sol('sol13').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
-model.sol('sol13').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
-model.sol('sol13').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
-model.sol('sol13').feature('v1').feature('mod1_FluxN1').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
-model.sol('sol13').feature('v1').feature('mod1_FluxN2').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
-model.sol('sol13').feature('v1').feature('mod1_FluxN3').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
-model.sol('sol13').feature('v1').feature('mod1_FluxN4').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
-model.sol('sol13').feature('v1').feature('mod1_FluxN5').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
-model.sol('sol13').feature('v1').feature('mod1_FluxN6').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
-model.sol('sol13').feature('v1').feature('mod1_FluxN7').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
-model.sol('sol13').feature('v1').feature('mod1_FluxN8').set('solvefor', false);
-model.sol('sol13').feature('s1').feature('fc1').set('initstep', 0.01);
-model.sol('sol13').feature('s1').feature('fc1').set('minstep', 1.0E-6);
-model.sol('sol13').feature('s1').feature('fc1').set('maxiter', 500);
-model.sol('sol13').runAll;
-model.sol('sol15').attach('std6');
-model.sol('sol15').feature('v1').set('initmethod', 'sol');
-model.sol('sol15').feature('v1').set('initsol', 'sol13');
-model.sol('sol15').feature('v1').set('solnum', 'auto');
-model.sol('sol15').feature('v1').set('notsolmethod', 'sol');
-model.sol('sol15').feature('v1').set('notsol', 'sol13');
-model.sol('sol15').feature('v1').set('notsolnum', 'auto');
-model.sol('sol15').feature('v1').feature('mod1_ConcN1').label('mod1.ConcN1');
-model.sol('sol15').feature('v1').feature('mod1_ConcN2').label('mod1.ConcN2');
-model.sol('sol15').feature('v1').feature('mod1_ConcN3').label('mod1.ConcN3');
-model.sol('sol15').feature('v1').feature('mod1_ConcN4').label('mod1.ConcN4');
-model.sol('sol15').feature('v1').feature('mod1_ConcN5').label('mod1.ConcN5');
-model.sol('sol15').feature('v1').feature('mod1_ConcN6').label('mod1.ConcN6');
-model.sol('sol15').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
-model.sol('sol15').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
-model.sol('sol15').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
-model.sol('sol15').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
-model.sol('sol15').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
-model.sol('sol15').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
-model.sol('sol15').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
-model.sol('sol15').runAll;
-model.sol('sol4').attach('std4');
-model.sol('sol4').feature('v1').set('control', 'user');
-model.sol('sol4').feature('v1').set('initmethod', 'sol');
-model.sol('sol4').feature('v1').set('initsol', 'sol15');
-model.sol('sol4').feature('v1').set('solnum', 'auto');
-model.sol('sol4').feature('v1').set('notsolmethod', 'sol');
-model.sol('sol4').feature('v1').set('notsol', 'sol15');
-model.sol('sol4').feature('v1').set('notsolnum', 'auto');
-model.sol('sol4').feature('v1').set('clist', {'range(0,0.1,20)'});
-model.sol('sol4').feature('v1').feature('mod1_FluxN1').label('mod1.FluxN1');
-model.sol('sol4').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
-model.sol('sol4').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
-model.sol('sol4').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
-model.sol('sol4').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
-model.sol('sol4').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
-model.sol('sol4').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
-model.sol('sol4').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
-model.sol('sol4').feature('t1').set('tlist', 'range(0,0.1,20)');
-model.sol('sol4').feature('t1').set('atolmethod', {'mod1_FluxN7' 'global' 'mod1_FluxN8' 'global' 'mod1_FluxN5' 'global' 'mod1_FluxN6' 'global' 'mod1_FluxN3' 'global'  ...
-'mod1_FluxN4' 'global' 'mod1_FluxN1' 'global' 'mod1_FluxN2' 'global' 'mod1_T_flibe' 'global' 'mod1_T_fuel' 'global'});
-model.sol('sol4').feature('t1').set('atol', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
-model.sol('sol4').feature('t1').set('atoludot', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
-model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
-model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
-model.sol('sol4').feature('t1').set('maxstepbdfactive', true);
-model.sol('sol4').feature('t1').set('maxorder', 1);
-model.sol('sol4').feature('t1').set('eventtol', 2);
-model.sol('sol4').feature('t1').set('stabcntrl', true);
-model.sol('sol4').feature('t1').set('bwinitstepfrac', 0.1);
-model.sol('sol4').feature('t1').set('estrat', 'exclude');
-model.sol('sol4').feature('t1').set('plot', true);
-model.sol('sol4').feature('t1').set('probefreq', 'tout');
-model.sol('sol4').feature('t1').set('reacf', false);
-model.sol('sol4').feature('t1').set('keeplog', true);
-model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
-model.sol('sol4').feature('t1').feature('fc1').set('damp', 0.9);
-model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'onevery');
-model.sol('sol4').feature('t1').feature('fc1').set('ntermconst', 'itertol');
-model.sol('sol4').feature('t1').feature('i1').set('maxlinit', 100);
-model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('relax', 0.8);
-model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridization', 'multi');
-model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridvar', {'mod1_FluxN7' 'mod1_FluxN8' 'mod1_FluxN5' 'mod1_FluxN6' 'mod1_FluxN3' 'mod1_FluxN4' 'mod1_FluxN1' 'mod1_FluxN2'});
-model.sol('sol4').runAll;
-
-model.result.dataset('rev1').label('Revolution 2D');
-model.result.dataset('rev1').set('startangle', -90);
-model.result.dataset('rev1').set('revangle', 225);
-model.result.dataset('dset5').label('Probe Solution 5');
-model.result.create('pg7', 'PlotGroup1D');
-model.result('pg1').label('Temperature, 3D (ht)');
+model.result('pg1').label('Temperature (ht)');
 model.result('pg1').feature('surf1').label('Surface');
+model.result('pg1').feature('surf1').set('expr', 'T_flibe');
+model.result('pg1').feature('surf1').set('unit', 'degC');
+model.result('pg1').feature('surf1').set('descr', 'Temperature');
 model.result('pg1').feature('surf1').set('colortable', 'ThermalLight');
 model.result('pg1').feature('surf1').set('resolution', 'normal');
-model.result('pg7').label('Probe Plot Group 7');
-model.result('pg7').set('data', 'none');
-model.result('pg7').set('xlabel', 'Time (s)');
-model.result('pg7').set('ylabel', 'Temperature (W), Probe Pint');
-model.result('pg7').set('window', 'window1');
-model.result('pg7').set('windowtitle', 'Probe Plot 1');
-model.result('pg7').set('xlabelactive', false);
-model.result('pg7').set('ylabelactive', false);
-model.result('pg7').create('tblp1', 'Table');
-model.result('pg7').feature('tblp1').label('Probe Table Graph 1');
-model.result('pg7').feature('tblp1').set('plotcolumninput', 'manual');
-model.result('pg8').label('Probe Plot Group 8');
-model.result('pg8').set('xlabel', 'Time (s)');
-model.result('pg8').set('windowtitle', 'Probe Plot 2');
-model.result('pg8').set('xlabelactive', false);
-model.result('pg8').feature('tblp1').label('Probe Table Graph 1');
-model.result('pg9').label('Probe Plot Group 9');
-model.result('pg9').set('xlabel', 'Time (s)');
-model.result('pg9').set('windowtitle', 'Probe Plot 3');
-model.result('pg9').set('xlabelactive', false);
-model.result('pg9').feature('tblp1').label('Probe Table Graph 1');
-model.result.remove('pg10');
 
-out = model;
+model.result.create('pg2', 'PlotGroup1D');
+model.result('pg2').label('Probe Plot Group 2');
+model.result('pg2').set('data', 'none');
+model.result('pg2').set('xlabel', 'Temperature (W), Probe Pint');
+model.result('pg2').set('ylabel', 'Temperature (W), Probe Pint');
+model.result('pg2').set('window', 'window1');
+model.result('pg2').set('windowtitle', 'Probe Plot 1');
+model.result('pg2').set('xlabelactive', false);
+model.result('pg2').set('ylabelactive', false);
+model.result('pg2').create('tblp1', 'Table');
+model.result('pg2').feature('tblp1').label('Probe Table Graph 1');
+model.result('pg2').feature('tblp1').set('plotcolumninput', 'manual');
+
+model.result('pg3').label('Probe Plot Group 3');
+model.result('pg3').set('xlabel', 'Temperature (W), Probe Pint');
+model.result('pg3').set('windowtitle', 'Probe Plot 2');
+model.result('pg3').set('xlabelactive', false);
+model.result('pg3').feature('tblp1').label('Probe Table Graph 1');
+
+model.result('pg4').label('Probe Plot Group 4');
+model.result('pg4').set('xlabel', 'Temperature (W), Probe Pint');
+model.result('pg4').set('windowtitle', 'Probe Plot 3');
+model.result('pg4').set('xlabelactive', false);
+model.result('pg4').feature('tblp1').label('Probe Table Graph 1');
+
+model.result('pg5').feature('str1').set('descractive', true);
+model.result('pg5').feature('str1').set('posmethod', 'magnitude');
+model.result('pg5').feature('str1').set('mdist', [0.001 0.1]);
+model.result('pg5').feature('str1').set('linetype', 'tube');
+model.result('pg5').feature('str1').set('tuberadiusscale', 0.021250000000000015);
+model.result('pg5').feature('str1').set('tuberadiusscaleactive', false);
+model.result('pg5').feature('str1').set('resolution', 'normal');
+
+model.result('pg6').feature('surf1').active(false);
+model.result('pg6').feature('surf1').set('expr', 'T_flibe');
+model.result('pg6').feature('surf1').set('unit', 'degC');
+model.result('pg6').feature('surf1').set('descr', 'Temperature');
+model.result('pg6').feature('surf1').set('resolution', 'normal');
+
+model.result('pg6').feature('con1').set('expr', 'T_flibe');
+model.result('pg6').feature('con1').set('unit', 'K');
+model.result('pg6').feature('con1').set('descr', 'Temperature');
+model.result('pg6').feature('con1').set('resolution', 'normal');
+
+model.result('pg7').feature('surf1').set('expr', 'T_fuel');
+model.result('pg7').feature('surf1').set('unit', 'degC');
+model.result('pg7').feature('surf1').set('descr', 'Temperature');
+model.result('pg7').feature('surf1').set('resolution', 'normal');
+
+model.result('pg8').feature('surf1').set('expr', 'PdensityN');
+model.result('pg8').feature('surf1').set('unit', 'W/m^3');
+model.result('pg8').feature('surf1').set('descr', 'power density normalized to Pop');
+
+model.result('pg8').feature('surf1').set('resolution', 'normal');
+model.result('pg9').feature('surf1').set('expr', 'PintN');
+model.result('pg9').feature('surf1').set('unit', 'W');
+model.result('pg9').feature('surf1').set('descr', 'integrated total core power normalized to Pop, should be equal to Pop');
+model.result('pg9').feature('surf1').set('resolution', 'normal');
+
+model.result('pg10').feature('surf1').set('expr', 'w');
+model.result('pg10').feature('surf1').set('descr', 'Velocity field, z component');
+model.result('pg10').feature('surf1').set('resolution', 'normal');
+
+model.result('pg11').feature('str1').set('data', 'cpl1');
+model.result('pg11').feature('str1').set('planecoordsys', 'cartesian');
+model.result('pg11').feature('str1').set('showzexpr', true);
+model.result('pg11').feature('str1').set('expr', {'u' 'v' 'w'});
+model.result('pg11').feature('str1').set('posmethod', 'magnitude');
+model.result('pg11').feature('str1').set('resolution', 'normal');
+model.result('pg11').feature('con1').set('expr', 'p');
+model.result('pg11').feature('con1').set('unit', 'Pa');
+model.result('pg11').feature('con1').set('descr', 'Pressure');
+model.result('pg11').feature('con1').set('number', 50);
+model.result('pg11').feature('con1').set('coloring', 'uniform');
+model.result('pg11').feature('con1').set('color', 'black');
+model.result('pg11').feature('con1').set('resolution', 'normal');
+
+
+model.result('pg13').label('Thermal flux');
+model.result('pg13').feature('surf1').set('expr', 'Flux5+Flux6+Flux7+Flux8');
+model.result('pg13').feature('surf1').set('unit', '1/(m^2*s)');
+model.result('pg13').feature('surf1').set('descr', 'Flux5+Flux6+Flux7+Flux8');
+model.result('pg13').feature('surf1').set('resolution', 'normal');
+
+
+
+model.result.export('img1').set('plotgroup', 'pg8');
+model.result.export('img1').set('pngfilename', 'power');
+model.result.export('img1').set('printunit', 'mm');
+model.result.export('img1').set('webunit', 'px');
+model.result.export('img1').set('printheight', '90');
+model.result.export('img1').set('webheight', '600');
+model.result.export('img1').set('printwidth', '120');
+model.result.export('img1').set('webwidth', '800');
+model.result.export('img1').set('printlockratio', 'off');
+model.result.export('img1').set('weblockratio', 'off');
+model.result.export('img1').set('printresolution', '300');
+model.result.export('img1').set('webresolution', '96');
+model.result.export('img1').set('size', 'manualprint');
+model.result.export('img1').set('antialias', 'on');
+model.result.export('img1').set('zoomextents', 'off');
+model.result.export('img1').set('title', 'off');
+model.result.export('img1').set('legend', 'off');
+model.result.export('img1').set('logo', 'off');
+model.result.export('img1').set('options', 'on');
+model.result.export('img1').set('fontsize', '9');
+model.result.export('img1').set('customcolor', [1 1 1]);
+model.result.export('img1').set('background', 'current');
+model.result.export('img1').set('axes', 'on');
+model.result.export('img1').set('qualitylevel', '92');
+model.result.export('img1').set('qualityactive', 'off');
+model.result.export('img1').set('imagetype', 'png');
+
+
+model.result.export('img2').set('plotgroup', 'pg13');
+model.result.export('img2').set('pngfilename', 'thermal_flux');
+model.result.export('img2').set('printunit', 'mm');
+model.result.export('img2').set('webunit', 'px');
+model.result.export('img2').set('printheight', '90');
+model.result.export('img2').set('webheight', '600');
+model.result.export('img2').set('printwidth', '120');
+model.result.export('img2').set('webwidth', '800');
+model.result.export('img2').set('printlockratio', 'off');
+model.result.export('img2').set('weblockratio', 'off');
+model.result.export('img2').set('printresolution', '300');
+model.result.export('img2').set('webresolution', '96');
+model.result.export('img2').set('size', 'manualprint');
+model.result.export('img2').set('antialias', 'on');
+model.result.export('img2').set('zoomextents', 'off');
+model.result.export('img2').set('title', 'off');
+model.result.export('img2').set('legend', 'off');
+model.result.export('img2').set('logo', 'off');
+model.result.export('img2').set('options', 'on');
+model.result.export('img2').set('fontsize', '9');
+model.result.export('img2').set('customcolor', [1 1 1]);
+model.result.export('img2').set('background', 'current');
+model.result.export('img2').set('axes', 'on');
+model.result.export('img2').set('qualitylevel', '92');
+model.result.export('img2').set('qualityactive', 'off');
+model.result.export('img2').set('imagetype', 'png');
+
