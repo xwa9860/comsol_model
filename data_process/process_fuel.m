@@ -11,29 +11,51 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     
     % temperature dependent parameters
     if TMSR
-        %tot_case_nb=9;
-        %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
-        tot_case_nb = 5;
-        temp_var_pb = ["log(T_fuel[1/K])"]; % used to set the fuel cross-section variable in comsol
+        if MultiScale
+            tot_case_nb = 2*3*3;
+            temp_var_pb = [];
+            for pnb = 1:3
+                for tnb = 1:3
+                        temp_var_pb = [temp_var_pb sprintf("Tp%d%d", pnb, tnb)];
+                end
+            end
+            
+            input =[ones(tot_case_nb, 1) ones(tot_case_nb, 9)*900];
+            k=1;
+            for pbn = 1:3
+                for tnb = 1:3
+                        input(k, pnb*tnb) = 600;
+                        input(k+1, pnb*tnb)= 1200;
+                        k = k+2;
+                end
+            end
+                        
+            
+        else % not multiscale
+            %tot_case_nb=9;
+            %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
+            tot_case_nb = 5;
+            temp_var_pb = ["log(T_fuel[1/K])"]; % used to set the fuel cross-section variable in comsol
 
-        %{
-        For a sample of size n, temperature varaibles t1, t2, ... tm:
-        temp_mat = [1, t11, t12, ... t1m
-                    1, t21, t22, ... t2m
-                        ...
-                    1, tn1, tn2, ... tnm]
-        %}
-        %temp_mat = csvread([datapath, 'fuel_temp_mat.csv']);
-        fuel_temp = [300; 600; 900; 1200; 1500];
-        %fuel_temp = [300; 600; 900; 1200; 1500; 900; 900; 900; 900];
-        log_fuel_temp = log(fuel_temp);
+            %{
+            For a sample of size n, temperature varaibles t1, t2, ... tm:
+            temp_mat = [1, t11, t12, ... t1m
+                        1, t21, t22, ... t2m
+                            ...
+                        1, tn1, tn2, ... tnm]
+            %}
+            %temp_mat = csvread([datapath, 'fuel_temp_mat.csv']);
+            fuel_temp = [300; 600; 900; 1200; 1500];
+            %fuel_temp = [300; 600; 900; 1200; 1500; 900; 900; 900; 900];
+            log_fuel_temp = log(fuel_temp);
 
-        %flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21]*100;
-        %flibe_temps = (2413-flibe_dens)/0.488;
-        
-        
-        %input = [ones(9, 1) log_fuel_temp flibe_temps];
-        input = [ones(5, 1) log_fuel_temp];
+            %flibe_dens = [19; 19; 19; 19; 19; 17; 18; 20; 21]*100;
+            %flibe_temps = (2413-flibe_dens)/0.488;
+
+
+            %input = [ones(9, 1) log_fuel_temp flibe_temps];
+            input = [ones(5, 1) log_fuel_temp];
+        end
         
     else
         tot_case_nb = 50;
