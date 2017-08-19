@@ -2,7 +2,6 @@
 mname = mfilename;
 mydir = which(mname); mydir = mydir(1:end-2-numel(mname));
 
-
 addpath(mydir(1:end-1));
 
 addpath([mydir, 'build_model'])
@@ -18,3 +17,5 @@ addpath([mydir, 'TMSR\XS_data'])
 %addpath([mydir, 'MK1\XS_data'])
 clear mydir mname
 
+format long e;
+format longEng

@@ -1,7 +1,6 @@
 clear all;
 close all;
-format long e;
-data_path = 'TMSR\XS_data\';
+
 
 run('model_attributes.m');
 run('create_comsol_model.m');

@@ -8,7 +8,15 @@ region=5; % temperature group number
 region_coated=1; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 
+data_path = 'TMSR\XS_data\';
+
 MultiScale= true;
+if MultiScale
+    fuel_data_path = 'TMSR\XS_data\multi_fuel\';
+else
+    fuel_data_path = 'TMSR\XS_data\fuel\';
+end
+
 sp3 = false;
 TMSR = true;
 

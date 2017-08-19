@@ -1,4 +1,4 @@
-function model = process_fuel(model, data_path, data_units, comsol_var_name, unb, u_fuel, TMSR)
+function model = process_fuel(model, data_path, data_units, comsol_var_name, unb, u_fuel, TMSR, MultiScale)
     %{ 
     This function get the neutronics data from serpent output file for fuel 
     and input them in the comsol model 
@@ -11,27 +11,29 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     
     % temperature dependent parameters
     if TMSR
-%         if MultiScale
-%             tot_case_nb = 2*3*3;
-%             temp_var_pb = [];
-%             for pnb = 1:3
-%                 for tnb = 1:3
-%                         temp_var_pb = [temp_var_pb sprintf("Tp%d%d", pnb, tnb)];
-%                 end
-%             end
-%             
-%             input =[ones(tot_case_nb, 1) ones(tot_case_nb, 9)*900];
-%             k=1;
-%             for pbn = 1:3
-%                 for tnb = 1:3
-%                         input(k, pnb*tnb) = 600;
-%                         input(k+1, pnb*tnb)= 1200;
-%                         k = k+2;
-%                 end
-%             end
+        if MultiScale
+            tot_case_nb = 2*3*3;
+            temp_var_pb = [];
+            for pnb = 1:3
+                for tnb = 1:3
+                        temp_var_pb = [temp_var_pb sprintf("log(Tp%d%d[1/K])", pnb+1, tnb+1)];
+                end
+            end
+            
+            input =[ones(tot_case_nb, 1) log(ones(tot_case_nb, 9)*900)];
+            row=1;
+            col = 2;
+            for pnb = 1:3
+                for tnb = 1:3
+                        input(row, col) = log(600);
+                        input(row+1, col)= log(1200);
+                        row = row+2;
+                        col = col + 1;
+                end
+            end
                         
             
-%        else % not multiscale
+        else % not multiscale
             %tot_case_nb=9;
             %temp_var_pb = ["log(T_fuel)", "T_flibe"];  % used to set the fuel cross-section variable in comsol
             tot_case_nb = 5;
@@ -55,7 +57,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
 
             %input = [ones(9, 1) log_fuel_temp flibe_temps];
             input = [ones(5, 1) log_fuel_temp];
-%        end
+        end
         
     else
         tot_case_nb = 50;
@@ -66,7 +68,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
         temp_var_pb(25) = "T_flibe";
         % used to set the fuel cross-section variable in comsol
 
-        raw_temps = load('D:\diffusion_models\model\m_files\MK1\XS_data\temp.mat');        
+        raw_temps = load([datapath, 'temp.mat']);        
         raw_fuel_temps = raw_temps.sol;
         % i = burn up number
         fuel_temps = ones(tot_case_nb, 24);

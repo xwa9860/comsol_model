@@ -1,10 +1,5 @@
 clear all;
 close all;
-format long e;
-format longEng
-
-TMSR = false;
-data_path = 'MK1\XS_data\';
 
 tic
 run('model_attributes.m');
