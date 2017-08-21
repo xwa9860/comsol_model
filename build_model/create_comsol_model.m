@@ -5,7 +5,7 @@ model = ModelUtil.create('Model');
 
 model.modelPath('D:\diffusion_models\model');
 ModelUtil.showProgress(true);
-model.label('transient_2d.mph');
+model.label('comsol_model.mph');
 
 model.modelNode.create('mod1');
 model.modelNode('mod1').label('FHR');
