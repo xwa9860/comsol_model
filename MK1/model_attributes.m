@@ -62,9 +62,19 @@ porous_media = {'Blanket', 'fuel'};
 
 
 %% porous media module
-in_bound1= [75 76 144 159];
-out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
-in_bound2 = [53 54 59 60 133 136 163 166];
+% lower inlet
+in_bound1 = [79:80, 89, 93, 99, 107, 114, 117, 123, 131, 175, 187, 225, 228, 238, 244, 257, 260, 264, 269];
+% upper inlet
+in_bound2= [53:54, 59:60, 162, 165, 192, 195]; %[75 76 144 159];
+
+%[53 54 59 60 133 136 163 166]; % when control rods are cylinders
+%out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
+% lower outlet
+out_bound1 = [39:42, 155:156, 203, 208];
+% upper outlet
+out_bound2 = [51:52, 57:58, 161, 164, 194, 199];
+
+
 
 valueSet = values(domains, porous_media);
 pm_domains = cell2mat(valueSet);

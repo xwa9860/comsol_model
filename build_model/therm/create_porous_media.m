@@ -37,10 +37,17 @@ model.physics('br').feature('fmp1').set('kappa', {'0'; '0'; '0'; '0'; '0'; '0'; 
 model.physics('br').feature('fmp1').label('Fluid and Matrix Properties');
 model.physics('br').feature('fmp1').feature('fd1').label('Forchheimer Drag');
 
-
+% lower(wall) outlet
 model.physics('br').create('out1', 'OutletBoundary', dimNb-1);
-model.physics('br').feature('out1').selection.set(out_bound);
+model.physics('br').feature('out1').selection.set(out_bound1);
 model.physics('br').feature('out1').set('BoundaryCondition', 'Pressure');
+model.component('mod1').physics('br').feature('out1').set('p0', '0.1*rhoL*g');
+
+% upper outlet
+model.physics('br').create('out2', 'OutletBoundary', dimNb-1);
+model.physics('br').feature('out2').selection.set(out_bound2);
+model.physics('br').feature('out2').set('BoundaryCondition', 'Pressure');
+model.component('mod1').physics('br').feature('out2').set('p0', '0*rhoL*g');
 
 model.physics('br').create('inl2', 'InletBoundary', dimNb-1);
 model.physics('br').feature('inl2').selection.set(in_bound1);
