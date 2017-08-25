@@ -82,7 +82,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
 
 %% for flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
-inlet_temp_bound = [53 54 59 60 75 76 133 136 144 159 163 166];
+inlet_temp_bound = [in_bound1, in_bound2];% [53 54 59 60 75 76 133 136 144 159 163 166];
 
 dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     69:70, 75:76, 85:86, 97, 102, 105, 110, 121, 126, 129, 134, 136:138,...

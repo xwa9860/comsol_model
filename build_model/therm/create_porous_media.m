@@ -77,6 +77,6 @@ model.physics('br').feature('wall1').set('zeta', '-0.1[V]');
 model.physics('br').feature('wall1').label('Wall');
 
 
-model.physics('br').feature('init1').set('u_init', {'0'; '0'; '0.05'});
+model.physics('br').feature('init1').set('u_init', {'0'; '0'; '0'});
 
 model.physics('br').prop('PhysicalModelProperty').set('StokesFlowProp', '0');
