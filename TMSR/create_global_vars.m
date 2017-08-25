@@ -17,6 +17,9 @@ model.param.set('r3', '0.017602558504261[m]');
 model.param.set('r4', '0.020149899425206[m]');
 model.param.set('r5', '0.027500000000000[m]');
 model.param.set('r0', '0.03[m]');
+% Tp16 is zero
+model.param.set('Tp16', '0');
+
 model.param.set('rfuel_zone','0.025[m]')
 model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
 model.param.set('pb_zone', '4', 'number of radial zones in the pebbles');

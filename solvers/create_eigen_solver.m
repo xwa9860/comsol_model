@@ -54,7 +54,7 @@ model.study('std2').create('eigv', 'Eigenvalue');
 if TMSR
         if MultiScale
         model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'neutrondiffusion' 'on' 'htpb' 'off'}); 
-        model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'neutrondiffusion' 'on' 'htpb_2' 'off'});    
+%         model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'neutrondiffusion' 'on' 'htpb_2' 'off'});    
         else
         model.study('std2').feature('eigv').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'on'});
         end
@@ -76,7 +76,7 @@ model.sol('sol16').create('e1', 'Eigenvalue');
 
 model.study('std2').label('Eigenvalue study');
 model.study('std2').feature('eigv').set('neigs', 1);
-model.study('std2').feature('eigv').set('eigunit', '');
+% model.study('std2').feature('eigv').set('eigunit', '');
 model.study('std2').feature('eigv').set('shift', '1');
 model.study('std2').feature('eigv').set('shiftactive', true);
 model.study('std2').feature('eigv').set('useinitsol', true);
