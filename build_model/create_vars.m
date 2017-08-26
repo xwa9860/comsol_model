@@ -7,7 +7,7 @@ model.variable('var1').set('SA', '6/d', 'pebble specific surface area');
 model.variable('var1').set('v0in', 'mL*rhoL/Ain');
 model.variable('var1').set('v0ghost', 'mL*rhoL/Ainghost');
 model.variable('var1').set('Acore2', 'pi*2*(2.8656[m]-1.5[m])*0.9[m]', 'inlet cross-sectional area on diverging region inner reflector');
-model.variable('var1').set('Acore1', 'pi*2*Hinlet*(0.9[m])', 'inlet cross-sectional area on core plug flow region inner reflector');
+model.variable('var1').set('Acenter', 'pi*2*Hinlet*(0.35[m])', 'inlet cross-sectional area on core plug flow region inner reflector');
 model.variable('var1').set('Ain', '2.8743 [m^2]');
 model.variable('var1').set('Ainghost', '3.29867 [m^2]');
 
@@ -61,7 +61,15 @@ for i = 1:length(temp_indep_comps)
     model.variable(['var_xs_' name]).selection.set(domNb);
     model.variable(['var_xs_' name]).label(['xs_' name]);
 end
- 
+
+if rod
+    model.variable.create('var_xs_rod');
+    model.variable('var_xs_rod').model('mod1');
+    model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, 'var_xs_rod', heights);
+    model.variable('var_xs_rod').selection.geom('geom1', dimNb);
+    model.variable('var_xs_rod').selection.set(rod_domNb);
+    model.variable('var_xs_rod').label(['xs_rod']);
+end
 
 if TMSR  
     % lower flibe region

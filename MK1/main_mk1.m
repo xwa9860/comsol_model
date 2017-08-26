@@ -49,18 +49,18 @@ fprintf('%.10f \n', lambda_eigen);
 % % % %run('calc_temperature_feedback_coefs.m'); 
 % % % 
 %% steady state calculation
-% model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-% model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-%     
-% fprintf('\nRun steady state study\n');
-% model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
-% model.variable.create('var19');
-% model.variable('var19').model('mod1');
-% model.variable('var19').set('lambda', 'lambda_critical');
-% model.variable('var19').label('lambda');
-% model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% %  
-% run('create_steady_state_solver.m');
+model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
+model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+    
+fprintf('\nRun steady state study\n');
+model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
+model.variable.create('var19');
+model.variable('var19').model('mod1');
+model.variable('var19').set('lambda', 'lambda_critical');
+model.variable('var19').label('lambda');
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+%  
+run('create_steady_state_solver.m');
 %model.sol('sol13').runAll;
 % 
 % %% Rerun eigenvalue calculation with temperature profile from steady state
