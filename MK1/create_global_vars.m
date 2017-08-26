@@ -34,4 +34,3 @@ model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary conditio
 model.param.set('pb_diam', '3[cm]');
 model.param.set('Pop', '236[MW]');
 
-model.param.set('h_rod', '4.3[m]');

@@ -7,10 +7,10 @@ function data = read_dep(data_path, univ, unb, gnb, tot_case_nb)
     end
     
     u=univ;
-    res_scat = ones(tot_case_nb, gnb, gnb);
-    res_rem = ones(tot_case_nb, gnb);
-    res_nsf = ones(tot_case_nb, gnb);
-    res_tot = ones(tot_case_nb, gnb);
+    %res_scat = ones(tot_case_nb, gnb, gnb);
+    %res_rem = ones(tot_case_nb, gnb);
+    %res_nsf = ones(tot_case_nb, gnb);
+    %res_tot = ones(tot_case_nb, gnb);
     for case_nb = 1:tot_case_nb  
         res_scat(case_nb, :, :) = read_2d_array(INF_S0, u, gnb);  
         res_rem(case_nb, :)= read_1d_array(INF_REMXS, u, gnb);
@@ -32,7 +32,7 @@ function data = read_dep(data_path, univ, unb, gnb, tot_case_nb)
     data('rem')= res_rem;
     data('nsf') = res_nsf;
     data('tot') = res_tot;
-    data('diff2') = 9/35.0./data('tot');
+%    data('diff2') = 9/35.0./data('tot');
 end
 
  

@@ -63,12 +63,17 @@ for i = 1:length(temp_indep_comps)
 end
 
 if rod
-    model.variable.create('var_xs_rod');
-    model.variable('var_xs_rod').model('mod1');
-    model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, 'var_xs_rod', heights);
-    model.variable('var_xs_rod').selection.geom('geom1', dimNb);
-    model.variable('var_xs_rod').selection.set(rod_domNb);
-    model.variable('var_xs_rod').label(['xs_rod']);
+        for i = 1:length(rod_comps)
+            name = control_rods{i};
+            domNb = domains(name);
+            model.param.set(sprintf('h_%s',name), '4.3[m]');
+            model.variable.create(['var_xs' name]);
+            model.variable(['var_xs' name]).model('mod1');
+            model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, ['var_xs' name]', heights, sprintf('h_%s', name));
+            model.variable(['var_xs' name]).selection.geom('geom1', dimNb);
+            model.variable(['var_xs' name]).selection.set(domNb);
+            model.variable(['var_xs' name]).label(['xs_rod']);
+        end
 end
 
 if TMSR  

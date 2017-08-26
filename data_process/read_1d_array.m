@@ -10,18 +10,19 @@ function XS_array = read_1d_array(serpent_data_name, row_nb, value_nb, isCR, hei
         isCR = false;
         heights = [];
     end
-    XS_array = eye(1, value_nb);
+    % XS_array = eye(1, value_nb);
     for i=1:value_nb
         k=i*2-1;
         if isCR
             seg_nb =4;
-            xsg = sprintf('%f*step_rod(h_rod-%f)', serpent_data_name(1, k) , heights(1));
+            xsg = sprintf('%10.8e*step_rod(h_rod-%f)', serpent_data_name(1, k) , heights(1));
             for seg = 2:seg_nb
-                xsg = sprintf('%s %f*step_rod(h_rod-%f)', xsg, serpent_data_name(seg, k), heights(seg));
+                xsg = sprintf('%s + %10.8e*step_rod(h_rod-%f)', xsg, serpent_data_name(seg, k), heights(seg));
             end
-            XS_array(i)= xsg;
+            
+            XS_array(i)= {xsg};
         else
-            XS_array(i)=serpent_data_name(row_nb, k);
+            XS_array(i)= serpent_data_name(row_nb, k);
         end
     end   
 end

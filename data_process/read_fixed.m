@@ -23,7 +23,7 @@ res('kappa') = read_1d_array(INF_KAPPA, univ, gnb);
 res('invV') = read_1d_array(INF_INVV, univ, gnb);
 res('chip') = read_1d_array(INF_CHIP, univ, gnb);
 res('chid') = read_1d_array(INF_CHID, univ, gnb);
-res('chit') = (1-res('beta'))*res('chip') + res('beta')*res('chid');
+res('chit') =  read_1d_array(INF_CHIT, univ, gnb);%(1-res('beta'))*res('chip') + res('beta')*res('chid');
 res('fiss') = read_1d_array(INF_FISS, univ, gnb); 
 res('nsf') = read_1d_array(INF_NSF, univ, gnb);
 
