@@ -83,12 +83,13 @@ for m=1:3
     
     for i=1:region_coated+region_fuel_kernel+1
         for j=1:region_coated+region_fuel_kernel+1
+            
             if i==j && j<region_coated+region_fuel_kernel+1
                 cfeq.setIndex('da',['eigenMode*',num2str(rho_coat(i)),'*',num2str(cp_coat(i))],k);
-                k=k+3*(region_coated+region_fuel_kernel)+1;
+                k=k+3*(region_coated+region_fuel_kernel+1)+1;
             elseif i==j && j==region_coated+region_fuel_kernel+1
                 cfeq.setIndex('da',['eigenMode*',num2str(rho_fuel),'*',num2str(cp_fuel)],k);
-                k=k+3*(region_coated+region_fuel_kernel)+1;
+                k=k+3*(region_coated+region_fuel_kernel+1)+1;
             else
                 cfeq.setIndex('da',num2str(0),k);
             end
