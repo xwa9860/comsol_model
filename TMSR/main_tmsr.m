@@ -20,7 +20,7 @@ if MultiScale
 %     run('test_mt')
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', '(Tp26+Tp22+Tp23+Tp24+Tp25+Tp36+Tp32+Tp33+Tp34+Tp35+Tp46+Tp42+Tp43+Tp44+Tp45)/15.0');
+    model.variable('var25').set('T_fuel', 'Tp45');
 else
     run('create_ht_fuel.m');
 end 

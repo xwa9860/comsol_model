@@ -41,8 +41,9 @@ temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC',...
           'VS'}; %, 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
           %'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
 rod = true;          
-rod_domNb = cell2mat(values(domains, {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
-          'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'}));   
+control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+          'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
+control_rod_heights = ones(9, 1) * 430.5;
 % heights where the 4 axial segments of control rods are seperated, from
 % top to bottom
 heights = [572.85, 430.85, 272, 112.5, 41.6];
@@ -103,7 +104,7 @@ dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
 %     196:197, 200:201, 209:212];
 
 
-OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
+OpPower = '0[W]'; %string, input to comsol global variable 'Pop'
 
 %% define transient study parameters
 tf = 20; %second, finishing time of the transient

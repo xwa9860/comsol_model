@@ -63,12 +63,26 @@ for i = 1:length(temp_indep_comps)
 end
 
 if rod
-    model.variable.create('var_xs_rod');
-    model.variable('var_xs_rod').model('mod1');
-    model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, 'var_xs_rod', heights);
-    model.variable('var_xs_rod').selection.geom('geom1', dimNb);
-    model.variable('var_xs_rod').selection.set(rod_domNb);
-    model.variable('var_xs_rod').label(['xs_rod']);
+        %define step function for reactivity insertion
+        model.func.create('step_rod', 'Step');
+        model.func('step_rod').label('step_rod');
+        model.func('step_rod').set('funcname', 'step_rod');
+        model.func('step_rod').set('to', '1');
+        model.func('step_rod').set('smooth', '0');
+        model.func('step_rod').set('from', '1');
+        model.func('step_rod').set('location', '0');
+    
+        for i = 1:length(control_rods)
+            name = control_rods{i};
+            domNb = domains(name);
+            model.param.set(sprintf('h_%s',name), num2str(control_rod_heights(i)));
+            model.variable.create(['var_xs' name]);
+            model.variable(['var_xs' name]).model('mod1');
+            model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, ['var_xs' name]', heights, sprintf('h_%s', name));
+            model.variable(['var_xs' name]).selection.geom('geom1', dimNb);
+            model.variable(['var_xs' name]).selection.set(domNb);
+            model.variable(['var_xs' name]).label(['xs_rod' name]);
+        end
 end
 
 if TMSR  

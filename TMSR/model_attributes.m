@@ -19,7 +19,7 @@ end
 
 sp3 = false;
 TMSR = true;
-
+rod = false;
 domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];
 if dimNb == 2
