@@ -30,6 +30,8 @@ model.param.set('bottomInletFraction', '0.3', 'fraction of mass flow rate going 
 model.param.set('Pci0', '1.3', 'center inlet pressure head (m) (boundary condition)');
 model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary condition)');
 
-model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
+% model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
 model.param.set('pb_diam', '3[cm]');
 model.param.set('Pop', '236[MW]');
+
+model.param.set('h_rod', '4.3[m]');

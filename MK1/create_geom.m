@@ -124,7 +124,7 @@ model.geom('geom1').feature('wp1').geom.feature('pol6').set('table', {'1.25' '1.
 '0.89' '5.7285';  ...
 '0.89' '4.9285';  ...
 '1.25' '4.305'; ...
-'1.25' '4'});
+'1.25' '4.305-Houtlet'}); %outlet boundary lower limit
 model.geom('geom1').create('rev1', 'Revolve');
 model.geom('geom1').feature('rev1').set('angtype', 'full');
 model.geom('geom1').feature('rev1').selection('input').set({'wp1'});
@@ -132,39 +132,60 @@ model.geom('geom1').feature('rev1').selection('input').set({'wp1'});
 % control rods
 model.geom('geom1').create('wp2', 'WorkPlane');
 model.geom('geom1').feature('wp2').set('quickz', '0.416');
-model.geom('geom1').feature('wp2').set('unite', 'on');
-model.geom('geom1').feature('wp2').geom.create('c1', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c1').set('pos', {'0.275' '0'});
-model.geom('geom1').feature('wp2').geom.create('c2', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c2').set('pos', {'-0.275' '0'});
-model.geom('geom1').feature('wp2').geom.create('c3', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c3').set('pos', {'0' '-0.275'});
-model.geom('geom1').feature('wp2').geom.create('c4', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c4').set('pos', {'0' '0.275'});
-model.geom('geom1').feature('wp2').geom.create('c5', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c5').set('pos', {'-0.19445436' '0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c6', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c6').set('pos', {'0.19445436' '0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c7', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c7').set('pos', {'-0.19445436' '-0.19445436'});
-model.geom('geom1').feature('wp2').geom.create('c8', 'Circle');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('selresult', 'on');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('r', '0.05');
-model.geom('geom1').feature('wp2').geom.feature('c8').set('pos', {'0.19445436' '-0.19445436'});
+model.geom('geom1').feature('wp2').set('unite', true);
+
+% model.geom('geom1').feature('wp2').geom.create('c1', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c1').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c1').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c1').set('pos', {'0.275' '0'});
+% model.geom('geom1').feature('wp2').geom.create('c2', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c2').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c2').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c2').set('pos', {'-0.275' '0'});
+% model.geom('geom1').feature('wp2').geom.create('c3', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c3').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c3').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c3').set('pos', {'0' '-0.275'});
+% model.geom('geom1').feature('wp2').geom.create('c4', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c4').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c4').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c4').set('pos', {'0' '0.275'});
+% model.geom('geom1').feature('wp2').geom.create('c5', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c5').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c5').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c5').set('pos', {'-0.19445436' '0.19445436'});
+% model.geom('geom1').feature('wp2').geom.create('c6', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c6').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c6').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c6').set('pos', {'0.19445436' '0.19445436'});
+% model.geom('geom1').feature('wp2').geom.create('c7', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c7').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c7').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c7').set('pos', {'-0.19445436' '-0.19445436'});
+% model.geom('geom1').feature('wp2').geom.create('c8', 'Circle');
+% model.geom('geom1').feature('wp2').geom.feature('c8').set('selresult', 'on');
+% model.geom('geom1').feature('wp2').geom.feature('c8').set('r', '0.05');
+% model.geom('geom1').feature('wp2').geom.feature('c8').set('pos', {'0.19445436' '-0.19445436'});
+
+model.geom('geom1').feature('wp2').geom.create('c9', 'Circle');
+model.geom('geom1').feature('wp2').geom.feature('c9').set('r', 0.35);
+
+for cr = 1:8
+    ang = 360/8*cr;
+    model.geom('geom1').feature('wp2').geom.create(sprintf('ic%d', cr), 'InterpolationCurve');
+    model.geom('geom1').feature('wp2').geom.feature(sprintf('ic%d', cr)).set('type', 'solid');
+    model.geom('geom1').feature('wp2').geom.feature(sprintf('ic%d', cr)).set('table', ...
+        {sprintf('0.35*cos((%f-15)[deg])', ang) sprintf('0.35*sin((%f-15)[deg])', ang);...
+        sprintf('0.2*cos((%f-15)[deg])', ang)  sprintf('0.2*sin((%f-15)[deg])', ang);...
+        sprintf('0.2*cos((%f+15)[deg])', ang)  sprintf('0.2*sin((%f+15)[deg])', ang); ...
+        sprintf('0.35*cos((%f+15)[deg])', ang) sprintf('0.35*sin((%f+15)[deg])', ang)});   
+end
+
+model.component('mod1').geom('geom1').feature('wp2').geom.create('uni1', 'Union');
+model.component('mod1').geom('geom1').feature('wp2').geom.feature('uni1').selection('input').set({'ic1' 'ic2' 'ic3' 'ic4' 'ic5' 'ic6' 'ic7' 'ic8'});
+model.component('mod1').geom('geom1').feature('wp2').geom.create('int9', 'Intersection');
+model.component('mod1').geom('geom1').feature('wp2').geom.feature('int9').selection('input').set({'c9' 'uni1'});
+
 model.geom('geom1').create('ext1', 'Extrude');
 model.geom('geom1').feature('ext1').label('contro_rod_channels');
 model.geom('geom1').feature('ext1').setIndex('distance', '5.7285-0.416', 0);

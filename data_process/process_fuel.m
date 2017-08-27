@@ -68,7 +68,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
         temp_var_pb(25) = "T_flibe";
         % used to set the fuel cross-section variable in comsol
 
-        raw_temps = load([datapath, 'temp.mat']);        
+        raw_temps = load([data_path, 'temp.mat']);        
         raw_fuel_temps = raw_temps.sol;
         % i = burn up number
         fuel_temps = ones(tot_case_nb, 24);

@@ -10,7 +10,8 @@ model.physics('ht').feature('temp1').label('Inlet Temperature');
 
 model.physics('ht').create('hs1', 'HeatSource', dimNb);
 model.physics('ht').feature('hs1').selection.set(fuel_domNb);
-model.physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*(h_conv/k_fuel*T_flibe+Tp46/(r5-r4))/(1/(r5-r4)+h_conv/k_fuel)');
+model.physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*T_fuel');
+%model.physics('ht').feature('hs1').set('Q0', 'h_conv*pb_area/fuel_v*(h_conv/k_fuel*T_flibe+Tp46/(r5-r4))/(1/(r5-r4)+h_conv/k_fuel)');
 model.physics('ht').feature('hs1').label('heat transfer from fuel-cst term');
 
 model.physics('ht').create('hs2', 'HeatSource', dimNb);
