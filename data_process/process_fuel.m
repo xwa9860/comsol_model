@@ -16,7 +16,7 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
             temp_var_pb = [];
             for pnb = 1:3
                 for tnb = 1:3
-                        temp_var_pb = [temp_var_pb sprintf("log(Tp%d%d[1/K])", pnb+1, tnb+1)];
+                        temp_var_pb = [temp_var_pb sprintf("log(Tp%d%d[1/K])", pnb, tnb)];
                 end
             end
             
