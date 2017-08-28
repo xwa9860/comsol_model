@@ -11,14 +11,22 @@ model.param.set('z0', '20[cm]-4.899[cm]', 'height of pebble boundary when pb_h =
 model.param.set('zin', 'z0+pb_h', 'inner height that fuel pebble regions starts');
 model.param.set('zout', '0.53+pb_h', 'outer height that fuel pebble starts');
 model.param.set('pb_diam', '0.06[m]', 'fuel pebble diameter');
-model.param.set('r1','0[m]');
-model.param.set('r2', '0.008667015929383[m]');
-model.param.set('r3', '0.017602558504261[m]');
-model.param.set('r4', '0.020149899425206[m]');
-model.param.set('r5', '0.027500000000000[m]');
-model.param.set('r0', '0.03[m]');
-% Tp16 is zero
-model.param.set('Tp16', '0');
+model.param.set('r0','0[m]');
+model.param.set('r1', '0.008667015929383[m]');
+model.param.set('r2', '0.017602558504261[m]');
+model.param.set('r3', '0.020149899425206[m]');
+model.param.set('r4', '0.027500000000000[m]');
+%radius of TRISTO
+model.param.set('R0', '0[m]');
+model.param.set('R1', '0.000086670159294[m]');
+model.param.set('R2', '0.000176025585043[m]');
+model.param.set('R3', '0.000201498994252[m]');
+model.param.set('R4', '0.000365000000000[m]');
+model.param.set('R5', '0.092000000000000[m]');
+
+
+% Tp0 is zero
+model.param.set('Tp0', '0');
 
 model.param.set('rfuel_zone','0.025[m]')
 model.param.set('V_zone', '4/3*pi*rfuel_zone^3/pb_zone', 'volume of each zone in a pebble times number of pebbles');
