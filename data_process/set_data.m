@@ -11,14 +11,14 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
            % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
            for j=1:var_size(2)
                model.variable(comsol_var_name).set([XS_name, num2str(j)], ...
-               [num2str(values(1, j),'%10.8e'), unit]);
+               [num2str(values(1, j),'%10.6e'), unit]);
            
            end 
         else % for scattering matrix
            for i=1:var_size(1)  
                for j=1:var_size(2)
                    model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
-                    [num2str(values(j, i),'%10.8e'), unit]); %changed
+                    [num2str(values(j, i),'%10.6e'), unit]); %changed
                end 
            end
         end
@@ -28,14 +28,13 @@ function model = set_data(model, comsol_var_name, XS_name, temp_vars, values, un
            % if the array is 1D, name the variables like d1, d2, ... instead of d11, d12...
            for j=1:var_size(2)
                model.variable(comsol_var_name).set([XS_name, num2str(j)], ...
-               cell2mat([values(1, j), unit]));
-           
+               cell2mat([values(1, j), unit]));           
            end 
         else % for scattering matrix
            for i=1:var_size(1)  
                for j=1:var_size(2)
-                   model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...
-                    cell2mat([values(j, i), unit])); 
+                   model.variable(comsol_var_name).set([XS_name, num2str(i), num2str(j)],  ...                    
+                   cell2mat([values(j, i), unit])); 
                end 
            end
         end

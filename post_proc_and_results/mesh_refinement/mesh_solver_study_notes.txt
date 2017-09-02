@@ -1,0 +1,6 @@
+% based on the 3D TMSR sp3 model
+direct eigenvalue solver
+reaches memory limit(16GB) with 'extra fine' mesh(DOF=1026850), takes forever to do matrix factorization
+moved on to the workstation(128GB) 
+
+% changed to 3D TMSR diffusion 

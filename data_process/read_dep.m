@@ -32,7 +32,7 @@ function data = read_dep(data_path, univ, unb, gnb, tot_case_nb)
     data('rem')= res_rem;
     data('nsf') = res_nsf;
     data('tot') = res_tot;
-%    data('diff2') = 9/35.0./data('tot');
+    %data('diff2') = 9/35.0./data('tot');
 end
 
  

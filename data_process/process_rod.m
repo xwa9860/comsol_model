@@ -6,7 +6,9 @@ function model = process_rod(model, data_path, data_units, comsol_var_name, heig
     %}
 
  
-    file_name = [data_path, 'case_1.m'];
+    file_name = [data_path, 'all_down_res.m'];
+    run(file_name);
+    file_name = [data_path, 'no_rod_res.m'];
     run(file_name);
     res = containers.Map; 
     dnb = 6;
@@ -41,14 +43,14 @@ function model = process_rod(model, data_path, data_units, comsol_var_name, heig
     res('rem')= read_1d_array(INF_REMXS, seg, gnb, isCR, heights, rod_height);
     res('nsf') = read_1d_array(INF_NSF, seg, gnb, isCR, heights, rod_height);
     res('tot') = read_1d_array(INF_TOT, seg, gnb, isCR, heights, rod_height);
-    % res('diff2') = 9/35.0./res('tot'); 
+ 
  
             
     for k = keys(res)        
         name = k{1};
-        set_data(model, comsol_var_name,  name, 'NA', res(name), data_units(name), 'cr');
+        model = set_data(model, comsol_var_name,  name, 'NA', res(name), data_units(name), 'cr');
     end
-
+    model = set_diff2(model, comsol_var_name);
     end
 
 

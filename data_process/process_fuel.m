@@ -85,6 +85,6 @@ function model = process_fuel(model, data_path, data_units, comsol_var_name, unb
     fuel_data = read_dep(data_path, u_fuel, unb, gnb, tot_case_nb);
     coefs = fit_coef(input, fuel_data);
     model = set_coef(model, comsol_var_name, temp_var_pb, coefs, 'lin_temp_dep', data_units);
-   
+    model = set_diff2(model, comsol_var_name);
     
 end

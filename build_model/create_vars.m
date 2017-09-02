@@ -30,7 +30,12 @@ model.variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coef
 model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
 model.variable('var3').set('unitstest', 'betaL*To*rhoL*g');
 model.variable('var3').set('Pr', 'muL*cpL/kL');
-
+if TMSR
+    model.component('mod1').variable('var3').set('h_conv', '6000');
+else
+model.component('mod1').variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
+model.component('mod1').variable('var3').set('Re', '(rhoL*d*br.U/muL)');
+end
 
 %% fuel thermal properties
 model.variable.create('var4');
@@ -64,13 +69,13 @@ end
 
 if rod
         %define step function for reactivity insertion
-        model.func.create('step_rod', 'Step');
-        model.func('step_rod').label('step_rod');
-        model.func('step_rod').set('funcname', 'step_rod');
-        model.func('step_rod').set('to', '1');
-        model.func('step_rod').set('smooth', '0');
-        model.func('step_rod').set('from', '1');
-        model.func('step_rod').set('location', '0');
+        model.func.create('str', 'Step');
+        model.func('str').label('str');
+        model.func('str').set('funcname', 'str');
+        model.func('str').set('to', '1');
+        model.func('str').set('smooth', '0');
+        model.func('str').set('from', '0');
+        model.func('str').set('location', '0');
     
         for i = 1:length(control_rods)
             name = control_rods{i};

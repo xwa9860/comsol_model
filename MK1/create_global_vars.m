@@ -15,8 +15,8 @@ model.param.set('porosity', '0.4');
 model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');
 
 
-model.param.set('Houtlet', '1.5 [m]', 'outlet region height overlapping with active core region');
-model.param.set('Hinlet', '1.501 [m]', 'inlet region height overlapping with active core region');
+model.param.set('Houtlet', '1 [m]', 'outlet region height overlapping with active core region');
+model.param.set('Hinlet', '1.5 [m]', 'inlet region height overlapping with active core region');
 model.param.set('decay', '1', 'decay heat fraction of total power');
 model.param.set('Qcore', '249[MW]', 'total core power');
 model.param.set('Vcore', '16.99151[m^3]', 'total core volume');

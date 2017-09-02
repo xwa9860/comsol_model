@@ -25,7 +25,7 @@ function model = process_fixed(model, data_path, data_units, comsol_var_name, un
         set_data(model, comsol_var_name,  name, 'NA', xsdata(name), data_units(name), 'fixed');
         
     end
-
+    model = set_diff2(model, comsol_var_name);
 end
 
 

@@ -1,9 +1,35 @@
-model.result.dataset.create('cpl1', 'CutPlane');
+
+
 model.result.dataset.create('cpl2', 'CutPlane');
-model.result.dataset('cpl1').set('data', 'dset2');
 model.result.dataset('cpl2').set('data', 'dset3');
 model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
 model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
+model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
+model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
+
+% evaluate mass flow rate at inlets
+
+model.result.table.create('tbl2', 'Table');
+model.result.numerical.create('int1', 'IntSurface');
+model.result.numerical.create('int2', 'IntSurface');
+model.result.numerical('int1').set('data', 'dset2');
+model.result.numerical('int1').selection.set(in_bound2);
+model.result.numerical('int1').set('probetag', 'none');
+model.result.numerical('int2').set('data', 'dset2');
+model.result.numerical('int2').selection.set(in_bound3);
+model.result.numerical('int2').set('probetag', 'none');
+model.result.numerical('int1').label('center inlet mass flow rate');
+model.result.numerical('int1').set('table', 'tbl2');
+model.result.numerical('int1').set('expr', {'(u*nx+v*ny+w*nz)*rhoL'});
+model.result.numerical('int1').set('unit', {'kg/s'});
+model.result.numerical('int1').set('descr', {''});
+model.result.numerical('int2').label('upper inlet mass flow rate');
+model.result.numerical('int2').set('table', 'tbl2');
+model.result.numerical('int2').set('expr', {'(u*nx+v*ny+w*nz)*rhoL'});
+model.result.numerical('int2').set('unit', {'kg/s'});
+model.result.numerical('int2').set('descr', {''});
+model.result.numerical('int1').setResult;
+model.result.numerical('int2').appendResult;
 
 
 model.result.create('pg1', 'PlotGroup3D');
@@ -15,6 +41,15 @@ model.result.create('pg9', 'PlotGroup2D');
 model.result.create('pg10', 'PlotGroup2D');
 model.result.create('pg11', 'PlotGroup2D');
 model.result.create('pg13', 'PlotGroup2D');
+model.result.create('pg14', 'PlotGroup1D');
+model.result.create('pg15', 'PlotGroup1D');
+model.result.create('pg16', 'PlotGroup1D');
+model.result.create('pg17', 'PlotGroup3D');
+model.result.create('pg18', 'PlotGroup1D');
+model.result.create('pg19', 'PlotGroup2D');
+model.result.create('pg20', 'PlotGroup2D');
+model.result.create('pg23', 'PlotGroup2D');
+
 
 model.result('pg1').set('data', 'dset2');
 model.result('pg1').create('surf1', 'Surface');
@@ -119,6 +154,92 @@ model.result('pg13').feature('surf1').set('unit', '1/(m^2*s)');
 model.result('pg13').feature('surf1').set('descr', 'FluxN5+FluxN6+FluxN7+FluxN8');
 model.result('pg13').feature('surf1').set('resolution', 'normal');
 
+% model.result('pg14').set('probetag', 'window1');
+% model.result('pg14').create('tblp1', 'Table');
+% model.result('pg14').feature('tblp1').set('probetag', 'dom1');
+% model.result('pg14').label('Probe Plot Group 14');
+% model.result('pg14').set('data', 'none');
+% model.result('pg14').set('xlabel', 'Temperature (W), Probe Pint');
+% model.result('pg14').set('ylabel', 'Temperature (W), Probe Pint');
+% model.result('pg14').set('window', 'window1');
+% model.result('pg14').set('windowtitle', 'Probe Plot 1');
+% model.result('pg14').set('xlabelactive', false);
+% model.result('pg14').set('ylabelactive', false);
+% model.result('pg14').create('tblp1', 'Table');
+% model.result('pg14').feature('tblp1').label('Probe Table Graph 1');
+% model.result('pg14').feature('tblp1').set('plotcolumninput', 'manual');
+% 
+% model.result('pg15').set('probetag', 'window2');
+% model.result('pg15').create('tblp1', 'Table');
+% model.result('pg15').feature('tblp1').set('probetag', 'dom2,dom3');
+% model.result('pg16').set('probetag', 'window3');
+% model.result('pg16').create('tblp1', 'Table');
+% model.result('pg16').feature('tblp1').set('probetag', 'dom4,dom5');
+
+
+
+% model.result('pg15').label('Probe Plot Group 15');
+% model.result('pg15').set('xlabel', 'Temperature (W), Probe Pint');
+% model.result('pg15').set('windowtitle', 'Probe Plot 2');
+% model.result('pg15').set('xlabelactive', false);
+% model.result('pg15').feature('tblp1').label('Probe Table Graph 1');
+% model.result('pg16').label('Probe Plot Group 16');
+% model.result('pg16').set('xlabel', 'Temperature (W), Probe Pint');
+% model.result('pg16').set('windowtitle', 'Probe Plot 3');
+% model.result('pg16').set('xlabelactive', false);
+% model.result('pg16').feature('tblp1').label('Probe Table Graph 1');
+
+model.result('pg17').set('data', 'dset2');
+model.result('pg17').create('surf1', 'Surface');
+model.result('pg17').feature('surf1').set('rangecoloractive', true);
+model.result('pg17').feature('surf1').set('rangecolormax', 0.02);
+model.result('pg17').feature('surf1').set('resolution', 'normal');
+
+model.result('pg18').set('data', 'dset2');
+model.result('pg18').create('lngr1', 'LineGraph');
+model.result('pg18').feature('lngr1').selection.set([340 350]);
+
+model.result('pg18').set('xlabel', 'Arc length');
+model.result('pg18').set('ylabel', 'Temperature (K)');
+model.result('pg18').set('xlabelactive', false);
+model.result('pg18').set('ylabelactive', false);
+model.result('pg18').feature('lngr1').set('expr', 'T_flibe');
+model.result('pg18').feature('lngr1').set('unit', 'K');
+model.result('pg18').feature('lngr1').set('descr', 'Temperature');
+model.result('pg18').feature('lngr1').set('resolution', 'normal');
+
+model.result('pg19').create('surf1', 'Surface');
+
+model.result('pg19').label('h_conv');
+model.result('pg19').set('titletype', 'manual');
+model.result('pg19').set('title', 'hconv(wakao)(W/m2.K)');
+model.result('pg19').feature('surf1').set('expr', 'h_conv');
+model.result('pg19').feature('surf1').set('unit', 'W/(m^2*K)');
+model.result('pg19').feature('surf1').set('descr', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
+model.result('pg19').feature('surf1').set('resolution', 'normal');
+
+model.result('pg20').create('surf1', 'Surface');
+
+model.result('pg20').label('Re');
+model.result('pg20').set('titletype', 'manual');
+model.result('pg20').set('title', 'Re');
+model.result('pg20').feature('surf1').set('expr', 'rhoL*d*br.U/muL');
+model.result('pg20').feature('surf1').set('unit', '1');
+model.result('pg20').feature('surf1').set('descr', 'rhoL*d*br.U/muL');
+model.result('pg20').feature('surf1').set('titletype', 'manual');
+model.result('pg20').feature('surf1').set('title', 'Flibe temperature (degC)');
+model.result('pg20').feature('surf1').set('resolution', 'normal');
+
+model.result('pg23').create('surf1', 'Surface');
+model.result('pg23').label('T_fuel-T_flibe');
+model.result('pg23').set('titletype', 'manual');
+model.result('pg23').set('title', 'Tfuel-Tflibe (degC)');
+model.result('pg23').feature('surf1').set('expr', '(T_fuel-T_flibe)');
+model.result('pg23').feature('surf1').set('unit', 'K');
+model.result('pg23').feature('surf1').set('descr', '(T_fuel-T_flibe)');
+model.result('pg23').feature('surf1').set('titletype', 'manual');
+model.result('pg23').feature('surf1').set('title', 'Flibe temperature (degC)');
+model.result('pg23').feature('surf1').set('resolution', 'normal');
 
 % exports
 model.result.export.create('img1', 'Image2D');
@@ -127,6 +248,9 @@ model.result.export.create('img3', 'Image2D');
 model.result.export.create('img4', 'Image2D');
 model.result.export.create('img5', 'Image2D');
 model.result.export.create('img6', 'Image2D');
+model.result.export.create('img7', 'Image2D');
+model.result.export.create('img8', 'Image1D');
+model.result.export.create('img9', 'Image2D');
 
 model.result.export('img1').label('Pdensity');
 model.result.export('img1').set('plotgroup', 'pg8');
@@ -300,3 +424,87 @@ model.result.export('img6').set('axes', 'on');
 model.result.export('img6').set('qualitylevel', '92');
 model.result.export('img6').set('qualityactive', 'off');
 model.result.export('img6').set('imagetype', 'png');
+model.result.export('img7').label('deltaT');
+model.result.export('img7').set('plotgroup', 'pg23');
+model.result.export('img7').set('pngfilename', 'deltaT');
+model.result.export('img7').set('printunit', 'mm');
+model.result.export('img7').set('webunit', 'px');
+model.result.export('img7').set('printheight', '90');
+model.result.export('img7').set('webheight', '600');
+model.result.export('img7').set('printwidth', '120');
+model.result.export('img7').set('webwidth', '800');
+model.result.export('img7').set('printlockratio', 'off');
+model.result.export('img7').set('weblockratio', 'off');
+model.result.export('img7').set('printresolution', '300');
+model.result.export('img7').set('webresolution', '96');
+model.result.export('img7').set('size', 'manualprint');
+model.result.export('img7').set('antialias', 'on');
+model.result.export('img7').set('zoomextents', 'off');
+model.result.export('img7').set('title', 'on');
+model.result.export('img7').set('legend', 'on');
+model.result.export('img7').set('logo', 'off');
+model.result.export('img7').set('options', 'on');
+model.result.export('img7').set('fontsize', '9');
+model.result.export('img7').set('customcolor', [1 1 1]);
+model.result.export('img7').set('background', 'current');
+model.result.export('img7').set('axes', 'on');
+model.result.export('img7').set('qualitylevel', '92');
+model.result.export('img7').set('qualityactive', 'off');
+model.result.export('img7').set('imagetype', 'png');
+model.result.export('img8').label('outlet_T_flibe');
+model.result.export('img8').set('plotgroup', 'pg18');
+model.result.export('img8').set('pngfilename', 'outlet_T_flibe');
+model.result.export('img8').set('printunit', 'mm');
+model.result.export('img8').set('webunit', 'px');
+model.result.export('img8').set('printheight', '90');
+model.result.export('img8').set('webheight', '600');
+model.result.export('img8').set('printwidth', '120');
+model.result.export('img8').set('webwidth', '800');
+model.result.export('img8').set('printlockratio', 'off');
+model.result.export('img8').set('weblockratio', 'off');
+model.result.export('img8').set('printresolution', '300');
+model.result.export('img8').set('webresolution', '96');
+model.result.export('img8').set('size', 'manualprint');
+model.result.export('img8').set('antialias', 'on');
+model.result.export('img8').set('zoomextents', 'off');
+model.result.export('img8').set('title', 'on');
+model.result.export('img8').set('legend', 'on');
+model.result.export('img8').set('logo', 'off');
+model.result.export('img8').set('options', 'on');
+model.result.export('img8').set('fontsize', '9');
+model.result.export('img8').set('customcolor', [1 1 1]);
+model.result.export('img8').set('background', 'current');
+model.result.export('img8').set('axes', 'on');
+model.result.export('img8').set('showgrid', 'on');
+model.result.export('img8').set('qualitylevel', '92');
+model.result.export('img8').set('qualityactive', 'off');
+model.result.export('img8').set('imagetype', 'png');
+model.result.export('img9').label('h_conv');
+model.result.export('img9').set('plotgroup', 'pg19');
+model.result.export('img9').set('pngfilename', 'h_conv');
+model.result.export('img9').set('printunit', 'mm');
+model.result.export('img9').set('webunit', 'px');
+model.result.export('img9').set('printheight', '90');
+model.result.export('img9').set('webheight', '600');
+model.result.export('img9').set('printwidth', '120');
+model.result.export('img9').set('webwidth', '800');
+model.result.export('img9').set('printlockratio', 'off');
+model.result.export('img9').set('weblockratio', 'off');
+model.result.export('img9').set('printresolution', '300');
+model.result.export('img9').set('webresolution', '96');
+model.result.export('img9').set('size', 'manualprint');
+model.result.export('img9').set('antialias', 'on');
+model.result.export('img9').set('zoomextents', 'off');
+model.result.export('img9').set('title', 'on');
+model.result.export('img9').set('legend', 'on');
+model.result.export('img9').set('logo', 'off');
+model.result.export('img9').set('options', 'on');
+model.result.export('img9').set('fontsize', '9');
+model.result.export('img9').set('customcolor', [1 1 1]);
+model.result.export('img9').set('background', 'current');
+model.result.export('img9').set('axes', 'on');
+model.result.export('img9').set('qualitylevel', '92');
+model.result.export('img9').set('qualityactive', 'off');
+model.result.export('img9').set('imagetype', 'png');
+
+

@@ -37,16 +37,26 @@ universe_names = {'OR', 'ORCC', 'CR', 'CRCC', 'VS', 'DC', 'CB', 'BK','fuel'};
 
 % for XS definition
 
-temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC',...
+
+rod = true;
+if rod
+    temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC',...
           'VS'}; %, 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
           %'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
-rod = true;          
-control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+    control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
           'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
-control_rod_heights = ones(9, 1) * 430.5;
-% heights where the 4 axial segments of control rods are seperated, from
-% top to bottom
-heights = [572.85, 430.85, 272, 112.5, 41.6];
+    control_rod_heights = ones(9, 1) * 112.5*0.01;
+    %control_rod_heights(3) = 3;
+    %control_rod_heights(6) = 3;
+    % heights where the 4 axial segments of control rods are seperated, from
+    % top to bottom
+    heights = [572.85, 430.85, 272, 112.5, 41.6]*0.01;
+else
+    temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC',...
+          'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+          'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
+end
+
 % temp_indep_comps = {'CR',...
 %   'Blanket', 'ORCC','OR', 'CB', 'DC',...
 %   'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
@@ -69,18 +79,33 @@ porous_media = {'Blanket', 'fuel'};
 
 %% porous media module
 % lower inlet
-in_bound1 = [79:80, 89, 93, 99, 107, 114, 117, 123, 131, 175, 187, 225, 228, 238, 244, 257, 260, 264, 269];
+in_bound1= [53:54, 59:60, 162, 165, 192, 195]; %[75 76 144 159];
+% center inlet
+in_bound2 = [79:80, 89, 93, 99, 107, 114, 117, 123, 131, 175, 187, 225, 228, 238, 244, 257, 260, 264, 269];
 % upper inlet
-in_bound2= [53:54, 59:60, 162, 165, 192, 195]; %[75 76 144 159];
+in_bound3 = [61 62 166 193];
 
 %[53 54 59 60 133 136 163 166]; % when control rods are cylinders
 %out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
 % lower outlet
-out_bound1 = [39:42, 155:156, 203, 208];
+out_bound1 = [39 40 155 208]; %39:42, 155:156, 203, 208];
+% middle outlet
+out_bound2 = [41 42 156 203];
 % upper outlet
-out_bound2 = [51:52, 57:58, 161, 164, 194, 199];
+out_bound3 = [51 52 57 58 161 164 194 199];
 
-
+% model.component('mod1').physics('br').create('out1', 'OutletBoundary', 2);
+% model.component('mod1').physics('br').feature('out1').selection.set([39 40 155 208]);
+% model.component('mod1').physics('br').create('out2', 'OutletBoundary', 2);
+% model.component('mod1').physics('br').feature('out2').selection.set([51 52 57 58 161 164 194 199]);
+% model.component('mod1').physics('br').create('inl2', 'InletBoundary', 2);
+% model.component('mod1').physics('br').feature('inl2').selection.set([79 80 89 93 99 107 114 117 123 131 175 187 225 228 238 244 257 260 264 269]);
+% model.component('mod1').physics('br').create('inl3', 'InletBoundary', 2);
+% model.component('mod1').physics('br').feature('inl3').selection.set([53 54 59 60 162 165 192 195]);
+% model.component('mod1').physics('br').create('inl4', 'InletBoundary', 2);
+% model.component('mod1').physics('br').feature('inl4').selection.set([61 62 166 193]);
+% model.component('mod1').physics('br').create('out3', 'OutletBoundary', 2);
+% model.component('mod1').physics('br').feature('out3').selection.set([41 42 156 203]);
 
 valueSet = values(domains, porous_media);
 pm_domains = cell2mat(valueSet);
@@ -88,7 +113,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
 
 %% for flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
-inlet_temp_bound = [in_bound1, in_bound2];% [53 54 59 60 75 76 133 136 144 159 163 166];
+inlet_temp_bound = [in_bound1, in_bound2, in_bound3];% [53 54 59 60 75 76 133 136 144 159 163 166];
 
 dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     69:70, 75:76, 85:86, 97, 102, 105, 110, 121, 126, 129, 134, 136:138,...
@@ -104,7 +129,7 @@ dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
 %     196:197, 200:201, 209:212];
 
 
-OpPower = '0[W]'; %string, input to comsol global variable 'Pop'
+OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
 
 %% define transient study parameters
 tf = 20; %second, finishing time of the transient
