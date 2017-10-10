@@ -8,27 +8,35 @@ region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 
 TMSR = false;
-data_path = 'MK1\XS_data\';
-fuel_data_path = 'MK1\XS_data\fuel\';
+data_path = 'MK1\XS_data_radial_zones\';
+fuel_data_path = 'MK1\XS_data_radial_zones\fuel\';
 
 MultiScale= false;
-
+is_rounded_geom = true;
 sp3 = false;
 
 unb = 9;
-
-keySet = {'CR', 'fuel',...
-      'Blanket', 'ORCC','OR', 'CB', 'DC',...
-      'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+keySet = {'CR', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'...
+      'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS',...
+       'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
-uvalueSet = int16([3 9 ...
-             8 2 1 7 6 ...
-             5 4 4 4 4  ...
+% keySet = {'CR', 'fuel',...
+%       'Blanket', 'ORCC','OR', 'CB', 'DC',...
+%       'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
+%       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'}; % one fuel zone
+
+% the row number in serpent output for group constant generation
+uvalueSet = int16([3 9 9 9 9 9 9  ... % TODO
+             8 2 1 7 6 5 ...
+             4 4 4 4  ...
              4 4 4 4 4]);
-dvalueSet = int16([8, 7,...
-            6, 5, 4, 3, 2, ...
-            1, 9, 10, 11, 12,...
-            13, 14, 15, 16, 17]);
+dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
+    6, 5, 4, 3, 2, 1, ...
+    18, 19, 20, 14, 15, 16, 17, 21, 22];
+% int16([8, 7,...
+%             6, 5, 4, 3, 2, ...
+%             1, 9, 10, 11, 12,...
+%             13, 14, 15, 16, 17]); % one fuel zone
 
 
 domains = containers.Map(keySet,dvalueSet);
@@ -45,7 +53,7 @@ if rod
           %'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
     control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
           'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
-    control_rod_heights = ones(9, 1) * 112.5*0.01;
+    control_rod_heights = ones(9, 1) * 572.85*0.01;
     %control_rod_heights(3) = 3;
     %control_rod_heights(6) = 3;
     % heights where the 4 axial segments of control rods are seperated, from
@@ -69,12 +77,12 @@ end
   'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};
 
 % for setting fuel XS and heat generation domains
-fuel_domNb = domains('fuel');
-fuel_univ = universes('fuel');
+fuel_domNb = cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
+fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})); 
 
 % for porous media mmtm module and material properties
 
-porous_media = {'Blanket', 'fuel'};
+porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'};
 
 
 %% porous media module
@@ -94,6 +102,25 @@ out_bound2 = [41 42 156 203];
 % upper outlet
 out_bound3 = [51 52 57 58 161 164 194 199];
 
+
+if is_rounded_geom
+% lower inlet
+in_bound1= [53 54 61 62 166 170 199 203];
+% center inlet
+in_bound2 = [83 84 93 97 103 111 118 121 127 135 181 193 233 236 246 252 265 268 272 277];
+% upper inlet
+in_bound3 = [63 64 171 200];
+
+%[53 54 59 60 133 136 163 166]; % when control rods are cylinders
+%out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
+% lower outlet
+out_bound1 = [39 40 159 216]; %39:42, 155:156, 203, 208];
+% middle outlet
+out_bound2 = [41 42 160 211];
+% upper outlet
+out_bound3 = [51 52 57 58 165 168 201 207];
+end
+
 % model.component('mod1').physics('br').create('out1', 'OutletBoundary', 2);
 % model.component('mod1').physics('br').feature('out1').selection.set([39 40 155 208]);
 % model.component('mod1').physics('br').create('out2', 'OutletBoundary', 2);
@@ -109,10 +136,10 @@ out_bound3 = [51 52 57 58 161 164 194 199];
 
 valueSet = values(domains, porous_media);
 pm_domains = cell2mat(valueSet);
-main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
+main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 
 %% for flibe heat transfer module
-flibe_domains = cell2mat(values(domains, {'Blanket', 'fuel'}));
+flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 inlet_temp_bound = [in_bound1, in_bound2, in_bound3];% [53 54 59 60 75 76 133 136 144 159 163 166];
 
 dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
@@ -120,7 +147,20 @@ dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     140:141, 143:144, 146:147, 152, 161:162, 164:165, 168, 170, 173, 178,...
     180:183, 192, 194:195, 199, 201, 204, 212, 214:215, 217:218, 220:222, ...
     232:233, 236, 241, 250:253];
- 
+
+if is_rounded_geom
+%     dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33:34, 51:54, 57:58, 61:62, ...
+%         67:68, 71:72, 79:80, 89:90, 101, 106, 109, 114, 125, 130, ...
+%         133, 138, 140:142, 144:145, 147:148, 150:151, 156, 165:166, ...
+%         168, 170, 173, 175, 179, 184, 186:189, 199, 201, 203, 207, 209,...
+%         212, 220, 222:223, 225:226, 228:230, 240:241, 244, 249, 258:261];
+dirichelet_b = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 16, 17, 18, 21, 22,...
+    23, 24, 33:34, 61:64, 67:68, 71:72, 77:78, 93:94, 101:102, 113:114,...
+    127, 133, 136, 142, 155, 161, 164, 170, 172:174, 176:177, 179:180,...
+    182:183, 188, 202:203, 205, 207, 210, 218, 222, 228, 230:233, 246, ...
+    254, 256, 260, 262, 265, 276, 278:279, 281:282, 284:286, 298:299,...
+    302, 308, 318:321];
+end
 
 % [1:6, 9:12, 15:18, 21:24, 33:34, 51:54, 57:60, 65:66, ...
 %     69:70, 81:84, 89:90, 93:94, 101:102, 105:109, 111:112, 114:115, ...

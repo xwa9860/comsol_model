@@ -1,4 +1,5 @@
 
+model.result.dataset('cpl1').set('data', 'dset2');
 
 model.result.dataset.create('cpl2', 'CutPlane');
 model.result.dataset('cpl2').set('data', 'dset3');

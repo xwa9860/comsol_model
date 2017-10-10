@@ -1,14 +1,14 @@
 model.result.dataset.create('cpl1', 'CutPlane');
 model.result.dataset('cpl1').set('data', 'dset1');
 
-model.result.create('pg1', 'PlotGroup3D');
-model.result('pg1').create('slc1', 'Slice');
+model.result.create('pg_pdens', 'PlotGroup3D');
+model.result('pg_pdens').create('slc1', 'Slice');
 
-model.result('pg1').feature('slc1').set('expr', 'Pdensity');
-model.result('pg1').feature('slc1').set('unit', 'W/m^3');
-model.result('pg1').feature('slc1').set('descr', 'power density');
-model.result('pg1').feature('slc1').set('quickxnumber', 1);
-model.result('pg1').feature('slc1').set('resolution', 'normal');
+model.result('pg_pdens').feature('slc1').set('expr', 'Pdensity');
+model.result('pg_pdens').feature('slc1').set('unit', 'W/m^3');
+model.result('pg_pdens').feature('slc1').set('descr', 'power density');
+model.result('pg_pdens').feature('slc1').set('quickxnumber', 1);
+model.result('pg_pdens').feature('slc1').set('resolution', 'normal');
 
 
 %% export power density on a mesh

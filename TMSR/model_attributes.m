@@ -40,8 +40,8 @@ gr_comps = {'gr'};
 %channel_domains = cell2mat(values(domains, {'salt'}));
 
 % for setting fuel XS and heat generation domains
-fuel_domNb = domains('fuel');
-fuel_univ = universes('fuel');
+fuel_domNb = [domains('fuel')];
+fuel_univ = [universes('fuel')];
 
 % for porous media mmtm module and material properties
 porous_media = {'fuel'};

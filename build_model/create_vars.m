@@ -44,7 +44,11 @@ model.variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TM
 model.variable('var4').set('k_fuel', '15[W/m/K]');
 model.variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
 model.variable('var4').selection.geom('geom1', dimNb);
+if TMSR
 model.variable('var4').selection.set(domains('fuel'));
+else
+model.variable('var4').selection.set(cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})));
+end
 model.variable('var4').label('fuel properties');
 
 %% cross section data
@@ -101,13 +105,14 @@ if TMSR
 end
 
 % fuel region  
-model.variable.create('var16');
-model.variable('var16').model('mod1');
-model = process_fuel(model, fuel_data_path, data_units, 'var16', unb, fuel_univ, TMSR, MultiScale);
-model.variable('var16').selection.geom('geom1', dimNb);
-model.variable('var16').selection.set(fuel_domNb);
-model.variable('var16').label('XS_pb');
-
+for i = 1:length(fuel_univ)
+model.variable.create(['fuel_xs_var', i]);
+model.variable(['fuel_xs_var', i]).model('mod1');
+model = process_fuel(model, fuel_data_path, data_units, ['fuel_xs_var', i], unb, fuel_univ(i), TMSR, MultiScale);
+model.variable(['fuel_xs_var', i]).selection.geom('geom1', dimNb);
+model.variable(['fuel_xs_var', i]).selection.set(fuel_domNb(i));
+model.variable(['fuel_xs_var', i]).label(['XS_pb' i]);
+end
 
 model.variable.create('var18');
 model.variable('var18').model('mod1');
