@@ -87,7 +87,7 @@ if rod
             model.param.set(sprintf('h_%s',name), num2str(control_rod_heights(i)));
             model.variable.create(['var_xs' name]);
             model.variable(['var_xs' name]).model('mod1');
-            model = process_rod(model, char(strcat(data_path, "rod", "\")), data_units, ['var_xs' name]', heights, sprintf('h_%s', name));
+            model = process_rod(model, rod_data_path, data_units, ['var_xs' name]', heights, sprintf('h_%s', name));
             model.variable(['var_xs' name]).selection.geom('geom1', dimNb);
             model.variable(['var_xs' name]).selection.set(domNb);
             model.variable(['var_xs' name]).label(['xs_rod' name]);
@@ -104,16 +104,20 @@ if TMSR
     model.variable('var17').label('XS_flibe');
 end
 
-% fuel region  
+% fuel regions  
+sprintf('fuel univ')
+fuel_univ
 for i = 1:length(fuel_univ)
-model.variable.create(['fuel_xs_var', i]);
-model.variable(['fuel_xs_var', i]).model('mod1');
-model = process_fuel(model, fuel_data_path, data_units, ['fuel_xs_var', i], unb, fuel_univ(i), TMSR, MultiScale);
-model.variable(['fuel_xs_var', i]).selection.geom('geom1', dimNb);
-model.variable(['fuel_xs_var', i]).selection.set(fuel_domNb(i));
-model.variable(['fuel_xs_var', i]).label(['XS_pb' i]);
+    var_name = ['fuel_xs_var', num2str(i)];
+    model.variable.create(var_name);
+    model.variable(var_name).model('mod1');
+    model = process_fuel(model, fuel_data_path, data_units, var_name, unb, fuel_univ(i), TMSR, MultiScale);
+    model.variable(var_name).selection.geom('geom1', dimNb);
+    model.variable(var_name).selection.set(fuel_domNb(i));
+    model.variable(var_name).label(['XS_pb', num2str(i)]);
 end
 
+%% variables used to compute power
 model.variable.create('var18');
 model.variable('var18').model('mod1');
 model.variable('var18').set('Pdensity', ...
@@ -136,7 +140,7 @@ model.variable('var18').label('power');
 % model.variable('var22').selection.set(cell2mat(values(domains)));
 % model.variable('var22').label('delayed');
 
-% create T_fuel_i varaibles temporarily for testing
+%% create T_fuel_i varaibles temporarily for testing
 model.variable.create('var_T_fuel');
 model.variable('var_T_fuel').model('mod1');
 for i = 1:24

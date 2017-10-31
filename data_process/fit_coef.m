@@ -1,5 +1,9 @@
  function coef = fit_coef(temp_mat, data)
-    % fit a linear function data = coef * temp_mat
+  %{ fit a linear function data = coef * temp_mat
+  %  data: containers.Map that contains xs values for each type, such as
+  %   'fission', 'absorption' ...
+   %}
+    
         coef = containers.Map; 
         for k = keys(data)
             name = k{1};
@@ -35,7 +39,7 @@ Return coefs:
     end 
 
     if length(mat_size) == 2 %2D matrix
-        coefs=x\matrix_to_fit;
+        coefs=x\matrix_to_fit
     end 
 end
 

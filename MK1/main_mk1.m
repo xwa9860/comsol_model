@@ -2,14 +2,22 @@ clear all;
 close all;
 
 tic
+% define global parameters used in the model
 run('model_attributes.m');
+% create a model object in comsol_MATLAB server
 run('create_comsol_model.m');
+% define global variables that are common for TMSR and Mk1, avoiding
+% duplication of files
 run('create_common_global_vars.m');
+% define global variables specific for Mk1
 run('create_global_vars.m');
+
 run('create_fcns.m');
 run('create_geom.m');
 toc
+
 run('create_vars.m');
+fprintf('created variables')
 toc
 run('create_mats.m');
 
@@ -28,7 +36,6 @@ end
 
 %Neutronics module
 run('create_neutron_diffusion.m');
-toc
 %Math operatoins
 run('create_operations.m');
 

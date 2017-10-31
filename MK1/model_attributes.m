@@ -1,5 +1,5 @@
 % MK1
-% Define input variables for the model 
+% Define global variables for the model 
 dimNb= 3; % 3D model
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
@@ -10,7 +10,7 @@ region_fuel_kernel=3; %termperature of fuel kernel
 TMSR = false;
 data_path = 'MK1\XS_data_radial_zones\';
 fuel_data_path = 'MK1\XS_data_radial_zones\fuel\';
-
+rod_data_path = 'MK1\XS_rod\';
 MultiScale= false;
 is_rounded_geom = true;
 sp3 = false;
@@ -26,8 +26,8 @@ keySet = {'CR', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'...
 %       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'}; % one fuel zone
 
 % the row number in serpent output for group constant generation
-uvalueSet = int16([3 9 9 9 9 9 9  ... % TODO
-             8 2 1 7 6 5 ...
+uvalueSet = int16([3 12 12 13 14 15 16   ... % TODO
+             11 2 1 10 9 8 ...
              4 4 4 4  ...
              4 4 4 4 4]);
 dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
@@ -46,7 +46,7 @@ universe_names = {'OR', 'ORCC', 'CR', 'CRCC', 'VS', 'DC', 'CB', 'BK','fuel'};
 % for XS definition
 
 
-rod = true;
+rod = true; % having rods in the model geometry
 if rod
     temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC',...
           'VS'}; %, 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
@@ -85,8 +85,8 @@ fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'f
 porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'};
 
 
-%% porous media module
-% lower inlet
+%% porous media module boundary numbers used in comsol
+% lower inlet 
 in_bound1= [53:54, 59:60, 162, 165, 192, 195]; %[75 76 144 159];
 % center inlet
 in_bound2 = [79:80, 89, 93, 99, 107, 114, 117, 123, 131, 175, 187, 225, 228, 238, 244, 257, 260, 264, 269];
