@@ -18,7 +18,8 @@ else
 end
 
 sp3 = false;
-TMSR = true;
+TMSR = true; % will be removed when I change all the 'TMSR' to 'isTMSR'
+isTMSR = true;
 rod = false;
 domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];

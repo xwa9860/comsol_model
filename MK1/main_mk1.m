@@ -15,12 +15,12 @@ run('create_global_vars.m');
 run('create_fcns.m');
 run('create_geom.m');
 toc
-
+fprintf('creating variables\n')
 run('create_vars.m');
-fprintf('created variables')
 toc
 run('create_mats.m');
 
+fprintf('creating physics')
 run('create_porous_media')
 %Heat transfer modules
 run('create_ht_flibe.m');
@@ -45,7 +45,7 @@ run('create_probes.m');
 %% solvers
 %% Eigenvalue calculation with inital values and fixed XS
 run('create_eigen_solver.m');
-fprintf('Run eigenvalue study');
+fprintf('Run eigenvalue study\n');
 model.sol('sol16').runAll;
 lambda_eigen = mphglobal(model, 'lambda');
 fprintf('\nThe eigenvalue with initial temperatures is\n');

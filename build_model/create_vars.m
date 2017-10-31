@@ -1,3 +1,6 @@
+if isVerbose
+    fprintf('defining geometry and thermal properties variables\n')
+end
 model.variable.create('var1');
 model.variable('var1').model('mod1');
 model.variable('var1').set('DT', '100[K]', 'core temperature rise');
@@ -33,8 +36,8 @@ model.variable('var3').set('Pr', 'muL*cpL/kL');
 if TMSR
     model.component('mod1').variable('var3').set('h_conv', '6000');
 else
-model.component('mod1').variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
-model.component('mod1').variable('var3').set('Re', '(rhoL*d*br.U/muL)');
+    model.component('mod1').variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
+    model.component('mod1').variable('var3').set('Re', '(rhoL*d*br.U/muL)');
 end
 
 %% fuel thermal properties
@@ -52,13 +55,33 @@ end
 model.variable('var4').label('fuel properties');
 
 %% cross section data
+if isVerbose
+    fprintf('defining cross-section variables\n')
+end
+
 nameSet =   {'scat', 'nsf', 'rem', 'tot', 'diff2', 'beta', 'betas', ...
     'lambdas', 'kappa', 'diff1', 'invV', 'fiss', 'chit', 'chip', 'chid'};
 unitSet = {'[1/cm]', '[1/cm]', '[1/cm]', '[1/cm]', '[cm]', '', '', ...
     '[1/s]', '[MeV]', '[cm]', '[s/cm]', '[1/cm]', '', '', ''};
 data_units = containers.Map(nameSet,unitSet);
 
+% fuel regions  
+if isVerbose
+    fprintf('  for fuel region\n')
+end
+for i = 1:length(fuel_univ)
+    var_name = ['fuel_xs_var', num2str(i)];
+    model.variable.create(var_name);
+    model.variable(var_name).model('mod1');
+    model = process_fuel(model, fuel_data_path, data_units, var_name, unb, fuel_univ(i), isTMSR, MultiScale);
+    model.variable(var_name).selection.geom('geom1', dimNb);
+    model.variable(var_name).selection.set(fuel_domNb(i));
+    model.variable(var_name).label(['XS_pb', num2str(i)]);
+end
 
+if isVerbose
+    fprintf('  for temperature independent components\n')
+end
 for i = 1:length(temp_indep_comps)
     name = temp_indep_comps{i};
     domNb = domains(name);
@@ -71,6 +94,9 @@ for i = 1:length(temp_indep_comps)
     model.variable(['var_xs_' name]).label(['xs_' name]);
 end
 
+if isVerbose
+    fprintf('  for control rods\n')
+end
 if rod
         %define step function for reactivity insertion
         model.func.create('str', 'Step');
@@ -81,6 +107,7 @@ if rod
         model.func('str').set('from', '0');
         model.func('str').set('location', '0');
     
+        % define the variables for each control rod
         for i = 1:length(control_rods)
             name = control_rods{i};
             domNb = domains(name);
@@ -94,7 +121,7 @@ if rod
         end
 end
 
-if TMSR  
+if isTMSR  
     % lower flibe region
     model.variable.create('var17');
     model.variable('var17').model('mod1');
@@ -104,20 +131,12 @@ if TMSR
     model.variable('var17').label('XS_flibe');
 end
 
-% fuel regions  
-sprintf('fuel univ')
-fuel_univ
-for i = 1:length(fuel_univ)
-    var_name = ['fuel_xs_var', num2str(i)];
-    model.variable.create(var_name);
-    model.variable(var_name).model('mod1');
-    model = process_fuel(model, fuel_data_path, data_units, var_name, unb, fuel_univ(i), TMSR, MultiScale);
-    model.variable(var_name).selection.geom('geom1', dimNb);
-    model.variable(var_name).selection.set(fuel_domNb(i));
-    model.variable(var_name).label(['XS_pb', num2str(i)]);
-end
+
 
 %% variables used to compute power
+if isVerbose
+    fprintf('defining other non-cross-section variables\n')
+end
 model.variable.create('var18');
 model.variable('var18').model('mod1');
 model.variable('var18').set('Pdensity', ...
