@@ -20,7 +20,7 @@ run('create_vars.m');
 toc
 run('create_mats.m');
 
-fprintf('creating physics')
+fprintf('creating physics\n')
 run('create_porous_media')
 %Heat transfer modules
 run('create_ht_flibe.m');
@@ -44,6 +44,7 @@ run('create_probes.m');
 % 
 %% solvers
 %% Eigenvalue calculation with inital values and fixed XS
+tic
 run('create_eigen_solver.m');
 fprintf('Run eigenvalue study\n');
 model.sol('sol16').runAll;
@@ -52,24 +53,26 @@ fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f \n', lambda_eigen);
 
 run('create_3d_eigen_results.m');
+toc
 % run the following line only if needed
 % run('calc_temperature_feedback_coefs.m'); 
 
 %% steady state calculation
-% model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-% model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-%     
-% fprintf('\nRun steady state study\n');
-% model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
-% model.variable.create('var19');
-% model.variable('var19').model('mod1');
-% model.variable('var19').set('lambda', 'lambda_critical');
-% model.variable('var19').label('lambda');
-% model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% %  
-% run('create_steady_state_solver.m');
-% model.sol('sol13').runAll;
-% % 
+tic
+model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
+model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+    
+fprintf('\nRun steady state study\n');
+model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
+model.variable.create('var19');
+model.variable('var19').model('mod1');
+model.variable('var19').set('lambda', 'lambda_critical');
+model.variable('var19').label('lambda');
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+  
+run('create_steady_state_solver.m');
+model.sol('sol13').runAll;
+toc
 % % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % % set to eigenvalue mode
 % % % model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');

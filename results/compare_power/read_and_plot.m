@@ -1,7 +1,7 @@
 function res = read_and_plot(diffusion_output, serpent_output, R, Z, config)
     rbin = size(R, 2);
     zbin = size(Z, 2);
-    diffusion_power = read_comsol_power(diffusion_output, rbin, zbin);
+    [Rc, Zc, diffusion_power] = read_comsol_power(diffusion_output, rbin, zbin);
     %sp3_power = read_comsol_power('power_mesh_sp3.txt', rbin, zbin);
     
     if strcmp(serpent_output, 'isTMSR')
@@ -10,7 +10,7 @@ function res = read_and_plot(diffusion_output, serpent_output, R, Z, config)
         MC_uncert = load('unc.dat');
         MC_uncert = MC_uncert(zbin:-1:1, :);
     else
-    MC_power = read_det_output(serpent_output, rbin, zbin);
+    MC_power = read_det_output(serpent_output, rbin, zbin, 'DET1');
     end
     
     %% normalization of power

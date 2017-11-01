@@ -14,7 +14,7 @@ region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 
 %% modeling options that you can switch on and off
-TMSR = false;
+TMSR = false; 
 isTMSR = false;
 isVerbose = true; % setting this to true will print out more information in console
 MultiScale= false;
@@ -97,40 +97,21 @@ porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuel
 
 
 %% porous media module boundary numbers used in comsol
-% lower inlet 
-in_bound1= [53:54, 59:60, 162, 165, 192, 195]; %[75 76 144 159];
-% center inlet
-in_bound2 = [79:80, 89, 93, 99, 107, 114, 117, 123, 131, 175, 187, 225, 228, 238, 244, 257, 260, 264, 269];
-% upper inlet
-in_bound3 = [61 62 166 193];
 
-%[53 54 59 60 133 136 163 166]; % when control rods are cylinders
-%out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
-% lower outlet
-out_bound1 = [39 40 155 208]; %39:42, 155:156, 203, 208];
-% middle outlet
-out_bound2 = [41 42 156 203];
-% upper outlet
-out_bound3 = [51 52 57 58 161 164 194 199];
-
-
-if is_rounded_geom
 % lower inlet
-in_bound1= [53 54 61 62 166 170 199 203];
+in_bound1= [63, 64, 71, 72, 203, 207, 246, 256] ;
 % center inlet
-in_bound2 = [83 84 93 97 103 111 118 121 127 135 181 193 233 236 246 252 265 268 272 277];
+in_bound2 = [107, 108, 118, 123, 130, 139, 147, 151, 158, 167, 225, 238, 290, 294, 305, 312, 326, 330, 335, 341];
 % upper inlet
-in_bound3 = [63 64 171 200];
+in_bound3 = [73, 74, 208, 253] ;
 
-%[53 54 59 60 133 136 163 166]; % when control rods are cylinders
-%out_bound = [39 40 41 42 49 50 51 52 57 58 126 127 131 132 135 165 170 173 174 179];
 % lower outlet
-out_bound1 = [39 40 159 216]; %39:42, 155:156, 203, 208];
+out_bound1 = [39, 40, 191, 272]; 
 % middle outlet
-out_bound2 = [41 42 160 211];
+out_bound2 = [41, 42, 192, 264]; 
 % upper outlet
-out_bound3 = [51 52 57 58 165 168 201 207];
-end
+out_bound3 = [61, 62, 67, 68, 202, 205, 254, 260]; 
+
 
 
 valueSet = values(domains, porous_media);
@@ -139,7 +120,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1
 
 %% for flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
-inlet_temp_bound = [in_bound1, in_bound2, in_bound3];% [53 54 59 60 75 76 133 136 144 159 163 166];
+inlet_temp_bound = [in_bound1, in_bound2, in_bound3];
 
 dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     69:70, 75:76, 85:86, 97, 102, 105, 110, 121, 126, 129, 134, 136:138,...
@@ -148,11 +129,6 @@ dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     232:233, 236, 241, 250:253];
 
 if is_rounded_geom
-%     dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33:34, 51:54, 57:58, 61:62, ...
-%         67:68, 71:72, 79:80, 89:90, 101, 106, 109, 114, 125, 130, ...
-%         133, 138, 140:142, 144:145, 147:148, 150:151, 156, 165:166, ...
-%         168, 170, 173, 175, 179, 184, 186:189, 199, 201, 203, 207, 209,...
-%         212, 220, 222:223, 225:226, 228:230, 240:241, 244, 249, 258:261];
 dirichelet_b = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 16, 17, 18, 21, 22,...
     23, 24, 33:34, 61:64, 67:68, 71:72, 77:78, 93:94, 101:102, 113:114,...
     127, 133, 136, 142, 155, 161, 164, 170, 172:174, 176:177, 179:180,...

@@ -1,8 +1,5 @@
  close all;
 
-
-
-
 % mk1
 rbin = 89;
 zbin = 266;
@@ -14,7 +11,7 @@ Z = 0.42:0.02:5.72;
 diffusion_output = 'power_no_rod_atall.txt';
 serpent_output = 'no_rod_det0.m';
 read_and_plot(diffusion_output, serpent_output, R, Z, 'rods572.85[cm]')
-keff_no_rod_comsol =;
+%keff_no_rod_comsol =;
 keff_no_rod_serpent = 0.986167;
 
 %% rods at middle height
