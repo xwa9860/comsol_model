@@ -1,6 +1,5 @@
 function res = plot_image(R, Z, power, figtitle, saveto, plim)
     
-
     figure;
     %mesh(r, z, power+0.001); % tried to use surf or mesh plot, the figure
     %doesn't look good, so using image now.
@@ -8,7 +7,9 @@ function res = plot_image(R, Z, power, figtitle, saveto, plim)
     image(R, Z, power, 'CDataMapping', 'scaled');
     
     title(figtitle);
-    caxis([0 plim])
+    if plim
+        caxis([0 plim])
+    end
     colormap(jet);
     hcb=colorbar;
     %title(hcb,'Normalized power density');

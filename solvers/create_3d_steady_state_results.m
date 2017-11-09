@@ -1,6 +1,9 @@
+%{
+ Create steady state results: tables and plots
+%}
 
+%% Create datasets that will be used for plots and tables
 model.result.dataset('cpl1').set('data', 'dset2');
-
 model.result.dataset.create('cpl2', 'CutPlane');
 model.result.dataset('cpl2').set('data', 'dset3');
 model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
@@ -8,7 +11,7 @@ model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
 model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
 model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
 
-% evaluate mass flow rate at inlets
+%% evaluate mass flow rate at inlets
 
 model.result.table.create('tbl2', 'Table');
 model.result.numerical.create('int1', 'IntSurface');
@@ -32,29 +35,12 @@ model.result.numerical('int2').set('descr', {''});
 model.result.numerical('int1').setResult;
 model.result.numerical('int2').appendResult;
 
+%% plots
 
+% T_flibe
 model.result.create('pg1', 'PlotGroup3D');
-model.result.create('pg5', 'PlotGroup3D');
-model.result.create('pg6', 'PlotGroup2D');
-model.result.create('pg7', 'PlotGroup2D');
-model.result.create('pg8', 'PlotGroup2D');
-model.result.create('pg9', 'PlotGroup2D');
-model.result.create('pg10', 'PlotGroup2D');
-model.result.create('pg11', 'PlotGroup2D');
-model.result.create('pg13', 'PlotGroup2D');
-model.result.create('pg14', 'PlotGroup1D');
-model.result.create('pg15', 'PlotGroup1D');
-model.result.create('pg16', 'PlotGroup1D');
-model.result.create('pg17', 'PlotGroup3D');
-model.result.create('pg18', 'PlotGroup1D');
-model.result.create('pg19', 'PlotGroup2D');
-model.result.create('pg20', 'PlotGroup2D');
-model.result.create('pg23', 'PlotGroup2D');
-
-
 model.result('pg1').set('data', 'dset2');
 model.result('pg1').create('surf1', 'Surface');
-
 model.result('pg1').label('Temperature (ht)');
 model.result('pg1').feature('surf1').label('Surface');
 model.result('pg1').feature('surf1').set('expr', 'T_flibe');
@@ -63,7 +49,8 @@ model.result('pg1').feature('surf1').set('descr', 'Temperature');
 model.result('pg1').feature('surf1').set('colortable', 'ThermalLight');
 model.result('pg1').feature('surf1').set('resolution', 'normal');
 
-
+% Streamline
+model.result.create('pg5', 'PlotGroup3D');
 model.result('pg5').set('data', 'dset2');
 model.result('pg5').create('str1', 'Streamline');
 model.result('pg5').feature('str1').selection.set([133 136 144]);
@@ -76,11 +63,8 @@ model.result('pg5').feature('str1').set('tuberadiusscale', 0.021250000000000015)
 model.result('pg5').feature('str1').set('tuberadiusscaleactive', false);
 model.result('pg5').feature('str1').set('resolution', 'normal');
 
-
-
-
-
-
+% T_flibe
+model.result.create('pg6', 'PlotGroup2D');
 model.result('pg6').create('surf1', 'Surface');
 model.result('pg6').label('T_flibe');
 model.result('pg6').feature('surf1').set('expr', 'T_flibe');
@@ -90,6 +74,7 @@ model.result('pg6').feature('surf1').set('titletype', 'manual');
 model.result('pg6').feature('surf1').set('title', 'Flibe temperature (degC)');
 model.result('pg6').feature('surf1').set('resolution', 'normal');
 
+model.result.create('pg7', 'PlotGroup2D');
 model.result('pg7').create('surf1', 'Surface');
 model.result('pg7').label('T_fuel');
 model.result('pg7').set('titletype', 'manual');
@@ -98,6 +83,8 @@ model.result('pg7').feature('surf1').set('expr', 'T_fuel');
 model.result('pg7').feature('surf1').set('unit', 'degC');
 model.result('pg7').feature('surf1').set('descr', 'Temperature');
 model.result('pg7').feature('surf1').set('resolution', 'normal');
+
+model.result.create('pg8', 'PlotGroup2D');
 
 model.result('pg8').create('surf1', 'Surface');
 model.result('pg8').label('PdensityN');
@@ -108,6 +95,7 @@ model.result('pg8').feature('surf1').set('unit', 'W/m^3');
 model.result('pg8').feature('surf1').set('descr', 'power density normalized to Pop');
 model.result('pg8').feature('surf1').set('resolution', 'normal');
 
+model.result.create('pg9', 'PlotGroup2D');
 model.result('pg9').create('surf1', 'Surface');
 model.result('pg9').label('Fast flux');
 model.result('pg9').set('data', 'cpl2');
@@ -118,12 +106,16 @@ model.result('pg9').feature('surf1').set('unit', '1/(m^2*s)');
 model.result('pg9').feature('surf1').set('descr', 'FluxN1+FluxN2+FluxN3+FluxN4');
 model.result('pg9').feature('surf1').set('resolution', 'normal');
 
+model.result.create('pg10', 'PlotGroup2D');
+
 model.result('pg10').create('surf1', 'Surface');
 model.result('pg10').label('Power density');
 model.result('pg10').feature('surf1').set('expr', 'Pdensity');
 model.result('pg10').feature('surf1').set('unit', 'W/m^3');
 model.result('pg10').feature('surf1').set('descr', 'power density');
 model.result('pg10').feature('surf1').set('resolution', 'normal');
+
+model.result.create('pg11', 'PlotGroup2D');
 
 model.result('pg11').create('str1', 'Streamline');
 model.result('pg11').create('con1', 'Contour');
@@ -145,6 +137,7 @@ model.result('pg11').feature('con1').set('coloring', 'uniform');
 model.result('pg11').feature('con1').set('color', 'black');
 model.result('pg11').feature('con1').set('resolution', 'normal');
 
+model.result.create('pg13', 'PlotGroup2D');
 model.result('pg13').create('surf1', 'Surface');
 model.result('pg13').label('Thermal flux');
 model.result('pg13').set('data', 'cpl2');
@@ -154,6 +147,14 @@ model.result('pg13').feature('surf1').set('expr', 'FluxN5+FluxN6+FluxN7+FluxN8')
 model.result('pg13').feature('surf1').set('unit', '1/(m^2*s)');
 model.result('pg13').feature('surf1').set('descr', 'FluxN5+FluxN6+FluxN7+FluxN8');
 model.result('pg13').feature('surf1').set('resolution', 'normal');
+
+model.result.create('pg14', 'PlotGroup1D');
+model.result.create('pg15', 'PlotGroup1D');
+model.result.create('pg16', 'PlotGroup1D');
+model.result.create('pg17', 'PlotGroup3D');
+model.result.create('pg18', 'PlotGroup1D');
+model.result.create('pg19', 'PlotGroup2D');
+model.result.create('pg20', 'PlotGroup2D');
 
 % model.result('pg14').set('probetag', 'window1');
 % model.result('pg14').create('tblp1', 'Table');
@@ -231,6 +232,7 @@ model.result('pg20').feature('surf1').set('titletype', 'manual');
 model.result('pg20').feature('surf1').set('title', 'Flibe temperature (degC)');
 model.result('pg20').feature('surf1').set('resolution', 'normal');
 
+model.result.create('pg23', 'PlotGroup2D');
 model.result('pg23').create('surf1', 'Surface');
 model.result('pg23').label('T_fuel-T_flibe');
 model.result('pg23').set('titletype', 'manual');

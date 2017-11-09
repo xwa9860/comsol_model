@@ -1,4 +1,7 @@
 % TMSR 
+
+isVerbose = true;
+is_get_coef_from_file = false
 %Define input variables for the model 
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number

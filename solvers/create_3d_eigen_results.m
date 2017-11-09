@@ -3,7 +3,6 @@ model.result.dataset('cpl1').set('data', 'dset1');
 
 model.result.create('pg_pdens', 'PlotGroup3D');
 model.result('pg_pdens').create('slc1', 'Slice');
-
 model.result('pg_pdens').feature('slc1').set('expr', 'Pdensity');
 model.result('pg_pdens').feature('slc1').set('unit', 'W/m^3');
 model.result('pg_pdens').feature('slc1').set('descr', 'power density');
@@ -29,3 +28,4 @@ model.result.export('data1').set('gridy2', 'range(42[cm],2[cm],572[cm])');
 %model.result.export('data1').set('gridy2', 'range(1[cm],2[cm],285[cm])');
 model.result.export('data1').set('filename', 'D:\diffusion_models\model\m_files\results\power_mesh.txt');
 model.result.export('data1').run;
+

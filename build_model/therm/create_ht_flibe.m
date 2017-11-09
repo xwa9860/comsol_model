@@ -26,7 +26,7 @@ model.physics('ht').feature('ins1').label('Thermal Insulation');
 
 
 
-if TMSR
+if isTMSR
     model.physics('ht').create('ofl1', 'ConvectiveOutflow', dimNb-1);    
     model.physics('ht').feature('ofl1').selection.set(out_flow_bound);
     model.physics('ht').feature('ofl1').label('Outflow');

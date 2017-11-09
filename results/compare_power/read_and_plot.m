@@ -1,25 +1,36 @@
 function res = read_and_plot(diffusion_output, serpent_output, R, Z, config)
+    %{
+    read, normalize and compare, and plot the power distribution
+    from comsol and serpent output 
+    %}
+    
+    % r and z bin numbers
     rbin = size(R, 2);
     zbin = size(Z, 2);
+    
+    % read power from comsol(diffusion) output
     [Rc, Zc, diffusion_power] = read_comsol_power(diffusion_output, rbin, zbin);
     %sp3_power = read_comsol_power('power_mesh_sp3.txt', rbin, zbin);
     
+    % read power from serpent output, it was stored differently for TMSR
+    % and Mk1
     if strcmp(serpent_output, 'isTMSR')
         MC_power = load('power.dat');
         MC_power = MC_power(zbin:-1:1, :);
         MC_uncert = load('unc.dat');
         MC_uncert = MC_uncert(zbin:-1:1, :);
     else
-    MC_power = read_det_output(serpent_output, rbin, zbin, 'DET1');
+        MC_power = read_det_output(serpent_output, rbin, zbin, 'DET1');
     end
     
-    %% normalization of power
+    %% normalization of powers
     diffusion_powerN = normalize_power(diffusion_power, R);
     MC_powerN = normalize_power(MC_power, R);
     
-    plim = max( max([diffusion_powerN, MC_powerN]));
+    
 
-    %% plot the distribution
+    %% plot the distributions
+    plim = max( max([diffusion_powerN, MC_powerN])); % upper limit for the y axis
     plot_2d(R, Z, diffusion_powerN,...
         ['diffusion power' config], ['diffusion_', config, '.png'], plim);
     plot_2d(R, Z, MC_powerN,...
@@ -27,7 +38,8 @@ function res = read_and_plot(diffusion_output, serpent_output, R, Z, config)
     %plot_image(R, Z, SP3_powerN,...
     %    'sp3 power', 'power_sp3_mk1.png');
     
-    %% error bt the methods
+    
+    %% compute error bt the methods and plot
     diff_rel = (diffusion_powerN - MC_powerN)./(MC_powerN);
     diff_abs = abs((diffusion_powerN - MC_powerN));
     

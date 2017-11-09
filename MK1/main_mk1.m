@@ -1,30 +1,37 @@
 clear all;
 close all;
 
-tic
-% define global parameters used in the model
+fprintf('define parameters used in the matlab model\n')
 run('model_attributes.m');
-% create a model object in comsol_MATLAB server
+
+fprintf('creating a model object in the server\n')
 run('create_comsol_model.m');
-% define global variables that are common for TMSR and Mk1, avoiding
-% duplication of files
+
+fprintf('creating global variables\n')
+% common ones for TMSR and Mk1, avoiding duplication of code
 run('create_common_global_vars.m');
-% define global variables specific for Mk1
+% specific for Mk1
 run('create_global_vars.m');
 
+fprintf('creating function, such as step, ramp, ... functions\n')
 run('create_fcns.m');
+
+fprintf('creating geometry\n')
 run('create_geom.m');
-toc
+
+tic
 fprintf('creating variables\n')
 run('create_vars.m');
 toc
+
+fprintf('creating materials\n')
 run('create_mats.m');
 
 fprintf('creating physics\n')
 run('create_porous_media')
 %Heat transfer modules
 run('create_ht_flibe.m');
-if MultiScale
+if isMultiScale
     run('create_ms_ht_in_pebble.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
@@ -32,21 +39,20 @@ if MultiScale
 else
     run('create_ht_fuel.m');
 end 
-
-
 %Neutronics module
 run('create_neutron_diffusion.m');
-%Math operatoins
-run('create_operations.m');
 
+%Math operatoins, such as integration, for probes
+run('create_operations.m');
 %Probes to get desired variable values during transient
 run('create_probes.m');
-% 
+
 %% solvers
 %% Eigenvalue calculation with inital values and fixed XS
 tic
+fprintf('Creating eigenvalue study\n');
 run('create_eigen_solver.m');
-fprintf('Run eigenvalue study\n');
+fprintf('Running eigenvalue study\n');
 model.sol('sol16').runAll;
 lambda_eigen = mphglobal(model, 'lambda');
 fprintf('\nThe eigenvalue with initial temperatures is\n');
@@ -59,10 +65,9 @@ toc
 
 %% steady state calculation
 tic
+fprintf('\nCreating steady state study\n');
 model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
 model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-    
-fprintf('\nRun steady state study\n');
 model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
 model.variable.create('var19');
 model.variable('var19').model('mod1');
@@ -71,8 +76,10 @@ model.variable('var19').label('lambda');
 model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
   
 run('create_steady_state_solver.m');
-model.sol('sol13').runAll;
+%fprintf('\nRunning steady state study\n');
+%model.sol('sol13').runAll;
 toc
+
 % % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % % set to eigenvalue mode
 % % % model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');

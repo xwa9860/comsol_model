@@ -3,7 +3,7 @@ init = model.physics('neutrondiffusion').feature('init1');
 cfeq = model.physics('neutrondiffusion').feature('cfeq1');
 
 % The matrices contain two parts: neutron transport(NT) equations and delayed neutron(DN) equations
-if sp3
+if isSp3
     NT_nb = 2*gnb;
 else
     NT_nb = gnb;
@@ -32,7 +32,7 @@ for i = 1:NT_nb+dnb % column number
                  end
             end
         end
-        if sp3 && i<=gnb && j>gnb && j<=NT_nb
+        if isSp3 && i<=gnb && j>gnb && j<=NT_nb
             %middle left
             if i == j-gnb
                 if dimNb ==2
@@ -52,12 +52,12 @@ for i = 1:NT_nb+dnb % column number
            % lower left 
            cfeq.setIndex('a', ['-betas', num2str(j-NT_nb), '*nsf', num2str(i)], k); 
         end
-        if sp3 && j<=gnb && gnb<i && i<=NT_nb
+        if isSp3 && j<=gnb && gnb<i && i<=NT_nb
             %upper middle
             cfeq.setIndex('a', ...
               num2str(0), k);           
         end
-        if sp3 && gnb<i && i<=NT_nb && gnb<j && j<=NT_nb
+        if isSp3 && gnb<i && i<=NT_nb && gnb<j && j<=NT_nb
             %center of the matrix
             if i == j
                 if dimNb ==2
@@ -140,7 +140,7 @@ for i =1:NT_nb+dnb %column number
                      ['diff1', num2str(j)]},  k);
             end
         end
-        if sp3 && gnb<i  && i<=NT_nb && j<=gnb && j==(i-gnb)
+        if isSp3 && gnb<i  && i<=NT_nb && j<=gnb && j==(i-gnb)
             if dimNb == 2
                  cfeq.setIndex('c', ...
                     {['2*diff1', num2str(i-gnb), '*r'],...
@@ -152,7 +152,7 @@ for i =1:NT_nb+dnb %column number
                      ['2*diff1', num2str(i-gnb)]},  k); 
             end
         end      
-        if sp3 && i >gnb && i<=NT_nb && j>gnb && j<=NT_nb && i==j 
+        if isSp3 && i >gnb && i<=NT_nb && j>gnb && j<=NT_nb && i==j 
             if dimNb == 2
                  cfeq.setIndex('c', ...
                     {['diff2', num2str(j-gnb), '*r'],...
@@ -196,7 +196,7 @@ end
 
 %% set initial values for Flux and Conc
 for i=1:gnb
-    if sp3
+    if isSp3
         init.set(['Flux', num2str(i)], 1);
         init.set(['Flux2', num2str(i)], 1);
     else

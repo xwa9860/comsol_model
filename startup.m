@@ -14,7 +14,7 @@ addpath([mydir, 'tests'])
 %addpath([mydir, 'TMSR'])
 %addpath([mydir, 'TMSR\XS_data'])
 addpath([mydir, 'MK1'])
-addpath([mydir, 'MK1\XS_data'])
+%addpath([mydir, 'MK1\XS_data'])
 clear mydir mname
 
 format long e;
