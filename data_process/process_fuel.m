@@ -9,12 +9,11 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
     model to save time from fitting a lot of matrices
     %}
 
-    global gnb unb;
     global fuel_data_path;
     global isTMSR isMultiScale is_get_coef_from_file;
     
     %% read and set fixed cross-sections
-    isCR = false
+    isCR = false;
     fixed_data = read_fixed({[fuel_data_path, 'case_1.m']}, u_fuel, isCR, '');
     model = set_a_XS_map(model, comsol_var_name, fixed_data, isCR);
     
