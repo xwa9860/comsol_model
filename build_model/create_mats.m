@@ -13,7 +13,7 @@ model.material('mat1').propertyGroup('def').set('heatcapacity', '2386');
 
 
 %% pure flibe in TMSR
-if TMSR
+if isTMSR
     model.material.create('mat3', 'Common', 'mod1');
     model.material('mat3').selection.set(domains('salt'));
     model.material('mat3').label('Only liquid salt(no pebbles)');
