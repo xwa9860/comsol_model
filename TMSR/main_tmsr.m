@@ -15,12 +15,12 @@ run('create_mats.m');
 run('create_ht_flibe.m');
 
 if MultiScale
-    run('create_ms_ht_in_pebble.m');
-%     run('ms_ht_part2')
-%     run('test_mt')
+%     run('create_ms_ht_in_pebble.m');
+%     run('creat_ht_fuel_resistance')
+    run('test_resistance')
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', '((-h_conv/k_fuel)*T_flibe+Tp3/(r4-r3))/(1/(r4-r3)-h_conv/k_fuel)');
+    model.variable('var25').set('T_fuel', 'Tp14');
 else
     run('create_ht_fuel.m');
 end 
