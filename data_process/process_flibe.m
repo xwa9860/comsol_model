@@ -7,7 +7,6 @@ function model = process_flibe(model, data_path,  comsol_var_name, u_flibe)
 temp_var_flibe = "T_flibe[1/K]";
 tot_case_nb = 5;
 
-global gnb unb;
 isCR = false;
 
 %% getting the serpent results into the matlab data 'Workspace'
