@@ -59,6 +59,7 @@ fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f \n', lambda_eigen);
 
 run('create_3d_eigen_results.m');
+mphsave(model, 'Mk1_1st_eig.mph');
 toc
 % run the following line only if needed
 % run('calc_temperature_feedback_coefs.m'); 
@@ -76,114 +77,116 @@ model.variable('var19').label('lambda');
 model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
   
 run('create_steady_state_solver.m');
-%fprintf('\nRunning steady state study\n');
-%model.sol('sol13').runAll;
+fprintf('\nRunning steady state study\n');
+model.sol('sol13').runAll;
 toc
 
-% % %% Rerun eigenvalue calculation with temperature profile from steady state
-% % % set to eigenvalue mode
-% % % model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % % desable lambda
-% % % model.variable('var19').active(false);
-% % % % set the solver to take initial value from the previous steady state
-% % % % results
-% % % % model.study('std2').feature('eigv').set('notsolnum', 'auto');
-% % % % model.study('std2').feature('eigv').set('notsolmethod', 'sol');
-% % % % model.study('std2').feature('eigv').set('usesol', 'on');
-% % % % model.study('std2').feature('eigv').set('eigwhich', 'sr');
-% % % % model.study('std2').feature('eigv').set('notstudy', 'std5');
-% % % % model.study('std2').feature('eigv').set('shift', '1');
-% % % % model.study('std2').feature('eigv').set('useinitsol', 'on');
-% % % 
-% % % model.study('std2').feature('eigv').set('neigs', 1);
-% % % model.study('std2').feature('eigv').set('eigunit', '');
-% % % model.study('std2').feature('eigv').set('shift', '1');
-% % % model.study('std2').feature('eigv').set('shiftactive', true);
-% % % model.study('std2').feature('eigv').set('useinitsol', true);
-% % % model.study('std2').feature('eigv').set('initmethod', 'sol');
-% % % model.study('std2').feature('eigv').set('initstudy', 'std2');
-% % % model.study('std2').feature('eigv').set('solnum', 'auto');
-% % % model.study('std2').feature('eigv').set('usesol', true);
-% % % model.study('std2').feature('eigv').set('notsolmethod', 'sol');
-% % % model.study('std2').feature('eigv').set('notstudy', 'std5');
-% % % model.study('std2').feature('eigv').set('notsolnum', 'auto');
-% % % model.study('std2').feature('eigv').set('neigsactive', false);
-% % % model.sol('sol16').attach('std2');
-% % % model.sol('sol16').feature('v1').set('initmethod', 'sol');
-% % % model.sol('sol16').feature('v1').set('initsol', 'sol16');
-% % % model.sol('sol16').feature('v1').set('solnum', 'auto');
-% % % model.sol('sol16').feature('v1').set('notsolmethod', 'sol');
-% % % model.sol('sol16').feature('v1').set('notsol', 'sol13');
-% % % model.sol('sol16').feature('v1').set('notsolnum', 'auto');
-% % % model.sol('sol16').feature('e1').set('rtol', 1.0E-4);
-% % % model.sol('sol16').feature('e1').set('neigs', 1);
-% % % model.sol('sol16').feature('e1').set('shift', '1');
-% % % model.sol('sol16').feature('e1').set('maxeigit', 100);
-% % % model.sol('sol16').feature('e1').set('krylovdim', 15);
-% % % model.sol('sol16').feature('e1').set('keeplog', true);
-% % % 
-% % % model.sol('sol16').runAll;
-% % % 
-% % % % get new lambda
-% % % lambda_eigen_new = mphglobal(model, 'lambda');
-% % % fprintf('\nThe new eigenvalue is\n');
-% % % fprintf('%.10f ', lambda_eigen_new)
-% % % model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
-% % % 
-% % % %% Steady state calculation
-% % % fprintf('\nRerun steady state calculation\n');
-% % % model.variable('var19').active(true);
-% % % 
-% % % model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-% % % model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-% % % 
-% % % model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % model.sol('sol13').runAll;
-% % % 
-% % % %% Rerun eigenvalue calculation with temperature profile from steady state
-% % % % set to eigenvalue mode
-% % % model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % % desable lambda
-% % % model.variable('var19').active(false);
-% % % model.sol('sol16').runAll;
-% % % % get new lambda
-% % % lambda_eigen_new = mphglobal(model, 'lambda');
-% % % fprintf('\nThe new eigenvalue is\n');
-% % % fprintf('%.10f ', lambda_eigen_new)
-% % % model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
-% % % 
-% % % %% Steady state calculation
-% % % fprintf('\nRerun steady state calculation\n');
-% % % model.variable('var19').active(true);
-% % % 
-% % % model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-% % % model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-% % % 
-% % % model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % model.sol('sol13').runAll;
-% % % 
-% % % %% Rerun eigenvalue calculation with temperature profile from steady state
-% % % % set to eigenvalue mode
-% % % model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % % desable lambda
-% % % model.variable('var19').active(false);
-% % % model.sol('sol16').runAll;
-% % % % get new lambda
-% % % lambda_eigen_new = mphglobal(model, 'lambda');
-% % % fprintf('\nThe new eigenvalue is\n');
-% % % fprintf('%.10f ', lambda_eigen_new)
-% % % model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
-% % % 
-% % % %% Steady state calculation
-% % % fprintf('\nRerun steady state calculation\n');
-% % % model.variable('var19').active(true);
-% % % 
-% % % model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
-% % % model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
-% % % 
-% % % model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-% % % model.sol('sol13').runAll;
-% % % 
+
+% Rerun eigenvalue calculation with temperature profile from steady state
+tic
+% set to eigenvalue mode
+model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+% desable lambda
+model.variable('var19').active(false);
+% set the solver to take initial value from the previous steady state
+% results
+% model.study('std2').feature('eigv').set('notsolnum', 'auto');
+% model.study('std2').feature('eigv').set('notsolmethod', 'sol');
+% model.study('std2').feature('eigv').set('usesol', 'on');
+% model.study('std2').feature('eigv').set('eigwhich', 'sr');
+% model.study('std2').feature('eigv').set('notstudy', 'std5');
+% model.study('std2').feature('eigv').set('shift', '1');
+% model.study('std2').feature('eigv').set('useinitsol', 'on');
+
+model.study('std2').feature('eigv').set('neigs', 1);
+model.study('std2').feature('eigv').set('eigunit', '');
+model.study('std2').feature('eigv').set('shift', '1');
+model.study('std2').feature('eigv').set('shiftactive', true);
+model.study('std2').feature('eigv').set('useinitsol', true);
+model.study('std2').feature('eigv').set('initmethod', 'sol');
+model.study('std2').feature('eigv').set('initstudy', 'std2');
+model.study('std2').feature('eigv').set('solnum', 'auto');
+model.study('std2').feature('eigv').set('usesol', true);
+model.study('std2').feature('eigv').set('notsolmethod', 'sol');
+model.study('std2').feature('eigv').set('notstudy', 'std5');
+model.study('std2').feature('eigv').set('notsolnum', 'auto');
+model.study('std2').feature('eigv').set('neigsactive', false);
+model.sol('sol16').attach('std2');
+model.sol('sol16').feature('v1').set('initmethod', 'sol');
+model.sol('sol16').feature('v1').set('initsol', 'sol16');
+model.sol('sol16').feature('v1').set('solnum', 'auto');
+model.sol('sol16').feature('v1').set('notsolmethod', 'sol');
+model.sol('sol16').feature('v1').set('notsol', 'sol13');
+model.sol('sol16').feature('v1').set('notsolnum', 'auto');
+model.sol('sol16').feature('e1').set('rtol', 1.0E-4);
+model.sol('sol16').feature('e1').set('neigs', 1);
+model.sol('sol16').feature('e1').set('shift', '1');
+model.sol('sol16').feature('e1').set('maxeigit', 100);
+model.sol('sol16').feature('e1').set('krylovdim', 15);
+model.sol('sol16').feature('e1').set('keeplog', true);
+
+model.sol('sol16').runAll;
+
+% get new lambda
+lambda_eigen_new = mphglobal(model, 'lambda');
+fprintf('\nThe new eigenvalue is\n');
+fprintf('%.10f ', lambda_eigen_new)
+model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+toc
+%% Steady state calculation
+fprintf('\nRerun steady state calculation\n');
+model.variable('var19').active(true);
+
+model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
+model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+model.sol('sol13').runAll;
+
+%% Rerun eigenvalue calculation with temperature profile from steady state
+% set to eigenvalue mode
+model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+% desable lambda
+model.variable('var19').active(false);
+model.sol('sol16').runAll;
+% get new lambda
+lambda_eigen_new = mphglobal(model, 'lambda');
+fprintf('\nThe new eigenvalue is\n');
+fprintf('%.10f ', lambda_eigen_new)
+model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+
+%% Steady state calculation
+fprintf('\nRerun steady state calculation\n');
+model.variable('var19').active(true);
+
+model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
+model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+model.sol('sol13').runAll;
+
+%% Rerun eigenvalue calculation with temperature profile from steady state
+% set to eigenvalue mode
+model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+% desable lambda
+model.variable('var19').active(false);
+model.sol('sol16').runAll;
+% get new lambda
+lambda_eigen_new = mphglobal(model, 'lambda');
+fprintf('\nThe new eigenvalue is\n');
+fprintf('%.10f ', lambda_eigen_new)
+model.param.set('lambda_critical', lambda_eigen_new, 'lambda_engeinvalue to get to criticality');
+
+%% Steady state calculation
+fprintf('\nRerun steady state calculation\n');
+model.variable('var19').active(true);
+
+model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
+model.physics('ht').feature('fluid1').setIndex('minput_pressure_src', 'root.mod1.br.pA', 0);
+
+model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
+model.sol('sol13').runAll;
+
 % % % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % % % set to eigenvalue mode
 % % % model.param.set('eigenMode', '0', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');

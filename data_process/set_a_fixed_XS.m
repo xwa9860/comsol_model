@@ -6,16 +6,16 @@ function model = set_a_fixed_XS(model, comsol_var_name, XS_name, values, isCR)
 %}
  
     global xs_name_unit_map;
-    global gnb;
+    global gnb dnb;
     unit = xs_name_unit_map(XS_name);
     
     var_size = size(values);
     if length(size(values)) == 2      
         % if the values array is 1D or a constant, name the variables like d1, d2
-        if var_size(1) == 1 && (var_size(2) == 1 || var_size(2) == gnb)
+        if var_size(1) == 1 && (var_size(2) == 1 || var_size(2) == gnb || var_size(2) == dnb)
             model = set_a_1d_XS(model, comsol_var_name, XS_name, values, isCR);
         else
-            size(temp_vars)
+            var_size
             error(['coefficient value dimension doesnot match temp variables',...
             'should be 1 * gnb or 1 * 1'])
         end
