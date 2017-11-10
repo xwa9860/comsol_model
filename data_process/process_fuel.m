@@ -49,7 +49,7 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
             end
             
         % read fuel cross-section data from serpent result files
-        fuel_data = read_dep(fuel_data_path, u_fuel, tot_case_nb);
+        fuel_data = read_dep(fuel_data_path, u_fuel, tot_case_nb, isCR, '');
         
         % fit a function to compute the coefficients: fuel_data = input *
         % coefs
@@ -114,7 +114,7 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
     end
 
     function temp_var_pb = build_temp_var_TMSR
-        if MultiScale
+        if isMultiScale
             temp_var_pb = [];
             for pnb = 1:3
                 for tnb = 1:3

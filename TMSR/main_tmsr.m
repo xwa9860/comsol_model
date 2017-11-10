@@ -14,7 +14,7 @@ run('create_mats.m');
 %Heat transfer modules
 run('create_ht_flibe.m');
 
-if MultiScale
+if isMultiScale
     run('create_ms_ht_in_pebble.m');
 %     run('ms_ht_part2')
 %     run('test_mt')

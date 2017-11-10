@@ -132,7 +132,7 @@ end
 if isTMSR     
     model.variable.create('var17');
     model.variable('var17').model('mod1');
-    model = process_flibe(model, [data_path, 'flibe\'], data_units, 'var17', unb, gnb, universes('salt'));
+    model = process_flibe(model, [data_path, 'flibe\'], 'var17', universes('salt'));
     model.variable('var17').selection.geom('geom1', dimNb);
     model.variable('var17').selection.set(domains('salt'));
     model.variable('var17').label('XS_flibe');
