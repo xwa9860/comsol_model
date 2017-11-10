@@ -1,4 +1,7 @@
 % TMSR 
+
+isVerbose = true;
+is_get_coef_from_file = false
 %Define input variables for the model 
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
@@ -18,7 +21,8 @@ else
 end
 
 sp3 = false;
-TMSR = true;
+TMSR = true; % will be removed when I change all the 'TMSR' to 'isTMSR'
+isTMSR = true;
 rod = false;
 domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];
@@ -40,8 +44,8 @@ gr_comps = {'gr'};
 %channel_domains = cell2mat(values(domains, {'salt'}));
 
 % for setting fuel XS and heat generation domains
-fuel_domNb = domains('fuel');
-fuel_univ = universes('fuel');
+fuel_domNb = [domains('fuel')];
+fuel_univ = [universes('fuel')];
 
 % for porous media mmtm module and material properties
 porous_media = {'fuel'};

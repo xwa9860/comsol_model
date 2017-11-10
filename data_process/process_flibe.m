@@ -18,6 +18,9 @@ model = set_fixed(model, comsol_var_name, fixed_data, data_units);
 flibe_data = read_dep(data_path, u_flibe, unb, gnb, tot_case_nb);
 coefs = fit_coef(flibe_temp, flibe_data);
 model = set_coef(model, comsol_var_name, temp_var_flibe, coefs, 'lin_temp_dep', data_units);
+
+model = set_diff2(model, comsol_var_name);
+end
 % %% calculate linear function of rho for flibe cross sections
 % [flibe_scat.c1, flibe_scat.c0] = linear_fun_rho(flibe_temp(3), Ref_Scat_flibe, 'scat flibe');
 % [flibe_Rem.c1, flibe_Rem.c0] = linear_fun_rho(flibe_temp(3), Ref_Rem_flibe, 'removal flibe');
