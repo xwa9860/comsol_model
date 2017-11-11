@@ -52,7 +52,7 @@ r_t=[r_n1,r_n2,r_n3,r_n4,r_IPyc,092/1000];
 k=0;
 
 for i=1:3*(region_coated+region_fuel_kernel)+3
-    for j=1:6
+    for j=1:3*(region_coated+region_fuel_kernel)+3
         cfeq.setIndex('c',{num2str(0), num2str(0)},k);
         k=k+1;
     end
@@ -121,7 +121,7 @@ for i=1:3
                 '-R',num2str(m),')+','(R',num2str(m-1),'*Tp',num2str(i),num2str(m-1),...
                 ')/(R',num2str(m),'-R',num2str(m-1),'))/(0.5*(R',num2str(m+1),'-R',num2str(m-1),'))'],k);
         else
-            if i<=region-2
+            if i<=pebbles_region-2
                 cfeq.setIndex('f',['(1/r',num2str(i),')','*k_fuel*((r',num2str(i+1),'*Tp',num2str(i+1),')/(r',num2str(i+1),...
                     '-r',num2str(i),')+','(r',num2str(i-1),'*Tp',num2str(i-1),')/(r',num2str(i),'-r',num2str(i-1),...
                     '))/(0.5*(r',num2str(i+1),'-r',num2str(i-1),'))'],k);
