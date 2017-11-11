@@ -37,10 +37,10 @@ model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
 model.variable('var3').set('unitstest', 'betaL*To*rhoL*g');
 model.variable('var3').set('Pr', 'muL*cpL/kL');
 if isTMSR
-    model.component('mod1').variable('var3').set('h_conv', '6000');
+    model.variable('var3').set('h_conv', '6000');
 else
-    model.component('mod1').variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
-    model.component('mod1').variable('var3').set('Re', '(rhoL*d*br.U/muL)');
+    model.variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
+    model.variable('var3').set('Re', '(rhoL*d*br.U/muL)');
 end
 
 %% fuel thermal properties

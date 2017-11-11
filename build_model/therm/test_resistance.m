@@ -41,18 +41,18 @@ for i=1:region_coated+region_fuel_kernel
         if i==j && j==1
             cfeq.setIndex('a', [num2str(k_coat(i)),'*4*pi*R',num2str(i+1),...
                 '*R',num2str(i),'/(R',num2str(i+1),'-R',num2str(i),')'],k);
-            k=k+1;
+            k=k+1+region_coated+region_fuel_kernel;
             
         elseif i==j && j<region_coated+region_fuel_kernel %Tpi2-Tpi3
             cfeq.setIndex('a', [num2str(k_coat(i)),'*4*pi*R',num2str(i),...
                 '/((R',num2str(i-1),'/(R',num2str(i),'-R',num2str(i-1),'))'...
                 '+(R',num2str(i+1),'/(R',num2str(i+1),'-R',num2str(i-1),')))'],k);
-            k=k+1;
+            k=k+1+region_coated+region_fuel_kernel;
         elseif i==j && j==region_coated+region_fuel_kernel %Tp i4
             cfeq.setIndex('a', ['4*pi*'...
                 ,num2str(k_coat(i)),'*R',num2str(i),'*R',num2str(i-1),'/(R',num2str(i),'-R',num2str(i-1),')'...
                 '+  h_conv*pb_area/11558 '],k);
-            k=k+1;
+            k=k+1+region_coated+region_fuel_kernel;
         else
             cfeq.setIndex('a',num2str(0),k);
         end
@@ -65,10 +65,10 @@ for i=1:region_coated+region_fuel_kernel
     for j=1:region_coated+region_fuel_kernel
         if i==j && j<region_coated+region_fuel_kernel
             cfeq.setIndex('da',['eigenMode*',num2str(rho_coat(i)),'*',num2str(cp_coat(i)),'*V_fuel'],k);
-            k=k+1;
+            k=k+1+region_coated+region_fuel_kernel;
         elseif i==j && j==region_coated+region_fuel_kernel
             cfeq.setIndex('da',['eigenMode*',num2str(rho_coat(i)),'*',num2str(cp_coat(i)),'*V_coat'],k);
-            k=k+1;
+            k=k+1+region_coated+region_fuel_kernel;
         else
             cfeq.setIndex('da',num2str(0),k);
         end

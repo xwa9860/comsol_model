@@ -14,13 +14,22 @@ run('create_mats.m');
 %Heat transfer modules
 run('create_ht_flibe.m');
 
-if MultiScale
+if isMultiScale
 %     run('create_ms_ht_in_pebble.m');
 %     run('creat_ht_fuel_resistance')
     run('test_resistance')
     model.variable.create('var25');
     model.variable('var25').model('mod1');
     model.variable('var25').set('T_fuel', 'Tp14');
+    
+    model.variable.create('var26');
+    model.variable('var26').model('mod1');
+    model.variable('var26').set('Tp33','Tp13');
+    model.variable('var26').set('Tp32','Tp13');
+    model.variable('var26').set('Tp31','Tp13');
+    model.variable('var26').set('Tp21','Tp12');
+    model.variable('var26').set('Tp22','Tp12');
+    model.variable('var26').set('Tp23','Tp12');
 else
     run('create_ht_fuel.m');
 end 
