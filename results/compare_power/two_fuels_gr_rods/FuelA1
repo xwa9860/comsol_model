@@ -1,0 +1,77 @@
+
+%---FuelA1
+%---act
+surf 616 cylz 0.000000 0.000000 35.000000 180.500000 430.500000
+surf 617 cylz 0.000000 0.000000 46.100000 180.500000 430.500000
+surf 619 pz 180.500000
+surf 618 pz 430.500000
+cell 200 340 fill 265  616 -617 619 -618 
+%%---FCC unit cell lattice
+surf 695 cube 0. 0. 0. 4.550828
+cell 246  342 fill 264 -695
+lat 265 6 0. 0. 4.55082752 342
+
+%%---Pebble unit cell with position from input file
+pbed 264 263 "fpb_pos2_60"
+%%---Coolant in the unit cell
+
+%--FuelFCCCoolant
+surf 696 inf
+cell 247 263 Flibe1000 -696
+%%---Pebbles in the unit cell(pbed)
+%%---Fuel pebble
+cell 248 30 CG900 -693
+cell 249 30 fill 29 693 -694
+%---Triso particle 
+particle 28
+fuel1pba11 0.0200
+Buffer1000 0.0300
+iPyC1000 0.0335
+SiC1000 0.0370
+oPyC1000 0.0405
+Matrix1000
+%%---Triso  lattice
+lat 29 6 0. 0. 0.08860629 28
+cell 250 30 Shell900 694
+%%---Fuel pebble
+cell 251 33 CG900 -693
+cell 252 33 fill 32 693 -694
+%---Triso particle 
+particle 31
+fuel1pba12 0.0200
+Buffer1000 0.0300
+iPyC1000 0.0335
+SiC1000 0.0370
+oPyC1000 0.0405
+Matrix1000
+%%---Triso  lattice
+lat 32 6 0. 0. 0.08860629 31
+cell 253 33 Shell900 694
+%%---Fuel pebble
+cell 254 36 CG900 -693
+cell 255 36 fill 35 693 -694
+%---Triso particle 
+particle 34
+fuel1pba13 0.0200
+Buffer1000 0.0300
+iPyC1000 0.0335
+SiC1000 0.0370
+oPyC1000 0.0405
+Matrix1000
+%%---Triso  lattice
+lat 35 6 0. 0. 0.08860629 34
+cell 256 36 Shell900 694
+%%---Fuel pebble
+cell 257 39 CG900 -693
+cell 258 39 fill 38 693 -694
+%---Triso particle 
+particle 37
+fuel1pba14 0.0200
+Buffer1000 0.0300
+iPyC1000 0.0335
+SiC1000 0.0370
+oPyC1000 0.0405
+Matrix1000
+%%---Triso  lattice
+lat 38 6 0. 0. 0.08860629 37
+cell 259 39 Shell900 694
