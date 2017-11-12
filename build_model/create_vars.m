@@ -100,15 +100,15 @@ end
 
 %% Fuel regions XS
 fprintf('  for fuel regions\n')
-for i = 1:length(fuel_univ)
-    var_name = ['fuel_xs_var', num2str(i)];
-    model.variable.create(var_name);
-    model.variable(var_name).model('mod1');
-    model = process_fuel(model, var_name, fuel_univ(i));
-    model.variable(var_name).selection.geom('geom1', dimNb);
-    model.variable(var_name).selection.set(fuel_domNb(i));
-    model.variable(var_name).label(['XS_pb', num2str(i)]);
-end
+% for i = 1:length(fuel_univ)
+%     var_name = ['fuel_xs_var', num2str(i)];
+%     model.variable.create(var_name);
+%     model.variable(var_name).model('mod1');
+%     model = process_fuel(model, var_name, fuel_univ(i));
+%     model.variable(var_name).selection.geom('geom1', dimNb);
+%     model.variable(var_name).selection.set(fuel_domNb(i));
+%     model.variable(var_name).label(['XS_pb', num2str(i)]);
+% end
 
 %% Temperature independent components XS
 fprintf('  for temperature independent components\n')

@@ -20,7 +20,7 @@ data_path = 'TMSR\XS_data\';
 
 isMultiScale= true;
 if isMultiScale
-    fuel_data_path = 'TMSR\XS_data\multi_fuel\';
+    fuel_data_path = 'TMSR\XS_data\multi_fuel_3_3\';
 else
     fuel_data_path = 'TMSR\XS_data\fuel\';
 end
@@ -41,7 +41,7 @@ universes = containers.Map(domainNames, uvalueSet);
 universe_names =["gr", "pb", "fuel", "flibe"];% the same order as in the serpent script, but called differently;
  % {'graphiteU', 'pebbleU', 'dispPebbleU', 'flibeU'} in serpent   
 % for XS definition
-temp_indep_comps = {'gr'};
+temp_indep_comps = {'gr', 'fuel'};
 % for material definition
 gr_comps = {'gr'};
 

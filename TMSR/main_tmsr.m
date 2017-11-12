@@ -17,7 +17,7 @@ run('create_ht_flibe.m');
 if isMultiScale
 %     run('create_ms_ht_in_pebble.m');
 %     run('creat_ht_fuel_resistance')
-    run('test_resistance')
+    run('test_resistance');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
     model.variable('var25').set('T_fuel', 'Tp14');
