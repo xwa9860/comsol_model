@@ -20,13 +20,13 @@ end
 % desable the FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
-model.variable('var20').active(false);
+%??% model.variable('var20').active(false);
 % model.variable('var22').set('sumN', ...
 %     'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
 % model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
 
 % desable ConcN
-model.variable('var23').active(false);
+%??% model.variable('var23').active(false);
 
 %% set initial values for Flux and Conc
 init = model.physics('neutrondiffusion').feature('init1');

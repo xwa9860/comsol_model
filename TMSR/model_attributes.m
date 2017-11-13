@@ -18,7 +18,7 @@ region_fuel_kernel=3; %termperature of fuel kernel
 
 data_path = 'TMSR\XS_data\';
 
-isMultiScale= false;
+isMultiScale= true;
 if isMultiScale
     fuel_data_path = 'TMSR\XS_data\multi_fuel_3_3\';
 else
