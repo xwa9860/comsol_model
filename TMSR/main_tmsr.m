@@ -15,21 +15,11 @@ run('create_mats.m');
 run('create_ht_flibe.m');
 
 if isMultiScale
-%     run('create_ms_ht_in_pebble.m');
-%     run('creat_ht_fuel_resistance')
-    run('test_resistance');
+    run('creat_ht_fuel_resistance')
+%     run('create_ms_ht_in_pebble_resistance');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
     model.variable('var25').set('T_fuel', 'Tp14');
-    
-    model.variable.create('var26');
-    model.variable('var26').model('mod1');
-    model.variable('var26').set('Tp33','Tp13');
-    model.variable('var26').set('Tp32','Tp13');
-    model.variable('var26').set('Tp31','Tp13');
-    model.variable('var26').set('Tp21','Tp12');
-    model.variable('var26').set('Tp22','Tp12');
-    model.variable('var26').set('Tp23','Tp12');
 else
     run('create_ht_fuel.m');
 end 
@@ -67,7 +57,7 @@ model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 
  
 run('create_steady_state_solver.m');
 model.sol('sol13').runAll;
-% 
+
 % %% Rerun eigenvalue calculation with temperature profile from steady state
 % % set to eigenvalue mode
 % model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
