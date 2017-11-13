@@ -12,7 +12,7 @@ model.variable('var19').label('lambda');
 model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
 
-if sp3
+if isSp3
     model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'FluxN21' 'FluxN22' 'FluxN23' 'FluxN24' 'FluxN25' 'FluxN26' 'FluxN27' 'FluxN28' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
 else
         model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
@@ -34,7 +34,7 @@ for i=1:gnb
     init.set(['FluxN', num2str(i)], ['FluxN', num2str(i)]);
 end
 
-if sp3
+if isSp3
 for i=1:gnb
     init.set(['FluxN2', num2str(i)], ['FluxN2', num2str(i)]);
 end
@@ -45,7 +45,7 @@ for j=1:dnb
 end
 
 
-if MultiScale
+if isMultiScale
     fprintf('multiscale');
 else
 % change the normalized power to Pdensity
@@ -81,7 +81,7 @@ model.study('std4').feature('time').set('initmethod', 'sol');
 model.study('std4').feature('time').set('plot', 'on');
 
 
-if MultiScale
+if isMultiScale
        model.study('std4').feature('time').set('activate', {'ht' 'on' 'neutrondiffusion' 'on' 'htpb' 'on'});    
 else    
        model.study('std4').feature('time').set('activate', {'ht' 'on' 'ht3' 'on' 'neutrondiffusion' 'on'});

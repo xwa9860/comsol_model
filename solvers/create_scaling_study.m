@@ -65,7 +65,7 @@ model.study('std6').feature('stat').set('notsolnum', 'auto');
 model.study('std6').feature('stat').set('notsolmethod', 'sol');
 
 
-if MultiScale
+if isMultiScale
     model.study('std6').feature('stat').set('activate', {'ht' 'off' 'neutrondiffusion' 'off' 'htpb' 'off'});    
 else
     model.study('std6').feature('stat').set('activate', {'ht' 'off' 'ht3' 'off' 'neutrondiffusion' 'off'});
