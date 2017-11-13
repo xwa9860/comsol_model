@@ -1,0 +1,56 @@
+%%---Cross section data library path
+set title "FHR core"
+set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
+include "CRCC"
+include "Vessel"
+include "Downcomer"
+include "Fuel"
+include "CR"
+include "Blanket"
+include "Corebarrel"
+include "OR"
+include "ORCC"
+
+%%---Core as a whole, universe 0
+surf 156 cylz 0.000000 0.000000 176.800000 41.600000 572.850000
+surf 158 pz 41.600000
+surf 157 pz 572.850000
+cell 52 0 fill 104  -156 158 -157 
+
+%---Outside
+cell 90 0 outside 156
+include "coreMaterials"
+%%---Neutron source and BC
+
+%%---set pop neutron-per-cycle cycles skip-cycles
+set pop 100000 500 200
+set bc 1
+set ures 1
+%OR, ORCC, CR, CRCC, Vsl, Dcmer, barrel, Blanket, Fuel
+set gcu 28 29 27 25 52 53 54 50 32
+set nfg 8
+5.8e-8
+1.9e-7
+5e-7
+4e-6
+4.8e-5
+2.5e-2
+1.4
+set opti 1
+
+
+%%---Plot the geometry
+plot 1 700 700 0 %% yz cross plane at x=0
+plot 2 700 700 0 %% xz cross plane at y=0
+plot 3 1000 1000 300 %% xy cross plane at z=300
+
+%% detector for power
+%det <name> dn 1 <rmin> <rmax> <nr>  <amin> <amax> <na> <zmin> <zmax> <nz>
+det 1 dr -8 void dn 1 0  178 90 0 360 1 41 573 267
+%% detector for thermal neutron flux
+ene 1 1 1E-11 0.625E-6
+det 2 de 1 dn 1 0  178 90 0 360 1 41 573 267
+%% detector for fast neutron flux
+ene 2 1 0.625E-6 200
+det 3 de 2 dn 1 0  178 90 0 360 1 41 573 267
+
