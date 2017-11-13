@@ -1,11 +1,22 @@
-function res = plot_image(R, Z, power, figtitle, saveto, plim)
+function res = plot_2d(R, Z, power, figtitle, saveto, plim)
     
     figure;
+    
+    %% plot surface plot
     %mesh(r, z, power+0.001); % tried to use surf or mesh plot, the figure
     %doesn't look good, so using image now.
-    %hold on;
     image(R, Z, power, 'CDataMapping', 'scaled');
+    hold on;
     
+    %% add verticle lines for radial zones
+    ystart = 0;
+    yend = 6;
+    xzones = [0.35, 0.461, 0.583, 0.96, 1.05];
+    for idx = 1 : numel(xzones)
+        plot([xzones(idx), xzones(idx)], [ystart, yend], 'k');
+    end
+    
+    %% title, axis, ... settings
     title(figtitle);
     if plim
         caxis([0 plim])
@@ -21,4 +32,4 @@ function res = plot_image(R, Z, power, figtitle, saveto, plim)
     % direction. So the height of the reactor is properly shown.
     folder_name = '';
     saveas(gcf,[folder_name, saveto]);
-    %hold off;
+    hold off;
