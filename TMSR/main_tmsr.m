@@ -2,21 +2,39 @@ clear all;
 close all;
 
 
+fprintf('define parameters used in the matlab model\n')
 run('model_attributes.m');
+
+fprintf('creating a model object in the server\n')
 run('create_comsol_model.m');
-run('create_global_vars.m');
+
+fprintf('creating global variables\n')
+% common ones for TMSR and Mk1, avoiding duplication of code
 run('create_common_global_vars.m');
+% specific for Mk1
+run('create_global_vars.m');
+
+fprintf('creating function, such as step, ramp, ... functions\n')
 run('create_fcns.m');
+
+fprintf('creating geometry\n')
 run('create_geom.m');
+
+tic
+fprintf('creating variables\n')
 run('create_vars.m');
+toc
+
+fprintf('creating materials\n')
 run('create_mats.m');
-    
+
+fprintf('creating physics\n')
 %Heat transfer modules
 run('create_ht_flibe.m');
 
 if isMultiScale
-%     run('creat_ht_fuel_resistance')
-    run('create_ms_ht_in_pebble_resistance');
+     run('creat_ht_fuel_resistance')
+    %run('create_ms_ht_in_pebble_resistance');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
     model.variable('var25').set('T_fuel', 'Tp14');
@@ -128,11 +146,11 @@ model.sol('sol13').runAll;
 % 
 % %run('create_steady_state_results')
 % 
-% % Transient calculation
+% Transient calculation
 % fprintf('\nRunning transient...\n');
 % run('create_transient_study.m')
 % model.physics('ht').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
 % %model.sol('sol4').runAll;
-% %run('create_transient_results')
+%run('create_transient_results')
 
 

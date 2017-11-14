@@ -41,7 +41,7 @@ universes = containers.Map(domainNames, uvalueSet);
 universe_names =["gr", "pb", "fuel", "flibe"];% the same order as in the serpent script, but called differently;
  % {'graphiteU', 'pebbleU', 'dispPebbleU', 'flibeU'} in serpent   
 % for XS definition
-temp_indep_comps = {'gr', 'fuel'};
+temp_indep_comps = {'gr'};
 % for material definition
 gr_comps = {'gr'};
 

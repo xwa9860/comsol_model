@@ -20,13 +20,13 @@ end
 % desable the FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
-model.variable('var20').active(false);
+%??% model.variable('var20').active(false);
 % model.variable('var22').set('sumN', ...
 %     'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
 % model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
 
 % desable ConcN
-model.variable('var23').active(false);
+%??% model.variable('var23').active(false);
 
 %% set initial values for Flux and Conc
 init = model.physics('neutrondiffusion').feature('init1');
@@ -109,13 +109,13 @@ model.sol('sol4').feature('v1').feature('mod1_FluxN1').label('mod1.FluxN1');
 model.sol('sol4').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
 
 
-model.sol('sol4').feature('t1').set('atoludotactive', ...
-    {'mod1_FluxN7' 'off' 'mod1_FluxN8' 'off' 'mod1_FluxN5' 'off' 'mod1_FluxN6' 'off' 'mod1_FluxN3' 'off'  ...
-'mod1_FluxN4' 'off' 'mod1_FluxN1' 'off' 'mod1_FluxN2' 'off' 'mod1_T_flibe' 'off'});
-model.sol('sol4').feature('t1').set('atol', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3'  'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
-model.sol('sol4').feature('t1').set('atoludot', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
+% model.sol('sol4').feature('t1').set('atoludotactive', ...
+%     {'mod1_FluxN7' 'off' 'mod1_FluxN8' 'off' 'mod1_FluxN5' 'off' 'mod1_FluxN6' 'off' 'mod1_FluxN3' 'off'  ...
+% 'mod1_FluxN4' 'off' 'mod1_FluxN1' 'off' 'mod1_FluxN2' 'off' 'mod1_T_flibe' 'off'});
+% model.sol('sol4').feature('t1').set('atol', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
+% 'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3'  'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
+% model.sol('sol4').feature('t1').set('atoludot', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
+% 'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
 
 model.sol('sol4').feature('t1').set('estrat', 'exclude');
 model.sol('sol4').feature('t1').set('stabcntrl', true);
@@ -135,8 +135,8 @@ model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
 model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
 % deleted mod1_T_fuel from the list, don't know how this affects the
 % simulation
-model.sol('sol4').feature('t1').set('atolmethod', {'mod1_FluxN7' 'global' 'mod1_FluxN8' 'global' 'mod1_FluxN5' 'global' 'mod1_FluxN6' 'global' 'mod1_FluxN3' 'global'  ...
-'mod1_FluxN4' 'global' 'mod1_FluxN1' 'global' 'mod1_FluxN2' 'global' 'mod1_T_flibe' 'global' 'mod1_T_fuel' 'global'});
+%model.sol('sol4').feature('t1').set('atolmethod', {'mod1_FluxN7' 'global' 'mod1_FluxN8' 'global' 'mod1_FluxN5' 'global' 'mod1_FluxN6' 'global' 'mod1_FluxN3' 'global'  ...
+%'mod1_FluxN4' 'global' 'mod1_FluxN1' 'global' 'mod1_FluxN2' 'global' 'mod1_T_flibe' 'global' 'mod1_T_fuel' 'global'});
 model.sol('sol4').feature('t1').set('plot', 'on');
 model.sol('sol4').feature('t1').feature('fc1').set('damp', '0.9');
 model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
