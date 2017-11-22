@@ -1,4 +1,3 @@
-model.result.dataset('dset1').set('solution', 'sol16');
 model.result.dataset('dset2').set('solution', 'sol13');
     % dset2 is the steady state results
 model.result.dataset('dset3').set('solution', 'sol15');
@@ -50,7 +49,11 @@ model.result.export('data1').remove('expr', 0);
 model.result.export('data1').setIndex('expr', 'Pdensity', 0);
 model.result.export('data1').set('location', 'grid');
 model.result.export('data1').set('header', 'on');
-model.result.export('data1').set('gridx2', 'range(1[cm], 2[cm],67[cm])');
-model.result.export('data1').set('gridy2', 'range(1[cm],2[cm],285[cm])');
+
+%R = 0.005:0.01:1.775; % center of the bins
+%Z = 0.415:0.01:5.725; %
+model.result.export('data1').set('gridx2', 'range(0.5[cm], 1[cm],177.5[cm])');
+model.result.export('data1').set('gridy2', 'range(41,5[cm],1[cm],572.5[cm])');
 model.result.export('data1').set('filename', 'D:\diffusion_models\model\m_files\results\power_mesh.txt');
+
 model.result.export('data1').run;

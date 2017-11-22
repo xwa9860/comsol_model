@@ -1,0 +1,133 @@
+
+%---FuelA3
+%---act
+surf 624 cylz 0.000000 0.000000 58.300000 180.500000 430.500000
+surf 625 cylz 0.000000 0.000000 96.000000 180.500000 430.500000
+surf 627 pz 180.500000
+surf 626 pz 430.500000
+cell 197 385 fill 314  624 -625 627 -626 
+%%---FCC unit cell lattice
+surf 701 cube 0. 0. 0. 4.550828
+cell 273  389 fill 313 -701
+lat 314 6 0. 0. 4.55082752 389
+
+%%---Pebble unit cell with position from input file
+pbed 313 312 "fpb_pos4_60"
+%%---Coolant in the unit cell
+
+%--FuelFCCCoolant
+surf 702 inf
+cell 274 312 Flibe924 -702
+%%---Pebbles in the unit cell(pbed)
+%%---Fuel pebble
+cell 275 290 CG574 -696
+cell 276 290 fill 289 696 -697
+%---Triso particle 
+particle 288
+fuel1pba31 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 289 6 0. 0. 0.08860629 288
+cell 277 290 Shell574 697
+%%---Fuel pebble
+cell 278 293 CG574 -696
+cell 279 293 fill 292 696 -697
+%---Triso particle 
+particle 291
+fuel1pba32 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 292 6 0. 0. 0.08860629 291
+cell 280 293 Shell574 697
+%%---Fuel pebble
+cell 281 296 CG574 -696
+cell 282 296 fill 295 696 -697
+%---Triso particle 
+particle 294
+fuel1pba33 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 295 6 0. 0. 0.08860629 294
+cell 283 296 Shell574 697
+%%---Fuel pebble
+cell 284 299 CG574 -696
+cell 285 299 fill 298 696 -697
+%---Triso particle 
+particle 297
+fuel1pba34 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 298 6 0. 0. 0.08860629 297
+cell 286 299 Shell574 697
+%%---Fuel pebble
+cell 287 302 CG574 -696
+cell 288 302 fill 301 696 -697
+%---Triso particle 
+particle 300
+fuel1pba35 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 301 6 0. 0. 0.08860629 300
+cell 289 302 Shell574 697
+%%---Fuel pebble
+cell 290 305 CG574 -696
+cell 291 305 fill 304 696 -697
+%---Triso particle 
+particle 303
+fuel1pba36 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 304 6 0. 0. 0.08860629 303
+cell 292 305 Shell574 697
+%%---Fuel pebble
+cell 293 308 CG574 -696
+cell 294 308 fill 307 696 -697
+%---Triso particle 
+particle 306
+fuel1pba37 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 307 6 0. 0. 0.08860629 306
+cell 295 308 Shell574 697
+%%---Fuel pebble
+cell 296 311 CG574 -696
+cell 297 311 fill 310 696 -697
+%---Triso particle 
+particle 309
+fuel1pba38 0.0200
+Buffer574 0.0300
+iPyC574 0.0335
+SiC574 0.0370
+oPyC574 0.0405
+Matrix574
+%%---Triso  lattice
+lat 310 6 0. 0. 0.08860629 309
+cell 298 311 Shell574 697

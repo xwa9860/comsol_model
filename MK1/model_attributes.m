@@ -13,10 +13,12 @@ global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
 
-data_path = 'MK1\XS_data_radial_zones\';
-fuel_data_path = 'MK1\XS_data_radial_zones\fuel\';
+
+data_path = 'MK1\XS_data\';
+fuel_data_path = 'MK1\XS_data\fuel\';
 rod_data_path = 'MK1\XS_rod\';
 
+output_path = 'results\Mk1_rods_112\';
 
 dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
@@ -60,14 +62,20 @@ keySet = {'CR', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'...
 
 % universe number(the row number in serpent output for group constant
 % generation) that corresponds to each name in keySet
-uvalueSet = int16([3 12 12 13 14 15 16   ... 
-             11 2 1 10 9 8 ...
+uvalueSet = [3 12 12 13 14 15 16   ... 
+             11 2 1 8 9 10 ...
              4 4 4 4  ...
-             4 4 4 4 4]);
+             4 4 4 4 4];
+         
+        % [3 12 12 13 14 15 16   ... 
+        %     11 2 1 10 9 8 ...
+        %     4 4 4 4  ...
+        %     4 4 4 4 4];
 % domain number that corresponds to each name in keySet
 dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
     6, 5, 4, 3, 2, 1, ...
     18, 19, 20, 14, 15, 16, 17, 21, 22];
+
 
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
@@ -78,7 +86,7 @@ temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
 control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
 
-rod_positions = ones(9, 1) * 5.7285; % current control rods position(height in meter)
+rod_positions = ones(9, 1) * 1.125; % current control rods position(height in meter)
 %rod_positions(3) = 3; % can be uncommented to change the
 %position of rod number 3
 %rod_positions(6) = 3;  % can be uncommented to change the
