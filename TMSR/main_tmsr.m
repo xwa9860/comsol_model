@@ -33,11 +33,12 @@ fprintf('creating physics\n')
 run('create_ht_flibe.m');
 
 if isMultiScale
-     run('creat_ht_fuel_resistance')
-    %run('create_ms_ht_in_pebble_resistance');
+    run('creat_ht_fuel_resistance')
+%     run('create_ms_ht_in_pebble_resistance');
+%     run('debug')
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', 'Tp14');
+    model.variable('var25').set('T_fuel', 'Tp44');
 else
     run('create_ht_fuel.m');
 end 
