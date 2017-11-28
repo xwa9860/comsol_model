@@ -12,8 +12,8 @@ model.result.export('data1').set('gridy2', 'range(48[cm],14[cm],566[cm])');
 diffusion_output = 'Mk1_rods_572/1st_eig_power_mesh.txt';
 serpent_output = 'serpent_ref_rods_572/serp_full_core_det0.m';
 read_and_plot(diffusion_output, serpent_output, R, Z, ' (no rods)')
-%keff_no_rod_comsol =;
-%keff_no_rod_serpent = 0.986167;
+keff_no_rod_comsol =1/1.0529933038098347;
+keff_no_rod_serpent = 9.67163E-01; %'IMP_KEFF stat error=0.00018
 
 % rods at middle height
 diffusion_output = 'Mk1_rods_272/1st_eig_power_mesh.txt';
@@ -25,8 +25,8 @@ read_and_plot(diffusion_output, serpent_output, R, Z, '(rods half inserted)')
 diffusion_output = 'Mk1_rods_112/1st_eig_power_mesh.txt';
 serpent_output = 'serpent_ref_rods_112/serp_full_core_det0.m';
 read_and_plot(diffusion_output, serpent_output, R, Z, '(rods fully inserted)')
-%keff_down_comsol = 1/1.1599989541 ;
-%keff_serpent = 0.86949;
+keff_down_comsol = 1/1.2062840892314577 ;
+keff_down_serpent = 8.42169E-01; % stat error = 0.00022
 % 
 % tmsr
 % rbin = 34;

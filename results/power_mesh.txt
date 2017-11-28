@@ -1,8 +1,0 @@
-% Model:              
-% Version:            COMSOL 5.3.0.260
-% Date:               Nov 19 2017, 14:32
-% Dimension:          3
-% Nodes:              0
-% Expressions:        14
-% Description:        , , , , , , , , , , , , , 
-% Length unit:        m

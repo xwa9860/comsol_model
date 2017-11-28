@@ -25,6 +25,7 @@ model.variable('var2').set('ep', '0.40', 'porosity');
 model.variable('var2').set('bF', 'cF*rho_flibe(T_flibe)/(Kbr^0.5)', 'Forcheimer coefficient');
 model.variable('var2').set('ec', '1', 'fictional porosity representing channels in the central reflector');
 model.variable('var2').set('d', '3[cm]', 'pebble diameter');
+model.variable('var2').label('Porous media properties');
 
 model.variable.create('var3');
 model.variable('var3').model('mod1');
@@ -34,7 +35,6 @@ model.variable('var3').set('muL', '0.00678[Pa*s]', 'salt viscosity, 650C');
 model.variable('var3').set('kL', '1.091[W/m/K]', 'salt thermal conductivity, 650C');
 model.variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coefficient, constant');
 model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
-model.variable('var3').set('unitstest', 'betaL*To*rhoL*g');
 model.variable('var3').set('Pr', 'muL*cpL/kL');
 if isTMSR
     model.variable('var3').set('h_conv', '6000');
@@ -42,6 +42,7 @@ else
     model.variable('var3').set('h_conv', '(2+1.1*(Pr^(1.0/3))*(Re^(3.0/5)))*kL/d', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
     model.variable('var3').set('Re', '(rhoL*d*br.U/muL)');
 end
+model.variable('var3').label('Salt thermal-hydraulics properties');
 
 %% fuel thermal properties
 model.variable.create('var4');
@@ -55,7 +56,7 @@ model.variable('var4').selection.set(domains('fuel'));
 else
 model.variable('var4').selection.set(cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})));
 end
-model.variable('var4').label('fuel properties');
+model.variable('var4').label('fuel thermal properties');
 
 %% cross section data
 fprintf('defining cross-section variables\n')
@@ -80,22 +81,22 @@ model.func('str').set('location', '0');
 
 % define the variables for each control rod
 if ~isTMSR
-for i = 1:length(control_rods)
-    name = control_rods{i};
-    domNb = domains(name);
-    % create a global parameter like h_CRCC1 to denote the current position for
-    % control rod CRCC1
-    model.param.set(sprintf('h_%s',name), num2str(rod_positions(i)));
-    
-    % create a variable that contains all the xs variables for the control
-    % rod
-    model.variable.create(['var_xs' name]);
-    model.variable(['var_xs' name]).model('mod1');
-    model = process_rod(model, ['var_xs' name]', sprintf('h_%s', name));
-    model.variable(['var_xs' name]).selection.geom('geom1', dimNb);
-    model.variable(['var_xs' name]).selection.set(domNb);
-    model.variable(['var_xs' name]).label(['xs_rod' name]);
-end
+    for i = 1:length(control_rods)
+        name = control_rods{i};
+        domNb = domains(name);
+        % create a global parameter like h_CRCC1 to denote the current position for
+        % control rod CRCC1
+        model.param.set(sprintf('h_%s',name), num2str(rod_positions(i)));
+
+        % create a variable that contains all the xs variables for the control
+        % rod
+        model.variable.create(['var_xs' name]);
+        model.variable(['var_xs' name]).model('mod1');
+        model = process_rod(model, ['var_xs' name]', sprintf('h_%s', name));
+        model.variable(['var_xs' name]).selection.geom('geom1', dimNb);
+        model.variable(['var_xs' name]).selection.set(domNb);
+        model.variable(['var_xs' name]).label(['xs_rod' name]);
+    end
 end
 
 %% Fuel regions XS
@@ -156,10 +157,14 @@ model.variable('var18').selection.geom('geom1', dimNb);
 model.variable('var18').selection.set(cell2mat(values(domains)));
 model.variable('var18').label('power');
 
+model.variable.create('var19');
+model.variable('var19').model('mod1');
+model.variable('var19').set('lambda', 'lambda_critical');
+model.variable('var19').label('lambda');
 
-%% create T_fuel_i varaibles temporarily for testing
-model.variable.create('var_T_fuel');
-model.variable('var_T_fuel').model('mod1');
-for i = 1:24
-model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
-end
+% %% create T_fuel_i varaibles temporarily for testing
+% model.variable.create('var_T_fuel');
+% model.variable('var_T_fuel').model('mod1');
+% for i = 1:24
+% model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
+% end

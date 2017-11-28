@@ -6,23 +6,13 @@ run('model_attributes.m');
 run('create_model.m');
 
 %% solvers
-%% Eigenvalue calculation with inital values and fixed XS
-tic
-fprintf('Creating eigenvalue study\n');
-run('create_eigen_solver.m');
-fprintf('Running eigenvalue study\n');
-model.sol('sol16').runAll;
-lambda_eigen = mphglobal(model, 'lambda');
-fprintf('\nThe eigenvalue with initial temperatures is\n');
-fprintf('%.10f \n', lambda_eigen);
-
-run('create_3d_eigen_results.m');
-mphsave(model, [output_path, 'Mk1_1st_eig.mph']); % save intermediate solutions
-toc
+%% Eigenvalue calculation
+[model, lambda_eigen] = eigen_solver(model, isTMSR, '1st_eigen.mph');
 % run the following line only if needed
 %run('calc_temperature_feedback_coefs.m'); 
-% 
-% %% steady state calculation
+
+% fprintf('\nRun steady state study\n');
+model = steady_state_solver(model, lambda_eigen, isTMSR, '1st_steady_state.mph');
 % tic
 % fprintf('\nCreating steady state study\n');
 % model.physics('ht').feature('fluid1').setIndex('minput_velocity_src', 'root.mod1.u', 0);
@@ -37,7 +27,6 @@ toc
 % run('create_steady_state_solver.m');
 % fprintf('\nRunning steady state study\n');
 % model.sol('sol13').runAll;
-% mphsave(model, [output_path, 'Mk1_1st_ss.mph']);
 % toc
 % 
 % 

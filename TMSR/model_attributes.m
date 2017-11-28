@@ -1,13 +1,11 @@
 % TMSR 
 %% Define global variables for the model that can be used across the files and functions
 global data_path fuel_data_path; 
-global dimNb dnb gnb unb;
-global isTMSR isVerbose isMultiScale  isSp3;
-global is_get_coef_from_file;
+global output_path;
+data_path = 'TMSR\XS_data\';
+output_path = 'results\TMSR\';
 
-isVerbose = true;
-is_get_coef_from_file = false;
-%Define input variables for the model 
+global dimNb dnb gnb unb;
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
@@ -16,8 +14,12 @@ pebbles_region=4; % temperature group number
 region_coated=1; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 
-data_path = 'TMSR\XS_data\';
 
+global isTMSR isVerbose isMultiScale  isSp3;
+global is_get_coef_from_file;
+isVerbose = true;
+is_get_coef_from_file = false;
+%Define input variables for the model 
 isMultiScale= true;
 if isMultiScale
     fuel_data_path = 'TMSR\XS_data\multi_fuel_3_3\';
@@ -28,6 +30,8 @@ end
 isSp3 = false;
 isTMSR = true;
 rod = false;
+
+
 domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];
 if dimNb == 2

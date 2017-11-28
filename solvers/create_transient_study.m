@@ -1,17 +1,17 @@
+%% set to transient mode
 model.param.set('reactivity_insertion', num2str(rho_ext), 'external reactivity insertion');
-%set to non-eigenvalue mode, add the time derivative term in the PDE
+%set to non-eigenvalue mode = adding the time derivative term in the PDE
 model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not engenvalue mode, value =0 if engenvalue mode)');
-
 %enable the lambda variable and define lambda for RI transient
 model.variable('var19').active(true);
-model.variable('var19').model('mod1');
+%model.variable('var19').model('mod1');
 model.variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
-model.variable('var19').label('lambda');
+%model.variable('var19').label('lambda');
 
-% change 'Flux' to 'FluxN'
+%% change 'Flux' to 'FluxN'
 model.variable('var18').set('Pdensity', 'kappa1*fiss1*FluxN1+kappa2*fiss2*FluxN2+kappa3*fiss3*FluxN3+kappa4*fiss4*FluxN4+kappa5*fiss5*FluxN5+kappa6*fiss6*FluxN6+kappa7*fiss7*FluxN7+kappa8*fiss8*FluxN8', 'power density used in transient study for heat generation in the fuel');
+model.variable('var18').set('PdensityN', 'Pdensity');
 model.physics('neutrondiffusion').field('dimensionless').field('FluxN');
-
 if isSp3
     model.physics('neutrondiffusion').field('dimensionless').component({'FluxN1' 'FluxN2' 'FluxN3' 'FluxN4' 'FluxN5' 'FluxN6' 'FluxN7' 'FluxN8' 'FluxN21' 'FluxN22' 'FluxN23' 'FluxN24' 'FluxN25' 'FluxN26' 'FluxN27' 'FluxN28' 'ConcN1' 'ConcN2' 'ConcN3' 'ConcN4' 'ConcN5' 'ConcN6'});
 else
@@ -20,13 +20,19 @@ end
 % desable the FluxN variable, because FluxN become dependent variable in
 % neutron diffusion module, but the previous FluxN values will be used as
 % initial values for this transient study
-%??% model.variable('var20').active(false);
+model.variable('var20').active(false);
 % model.variable('var22').set('sumN', ...
-%     'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
+%      'nsf1*FluxN1+nsf2*FluxN2+nsf3*FluxN3+nsf4*FluxN4+nsf5*FluxN5+nsf6*FluxN6+nsf7*FluxN7+nsf8*FluxN8', 'sum of nuSigmafPhi_g, for delayed neutrons equations');
 % model.variable('var22').set('sumDelayedN', 'lambdas1*ConcN1+lambdas2*ConcN2+lambdas3*ConcN3+lambdas4*ConcN4+lambdas5*ConcN5+lambdas6*ConcN6', 'sum of lambda*C_i, for diffusion equation');
 
 % desable ConcN
-%??% model.variable('var23').active(false);
+model.variable('var23').active(false);
+% change the normalized power to Pdensity
+% if isMultiScale
+%     %Pdensity
+% else
+%     model.physics('ht_fuel').feature('hs1').set('Q0', 'Pdensity');
+% end
 
 %% set initial values for Flux and Conc
 init = model.physics('neutrondiffusion').feature('init1');
@@ -42,14 +48,6 @@ end
 
 for j=1:dnb
     init.set(['ConcN', num2str(j)], ['ConcN', num2str(j)]);
-end
-
-
-if isMultiScale
-    fprintf('multiscale');
-else
-% change the normalized power to Pdensity
-    model.physics('ht3').feature('hs1').set('Q0', 'Pdensity');
 end
 
 model.study.create('std4');
@@ -81,12 +79,6 @@ model.study('std4').feature('time').set('initmethod', 'sol');
 model.study('std4').feature('time').set('plot', 'on');
 
 
-if isMultiScale
-       model.study('std4').feature('time').set('activate', {'ht' 'on' 'neutrondiffusion' 'on' 'htpb' 'on'});    
-else    
-       model.study('std4').feature('time').set('activate', {'ht' 'on' 'ht3' 'on' 'neutrondiffusion' 'on'});
-end
-
 model.study('std4').feature('time').set('useinitsol', 'on');
 model.study('std4').feature('time').set('tlist', ...
     ['range(0,' num2str(dt), ',', num2str(tf), ')']);
@@ -99,23 +91,15 @@ model.sol('sol4').feature('v1').set('initsol', 'sol15');
 model.sol('sol4').feature('v1').set('notsol', 'sol15');
 model.sol('sol4').feature('v1').set('initmethod', 'sol');
 model.sol('sol4').feature('v1').set('solnum', 'auto');
-model.sol('sol4').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
-model.sol('sol4').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
-model.sol('sol4').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
-model.sol('sol4').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
-model.sol('sol4').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
-model.sol('sol4').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
-model.sol('sol4').feature('v1').feature('mod1_FluxN1').label('mod1.FluxN1');
-model.sol('sol4').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN7').label('mod1.FluxN7');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN8').label('mod1.FluxN8');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN5').label('mod1.FluxN5');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN6').label('mod1.FluxN6');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN3').label('mod1.FluxN3');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN4').label('mod1.FluxN4');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN1').label('mod1.FluxN1');
+% model.sol('sol4').feature('v1').feature('mod1_FluxN2').label('mod1.FluxN2');
 
-
-% model.sol('sol4').feature('t1').set('atoludotactive', ...
-%     {'mod1_FluxN7' 'off' 'mod1_FluxN8' 'off' 'mod1_FluxN5' 'off' 'mod1_FluxN6' 'off' 'mod1_FluxN3' 'off'  ...
-% 'mod1_FluxN4' 'off' 'mod1_FluxN1' 'off' 'mod1_FluxN2' 'off' 'mod1_T_flibe' 'off'});
-% model.sol('sol4').feature('t1').set('atol', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-% 'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3'  'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
-% model.sol('sol4').feature('t1').set('atoludot', {'mod1_FluxN7' '1e-3' 'mod1_FluxN8' '1e-3' 'mod1_FluxN5' '1e-3' 'mod1_FluxN6' '1e-3' 'mod1_FluxN3' '1e-3'  ...
-% 'mod1_FluxN4' '1e-3' 'mod1_FluxN1' '1e-3' 'mod1_FluxN2' '1e-3' 'mod1_T_flibe' '1e-3' 'mod1_T_fuel' '1e-3'});
 
 model.sol('sol4').feature('t1').set('estrat', 'exclude');
 model.sol('sol4').feature('t1').set('stabcntrl', true);
@@ -133,10 +117,6 @@ model.sol('sol4').feature('t1').set('atolglobal', '2');
 model.sol('sol4').feature('t1').set('eventtol', '2');
 model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
 model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
-% deleted mod1_T_fuel from the list, don't know how this affects the
-% simulation
-%model.sol('sol4').feature('t1').set('atolmethod', {'mod1_FluxN7' 'global' 'mod1_FluxN8' 'global' 'mod1_FluxN5' 'global' 'mod1_FluxN6' 'global' 'mod1_FluxN3' 'global'  ...
-%'mod1_FluxN4' 'global' 'mod1_FluxN1' 'global' 'mod1_FluxN2' 'global' 'mod1_T_flibe' 'global' 'mod1_T_fuel' 'global'});
 model.sol('sol4').feature('t1').set('plot', 'on');
 model.sol('sol4').feature('t1').feature('fc1').set('damp', '0.9');
 model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
