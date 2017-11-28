@@ -5,7 +5,7 @@ run('create_comsol_model.m');
 fprintf('creating global variables\n')
 % common ones for TMSR and Mk1, avoiding duplication of code
 run('create_common_global_vars.m');
-% specific for Mk1
+% specific for Mk1 or TMSR
 run('create_global_vars.m');
 
 fprintf('creating function, such as step, ramp, ... functions\n')
@@ -23,14 +23,17 @@ fprintf('creating materials\n')
 run('create_mats.m');
 
 fprintf('creating physics\n')
-run('create_porous_media')
+if ~isTMSR
+    run('create_porous_media');
+end
 %Heat transfer modules
 run('create_ht_flibe.m');
+
 if isMultiScale
-    run('create_ms_ht_in_pebble.m');
+    run('create_ht_fuel_resistance.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', '(Tp2+Tp22+Tp23+Tp24+Tp25+Tp26+Tp27+Tp3+Tp32+Tp33+Tp34+Tp35+Tp36+Tp37+Tp4+Tp42+Tp43+Tp44+Tp45+Tp46+Tp47)/21.0');
+    model.variable('var25').set('T_fuel', 'Tp44');
 else
     run('create_ht_fuel.m');
 end 

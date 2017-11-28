@@ -1,32 +1,35 @@
- close all;
+%{
+ plot and compare power profile and keff from serpent and comsol
+ Serpent outputs volume average in the bins
+ COMSOL outputs point estimation on the specified points 
+%}
+close all;
 
 % mk1
-%R = 0.005:0.01:1.745; % center of the bins
-%R = 0.0005:0.001:1.7495;
-%Z = 0.415:0.01:5.725; %
-R = 0.025:0.05:1.755;
-Z = 0.48:0.14:5.66;
-model.result.export('data1').set('gridx2', 'range(2.5[cm], 5[cm],175.5[cm])');
-model.result.export('data1').set('gridy2', 'range(48[cm],14[cm],566[cm])');
-%% no rod at all
-diffusion_output = '1st_eig_power_mesh_572';
-serpent_output = 'rods_572_coarse/serp_full_core_det0.m';
-read_and_plot(diffusion_output, serpent_output, R, Z, ' (no rods)')
-%keff_no_rod_comsol =;
-%keff_no_rod_serpent = 0.986167;
+R = 0.025:0.05:1.755; % center of the bins
+Z = 0.48:0.14:5.66; % center of the bins
+% model.result.export('data1').set('gridx2', 'range(2.5[cm], 5[cm],175.5[cm])');
+% model.result.export('data1').set('gridy2', 'range(48[cm],14[cm],566[cm])');
 
-% % rods at middle height
-% diffusion_output = 'power_all_middle.txt';
-% serpent_output = 'rods_272/serp_full_core_det0.m';
-% read_and_plot(diffusion_output, serpent_output, R, Z, 'rods272[cm]')
-% keff_mid_comsol = 1/1.0513637108 ;
-% 
-% % rods at down 
-% diffusion_output = 'power_all_down.txt';
-% serpent_output = 'rods_112/serp_full_core_det0.m';
-% read_and_plot(diffusion_output, serpent_output, R, Z, 'rods112[cm]')
-% keff_down_comsol = 1/1.1599989541 ;
-% keff_serpent = 0.86949;
+%% no rod at all
+diffusion_output = 'Mk1_rods_572/1st_eig_power_mesh.txt';
+serpent_output = 'serpent_ref_rods_572/serp_full_core_det0.m';
+read_and_plot(diffusion_output, serpent_output, R, Z, ' (no rods)')
+keff_no_rod_comsol =1/1.0529933038098347;
+keff_no_rod_serpent = 9.67163E-01; %'IMP_KEFF stat error=0.00018
+
+% rods at middle height
+diffusion_output = 'Mk1_rods_272/1st_eig_power_mesh.txt';
+serpent_output = 'serpent_ref_rods_272/serp_full_core_det0.m';
+read_and_plot(diffusion_output, serpent_output, R, Z, '(rods half inserted)')
+keff_mid_comsol = 1/1.0920871346208365 ;
+keff_middle_serpent = 9.28562E-01; % stats error 0.00019
+% rods at down 
+diffusion_output = 'Mk1_rods_112/1st_eig_power_mesh.txt';
+serpent_output = 'serpent_ref_rods_112/serp_full_core_det0.m';
+read_and_plot(diffusion_output, serpent_output, R, Z, '(rods fully inserted)')
+keff_down_comsol = 1/1.2062840892314577 ;
+keff_down_serpent = 8.42169E-01; % stat error = 0.00022
 % 
 % tmsr
 % rbin = 34;

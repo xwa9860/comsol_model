@@ -1,18 +1,18 @@
 %% multi-scale treatment to get the temperature profile inside a fuel pebble
 % thermal resistance
-model.physics.create('htpb', 'CoefficientFormPDE', 'geom1');
-model.physics('htpb').identifier('htpb');
-model.physics('htpb').field('dimensionless').field('Tp');
-model.physics('htpb').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14' ...
+model.physics.create('ht_fuel', 'CoefficientFormPDE', 'geom1');
+model.physics('ht_fuel').identifier('ht_fuel');
+model.physics('ht_fuel').field('dimensionless').field('Tp');
+model.physics('ht_fuel').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14' ...
     'Tp21' 'Tp22' 'Tp23' 'Tp24' ...
     'Tp31' 'Tp32' 'Tp33' 'Tp34'...
     'Tp44'});
-model.physics('htpb').selection.set([2]);
-model.physics('htpb').label('Heat diffusion in pebble');
-model.physics('htpb').prop('Units').set('SourceTermQuantity', 'powerdensity');
-model.physics('htpb').prop('Units').set('DependentVariableQuantity', 'temperature');
-cfeq = model.physics('htpb').feature('cfeq1');
-init = model.physics('htpb').feature('init1');
+model.physics('ht_fuel').selection.set([2]);
+model.physics('ht_fuel').label('Heat diffusion in pebble');
+model.physics('ht_fuel').prop('Units').set('SourceTermQuantity', 'powerdensity');
+model.physics('ht_fuel').prop('Units').set('DependentVariableQuantity', 'temperature');
+cfeq = model.physics('ht_fuel').feature('cfeq1');
+init = model.physics('ht_fuel').feature('init1');
 
 %% set k values
 k_fuel=15;k_Opyc=4;k_Sic=30;k_IPyC=4;k_buffer=0.5;k_wo2=3.5;

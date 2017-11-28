@@ -1,3 +1,5 @@
+function model = create_steady_state_solver(model)
+
 model.study.create('std5');
 model.study('std5').create('stat', 'Stationary');
 model.study('std5').label('Steady state study');
@@ -39,3 +41,4 @@ model.sol('sol13').feature('s1').feature('fc1').set('initstep', '0.01');
 model.sol('sol13').feature('s1').feature('fc1').set('maxiter', '500');
 model.sol('sol13').feature('s1').feature('fc1').set('minstep', '1.0E-6');
 
+end
