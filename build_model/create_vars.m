@@ -162,9 +162,9 @@ model.variable('var19').model('mod1');
 model.variable('var19').set('lambda', 'lambda_critical');
 model.variable('var19').label('lambda');
 
-% %% create T_fuel_i varaibles temporarily for testing
-% model.variable.create('var_T_fuel');
-% model.variable('var_T_fuel').model('mod1');
-% for i = 1:24
-% model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
-% end
+%% create T_fuel_i varaibles temporarily for testing
+model.variable.create('var_T_fuel');
+model.variable('var_T_fuel').model('mod1');
+for i = 1:24
+model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
+end

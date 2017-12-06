@@ -12,13 +12,12 @@ global dimNb dnb gnb unb seg_nb;
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
-
+global output_path
 
 data_path = 'MK1\XS_data\';
 fuel_data_path = 'MK1\XS_data\fuel\';
 rod_data_path = 'MK1\XS_rod\';
-
-output_path = 'results\Mk1_steady_state\Mk1_rods_430\';
+output_path = 'results\Mk1_steady_state\Mk1_rods300\';
 
 dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
@@ -86,7 +85,7 @@ temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
 control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
 
-rod_positions = ones(9, 1) * 4.3085; % current control rods position(height in meter)
+rod_positions = ones(9, 1) * 3; % current control rods position(height in meter)
 %rod_positions(3) = 3; % can be uncommented to change the
 %position of rod number 3
 %rod_positions(6) = 3;  % can be uncommented to change the

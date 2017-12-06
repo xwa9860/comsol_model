@@ -37,12 +37,10 @@ function [model, lambda_eigen]= run_eigen_solver(model, saveToFile, isInitialRun
     fprintf('%.10f \n', lambda_eigen);
 
     %% post_processing
-    if dimNb == 3
-        run('create_3d_eigen_results.m');
-    end
-
-    %% saving to file
     global output_path
+    if dimNb == 3
+        model = create_3d_eigen_results(model, output_path);
+    end
     mphsave(model, [output_path, saveToFile]); % save intermediate solutions
     toc
     

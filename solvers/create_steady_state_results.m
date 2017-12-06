@@ -3,11 +3,14 @@ model.result.dataset('dset2').set('solution', 'sol13');
 model.result.dataset('dset3').set('solution', 'sol15');
     % dset3: scaling study results
 %% plot
-model.result.create('pg1', 'PlotGroup2D');
-model.result('pg1').set('data', 'dset2');
-model.result('pg1').create('surf1', 'Surface');
-model.result('pg1').feature('surf1').set('expr', 'T_fuel');
-model.result('pg1').label('T_fuel(steady state)');
+
+
+model = create_a_surf_plot(model, 'dset2', 'T_fuel', 'T_fuel(steady state)');
+% model.result.create('pg1', 'PlotGroup2D');
+% model.result('pg1').set('data', 'dset2');
+% model.result('pg1').create('surf1', 'Surface');
+% model.result('pg1').feature('surf1').set('expr', 'T_fuel');
+% model.result('pg1').label('T_fuel(steady state)');
 
 model.result.create('pg2', 'PlotGroup2D');
 model.result('pg2').set('data', 'dset2');
@@ -128,6 +131,7 @@ model.result('pg18').set('data', 'dset2');
 model.result('pg18').create('surf1', 'Surface');
 model.result('pg18').feature('surf1').set('expr', 'Tp44');
 model.result('pg18').label('Tp44(steady state)');
+
 %% export power density on a mesh
 model.result.export.create('data1', 'Data');
 model.result.export('data1').set('data', 'dset2');
@@ -141,10 +145,12 @@ model.result.export('data1').setIndex('expr', 'Pdensity', 0);
 model.result.export('data1').set('location', 'grid');
 model.result.export('data1').set('header', 'on');
 
-%R = 0.005:0.01:1.775; % center of the bins
-%Z = 0.415:0.01:5.725; %
-% model.result.export('data1').set('gridx2', 'range(0.5[cm], 1[cm],177.5[cm])');
-% model.result.export('data1').set('gridy2', 'range(41,5[cm],1[cm],572.5[cm])');
-% model.result.export('data1').set('filename', 'C:\Users\19938\research\comsol_model\results\power_mesh.txt');
-% 
-% model.result.export('data1').run;
+if ~isTMSR
+    %R = 0.005:0.01:1.775; % center of the bins
+    %Z = 0.415:0.01:5.725; %
+    model.result.export('data1').set('gridx2', 'range(0.5[cm], 1[cm],177.5[cm])');
+    model.result.export('data1').set('gridy2', 'range(41,5[cm],1[cm],572.5[cm])');
+    model.result.export('data1').set('filename', 'power_mesh.txt');
+
+    model.result.export('data1').run;
+end

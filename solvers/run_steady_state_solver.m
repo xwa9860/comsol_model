@@ -1,4 +1,4 @@
-function model = steady_state_solver(model, lambda_eigen, saveToFile)
+function model = run_steady_state_solver(model, lambda_eigen, saveToFile)
 %% steady state calculation
     global output_path;
     
