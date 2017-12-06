@@ -1,3 +1,5 @@
+%% create global variables for Mk1
+
 model.param.set('U', '0.000055[m/s]', 'upwards velocity');
 model.param.set('Po', '0 [atm]', 'pressure');
 model.param.set('Ochuteout', '0.8', 'defueling chute pressure multiplier');

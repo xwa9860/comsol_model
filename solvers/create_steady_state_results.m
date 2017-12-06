@@ -54,6 +54,6 @@ model.result.export('data1').set('header', 'on');
 %Z = 0.415:0.01:5.725; %
 model.result.export('data1').set('gridx2', 'range(0.5[cm], 1[cm],177.5[cm])');
 model.result.export('data1').set('gridy2', 'range(41,5[cm],1[cm],572.5[cm])');
-model.result.export('data1').set('filename', 'D:\diffusion_models\model\m_files\results\power_mesh.txt');
+model.result.export('data1').set('filename', 'power_mesh.txt');
 
 model.result.export('data1').run;
