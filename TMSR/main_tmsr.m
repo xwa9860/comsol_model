@@ -32,14 +32,14 @@ model = steady_state_solver(model, lambda_eigen, 'ss.mph');
 fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 run('create_scaling_study.m')
 model.sol('sol15').runAll; 
-%run('create_steady_state_results')
+run('create_steady_state_results')
 mphsave(model, [output_path 'scaling.mph']);
 
-%%Transient calculation
-fprintf('\nRunning transient...\n');
-run('create_transient_study.m')
-model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
-%model.sol('sol4').runAll;
-%run('create_transient_results')
+% %%Transient calculation
+% fprintf('\nRunning transient...\n');
+% run('create_transient_study.m')
+% model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+% %model.sol('sol4').runAll;
+% %run('create_transient_results')
 
 
