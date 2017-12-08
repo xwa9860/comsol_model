@@ -36,14 +36,14 @@ model.sol('sol13').feature('v1').set('notsolmethod', 'sol');
 model.sol('sol13').feature('v1').set('notsol', 'sol16');
 model.sol('sol13').feature('v1').set('control', 'user');
 % 
-% model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux6').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
-% model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux6').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
+model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
 
 model.sol('sol13').feature('s1').feature('fc1').set('initstep', '0.01');
 model.sol('sol13').feature('s1').feature('fc1').set('maxiter', '500');
