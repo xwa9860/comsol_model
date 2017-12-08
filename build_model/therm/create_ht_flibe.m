@@ -1,4 +1,5 @@
 model.physics.create('ht_flibe', 'HeatTransferInFluids', 'geom1');
+model.physics('ht_flibe').identifier('ht_flibe');
 model.physics('ht_flibe').label('Heat Transfer - Flibe');
 model.physics('ht_flibe').field('temperature').field('T_flibe');
 model.physics('ht_flibe').selection.set(flibe_domains);
