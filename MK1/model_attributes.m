@@ -14,17 +14,15 @@ global rod_positions seg_heights;
 global is_get_coef_from_file;
 global output_path
 
-data_path = 'MK1\XS_data\';
-fuel_data_path = 'MK1\XS_data\fuel\';
+data_path = 'MK1\XS_data_radial_zones\';
+fuel_data_path = 'MK1\XS_data_radial_zones\fuel\';
 rod_data_path = 'MK1\XS_rod\';
-output_path = 'results\Mk1_steady_state\Mk1_rods300\';
+output_path = 'results\Mk1_steady_state\Mk1_rod_position\';
 
 dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
 gnb = 8; % energy group number
 unb = 16; %total number of universes computed in serpent for cross sections
-% unb = 9 when there is only one fuel region and only one control rod
-
 region=5; % temperature group number
 region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
@@ -85,7 +83,7 @@ temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
 control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
 
-rod_positions = ones(9, 1) * 3; % current control rods position(height in meter)
+rod_positions = ones(9, 1) * 5.7285; % current control rods position(height in meter)
 %rod_positions(3) = 3; % can be uncommented to change the
 %position of rod number 3
 %rod_positions(6) = 3;  % can be uncommented to change the
@@ -145,7 +143,7 @@ dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
     180:183, 192, 194:195, 199, 201, 204, 212, 214:215, 217:218, 220:222, ...
     232:233, 236, 241, 250:253];
 
-if is_rounded_geom
+if is_rounded_geom  % some corners of the center reflector are rounded for smoother coolant streamlines
 dirichelet_b = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 16, 17, 18, 21, 22,...
     23, 24, 33:34, 61:64, 67:68, 71:72, 77:78, 93:94, 101:102, 113:114,...
     127, 133, 136, 142, 155, 161, 164, 170, 172:174, 176:177, 179:180,...

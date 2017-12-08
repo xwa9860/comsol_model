@@ -8,8 +8,6 @@ close all;
 % mk1
 R = 0.025:0.05:1.755; % center of the bins
 Z = 0.48:0.14:5.66; % center of the bins
-% model.result.export('data1').set('gridx2', 'range(2.5[cm], 5[cm],175.5[cm])');
-% model.result.export('data1').set('gridy2', 'range(48[cm],14[cm],566[cm])');
 
 %% no rod at all
 diffusion_output = 'Mk1_rods_572/1st_eig_power_mesh.txt';

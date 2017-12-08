@@ -1,9 +1,17 @@
 function model = create_steady_state_solver(model)
+global isTMSR;
 
 model.study.create('std5');
 model.study('std5').create('stat', 'Stationary');
 model.study('std5').label('Steady state study');
 
+% only solver for non-neutronics modules
+if isTMSR
+    model.study('std5').feature('stat').set('activate', {'ht_fuel' 'on' 'neutrondiffusion' 'off' 'ht_flibe' 'on'}); 
+else
+    model.study('std5').feature('stat').set('activate', {'br' 'on' 'ht_fuel' 'on' 'ht_flibe' 'on' 'neutrondiffusion' 'off'});
+end
+    
 model.study('std5').feature('stat').set('initstudyhide', 'on');
 model.study('std5').feature('stat').set('initsolhide', 'on');
 model.study('std5').feature('stat').set('solnumhide', 'on');
@@ -27,15 +35,15 @@ model.sol('sol13').feature('v1').set('notsolnum', 'auto');
 model.sol('sol13').feature('v1').set('notsolmethod', 'sol');
 model.sol('sol13').feature('v1').set('notsol', 'sol16');
 model.sol('sol13').feature('v1').set('control', 'user');
-
-model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux6').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
-model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
+% 
+% model.sol('sol13').feature('v1').feature('mod1_Flux7').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux8').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux5').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux6').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux3').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux4').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux1').set('solvefor', false);
+% model.sol('sol13').feature('v1').feature('mod1_Flux2').set('solvefor', false);
 
 model.sol('sol13').feature('s1').feature('fc1').set('initstep', '0.01');
 model.sol('sol13').feature('s1').feature('fc1').set('maxiter', '500');

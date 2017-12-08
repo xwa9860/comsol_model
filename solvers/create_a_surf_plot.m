@@ -1,6 +1,9 @@
 function model = create_a_surf_plot(model, dataset, expr, label)
-    % give the plot a name in form of 'pg' + an incremental number
+    % give the plot a name in form of 'pg' + an incremental number,
+    % this number is made global, so it's alway incremented whenever
+    % this function is called.
     global plotNb
+    
     if plotNb
         plotNb = plotNb + 1;
     else
