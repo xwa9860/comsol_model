@@ -19,7 +19,7 @@ isInitialRun = true;
 %% iterate betwen eigenvalue and steady state computation until the result converges
 new_eigen = 0;
 while abs(new_eigen - lambda_eigen) > 0.001
-    % fprintf('\nRun steady state study\n');
+    fprintf('\nRun steady state study\n');
     model = run_steady_state_solver(model, lambda_eigen, 'ss.mph');    
     % Rerun eigenvalue calculation with temperature profile from steady state
     lambda_eigen = new_eigen;
