@@ -32,6 +32,7 @@ function [model, lambda_eigen]= run_eigen_solver(model, saveToFile, isInitialRun
     model.sol('sol16').runAll;
 
     %% display eigenvalue
+
     lambda_eigen = mphglobal(model, 'lambda');
     fprintf('\nThe eigenvalue is\n');
     fprintf('%.10f \n', lambda_eigen);

@@ -7,7 +7,7 @@ model.study('std5').label('Steady state study');
 
 % only solver for non-neutronics modules
 if isTMSR
-    model.study('std5').feature('stat').set('activate', {'ht_fuel' 'on' 'neutrondiffusion' 'off' 'ht_flibe' 'on'}); 
+    model.study('std5').feature('stat').set('activate', {'ht_fuel' 'on'  'ht_flibe' 'on' 'neutrondiffusion' 'off'}); 
 else
     model.study('std5').feature('stat').set('activate', {'br' 'on' 'ht_fuel' 'on' 'ht_flibe' 'on' 'neutrondiffusion' 'off'});
 end
