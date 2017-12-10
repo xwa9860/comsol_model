@@ -4,12 +4,13 @@
 
 %% Create datasets that will be used for plots and tables
 model.result.dataset('cpl1').set('data', 'dset2');
-model.result.dataset.create('cpl2', 'CutPlane');
-model.result.dataset('cpl2').set('data', 'dset3');
-model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
-model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
-model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
-model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
+
+% model.result.dataset.create('cpl2', 'CutPlane');
+% model.result.dataset('cpl2').set('data', 'dset3');
+% model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
+% model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
+% model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
+% model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
 
 %% evaluate mass flow rate at inlets
 

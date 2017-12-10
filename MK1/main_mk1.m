@@ -4,21 +4,29 @@ close all;
 fprintf('Define parameters used in matlab\n')
 run('model_attributes.m');
 
-% run('create_model.m');
-% 
-% %% solvers
-% model = create_eigenvalue_solver(model, isTMSR);
-% model = create_steady_state_solver(model);
-% 
-%% Eigenvalue calculation
-% isInitialRun = true;
-% [model, lambda_eigen] = run_eigen_solver(model, 'eigen.mph', isInitialRun);
-model = mphload([output_path, 'eigen.mph']);
+loadEigenFromFile = false;
+if loadEigenFromFile
+    % model = mphload([output_path, 'eigen.mph']);
+    % lambda_eigen = mphglobal(model, 'lambda');
+    % fprintf('\nThe eigenvalue is\n');
+    % fprintf('%.10f \n', lambda_eigen);
+else
+    run('create_model.m');
+
+    %% solvers
+    model = create_eigenvalue_solver(model, isTMSR);
+    % Eigenvalue calculation
+    isInitialRun = true;
+    [model, lambda_eigen] = run_eigen_solver(model, 'eigen.mph', isInitialRun);
+end
+
+
 % run the following line only if temperature feedback coefficients are needed
 % run('calc_temperature_feedback_coefs.m'); 
 
 fprintf('\nRun steady state study\n');
-lambda_eigen = 1.05;
+model = create_steady_state_solver(model);
+
 model = run_steady_state_solver(model, lambda_eigen, 'ss.mph');    
 
 % iterate betwen eigenvalue and steady state computation until the result converges
@@ -58,7 +66,7 @@ model = run_steady_state_solver(model, lambda_eigen, 'ss.mph');
 % % fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
 % % run('create_scaling_study.m')
 % % model.sol('sol15').runAll; 
-% % run('create_3d_steady_state_results')
+%run('create_3d_steady_state_results');
 % % mphsave(model, [output_path 'scaling.mph']);
 % % 
 % % % % %% Transient calculation

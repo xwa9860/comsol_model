@@ -17,7 +17,7 @@ global output_path
 data_path = 'MK1\XS_data_radial_zones\';
 fuel_data_path = 'MK1\XS_data_radial_zones\fuel\';
 rod_data_path = 'MK1\XS_rod\';
-output_path = 'results\Mk1_steady_state\Mk1_rod_position\';
+output_path = 'results\Mk1\Operation_rod_position\';
 
 dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
@@ -26,7 +26,7 @@ unb = 16; %total number of universes computed in serpent for cross sections
 region=5; % temperature group number
 region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
-OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
+OpPower = '0[MW]'; %string, input to comsol global variable 'Pop'
 
 %% define transient study parameters
 tf = 20; %second, finishing time of the transient
@@ -42,8 +42,7 @@ OCOnset = 100; %s, starting time of overcooling, a very large time means the ove
 OCSlope = -10; %K/s, speed of decrease in inlet coolant temperature
 
 
-%% modeling options that you can switch on and off
-%TMSR = false; 
+%% modeling options that you can switch on and off 
 isTMSR = false;
 isVerbose = false; % setting this to true will print out more information in console
 isMultiScale= false;
