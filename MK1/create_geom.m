@@ -1,9 +1,6 @@
 %create MK1 geometry in 3D in COMSOL
 model.geom.create('geom1', 3);
 
-model.mesh.create('mesh1', 'geom1');
-model.mesh('mesh1').autoMeshSize(7); % coarser
-
 model.geom('geom1').create('wp1', 'WorkPlane');
 model.geom('geom1').feature('wp1').set('quickplane', 'xz');
 model.geom('geom1').feature('wp1').set('unite', 'on');
