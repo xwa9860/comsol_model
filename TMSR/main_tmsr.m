@@ -2,7 +2,7 @@ clear all;
 close all;
 
 
-fprintf('Define parameters used in the matlab model\n')
+fprintf('Define paramet used in the matlab model\n')
 run('model_attributes.m');
 run('create_model.m');
 
