@@ -13,7 +13,7 @@ run('create_fcns.m');
 
 fprintf('creating geometry\n')
 run('create_geom.m');
-
+run('create_mesh.m');
 tic
 fprintf('creating variables\n')
 run('create_vars.m');
