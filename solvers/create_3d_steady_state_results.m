@@ -2,18 +2,11 @@
  Create steady state results: tables and plots
 %}
 
-%% Create datasets that will be used for plots and tables
+%% change the dataset for cp11 from eigenvalue solution to steady state solution
 model.result.dataset('cpl1').set('data', 'dset2');
 
-% model.result.dataset.create('cpl2', 'CutPlane');
-% model.result.dataset('cpl2').set('data', 'dset3');
-% model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
-% model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
-% model.result.dataset('cpl2').set('spacevars', {'cpl1x' 'cpl1y'});
-% model.result.dataset('cpl2').set('normal', {'cpl1nx' 'cpl1ny' 'cpl1nz'});
 
 %% evaluate mass flow rate at inlets
-
 model.result.table.create('tbl2', 'Table');
 model.result.numerical.create('int1', 'IntSurface');
 model.result.numerical.create('int2', 'IntSurface');
@@ -37,478 +30,333 @@ model.result.numerical('int1').setResult;
 model.result.numerical('int2').appendResult;
 
 %% plots
+model = create_a_surf_plot(model, 'cpl1', 'T_flibe', 'T_flibe(steady state)', 'degC');
+model = create_a_surf_plot(model, 'cpl1', 'T_fuel', 'T_fuel(steady state)', 'degC');
+model = create_a_surf_plot(model, 'cpl1', 'T_fuel-T_flibe', 'T_fuel-T_flibe(steady state)', 'degC');
+model = create_a_surf_plot(model, 'cpl1', 'Pdensity', 'Pdensity(steady state)(W/m<sup>3</sup>)','W/m^3');
 
-% T_flibe
-model.result.create('pg1', 'PlotGroup3D');
-model.result('pg1').set('data', 'dset2');
-model.result('pg1').create('surf1', 'Surface');
-model.result('pg1').label('Temperature (ht)');
-model.result('pg1').feature('surf1').label('Surface');
-model.result('pg1').feature('surf1').set('expr', 'T_flibe');
-model.result('pg1').feature('surf1').set('unit', 'degC');
-model.result('pg1').feature('surf1').set('descr', 'Temperature');
-model.result('pg1').feature('surf1').set('colortable', 'ThermalLight');
-model.result('pg1').feature('surf1').set('resolution', 'normal');
+%fast flux surface plot
+model = create_a_surf_plot(model, 'cpl1', 'FluxN1+FluxN2+FluxN3+FluxN4', 'fast flux(steady state)');
 
-% Streamline
-model.result.create('pg5', 'PlotGroup3D');
-model.result('pg5').set('data', 'dset2');
-model.result('pg5').create('str1', 'Streamline');
-model.result('pg5').feature('str1').selection.set([133 136 144]);
-model.result('pg5').feature('str1').create('col1', 'Color');
-model.result('pg5').feature('str1').set('descractive', true);
-model.result('pg5').feature('str1').set('posmethod', 'magnitude');
-model.result('pg5').feature('str1').set('mdist', [0.001 0.1]);
-model.result('pg5').feature('str1').set('linetype', 'tube');
-model.result('pg5').feature('str1').set('tuberadiusscale', 0.021250000000000015);
-model.result('pg5').feature('str1').set('tuberadiusscaleactive', false);
-model.result('pg5').feature('str1').set('resolution', 'normal');
+% thermal flux surface plot
+model = create_a_surf_plot(model, 'cpl1', 'FluxN5+FluxN6+FluxN7+FluxN8', ...
+                           'thermal flux(steady state)');
 
-% T_flibe
-model.result.create('pg6', 'PlotGroup2D');
-model.result('pg6').create('surf1', 'Surface');
-model.result('pg6').label('T_flibe');
-model.result('pg6').feature('surf1').set('expr', 'T_flibe');
-model.result('pg6').feature('surf1').set('unit', 'degC');
-model.result('pg6').feature('surf1').set('descr', 'Temperature');
-model.result('pg6').feature('surf1').set('titletype', 'manual');
-model.result('pg6').feature('surf1').set('title', 'Flibe temperature (degC)');
-model.result('pg6').feature('surf1').set('resolution', 'normal');
+model = create_a_surf_plot(model, 'cpl1', 'h_conv',...
+                           'h_conv', 'W/(m^2*K)',...
+                           '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d',...
+                           'hconv(wakao)(W/m2.K)');
 
-model.result.create('pg7', 'PlotGroup2D');
-model.result('pg7').create('surf1', 'Surface');
-model.result('pg7').label('T_fuel');
-model.result('pg7').set('titletype', 'manual');
-model.result('pg7').set('title', 'Fuel Temperature (degC)');
-model.result('pg7').feature('surf1').set('expr', 'T_fuel');
-model.result('pg7').feature('surf1').set('unit', 'degC');
-model.result('pg7').feature('surf1').set('descr', 'Temperature');
-model.result('pg7').feature('surf1').set('resolution', 'normal');
+model = create_a_surf_plot(model, 'cpl1', 'rhoL*d*br.U/muL', ...
+                           'Re', '1',...
+                           'Re',...
+                           'Re');
+    
+% % Streamline
+model = create_streamline_plot(model);
 
-model.result.create('pg8', 'PlotGroup2D');
-
-model.result('pg8').create('surf1', 'Surface');
-model.result('pg8').label('PdensityN');
-model.result('pg8').set('titletype', 'manual');
-model.result('pg8').set('title', 'Power density (W/m<sup>3</sup>)');
-model.result('pg8').feature('surf1').set('expr', 'PdensityN');
-model.result('pg8').feature('surf1').set('unit', 'W/m^3');
-model.result('pg8').feature('surf1').set('descr', 'power density normalized to Pop');
-model.result('pg8').feature('surf1').set('resolution', 'normal');
-
-model.result.create('pg9', 'PlotGroup2D');
-model.result('pg9').create('surf1', 'Surface');
-model.result('pg9').label('Fast flux');
-model.result('pg9').set('data', 'cpl2');
-model.result('pg9').set('titletype', 'manual');
-model.result('pg9').set('title', 'Fast flux (1/(m<sup>2</sup>*s))');
-model.result('pg9').feature('surf1').set('expr', 'FluxN1+FluxN2+FluxN3+FluxN4');
-model.result('pg9').feature('surf1').set('unit', '1/(m^2*s)');
-model.result('pg9').feature('surf1').set('descr', 'FluxN1+FluxN2+FluxN3+FluxN4');
-model.result('pg9').feature('surf1').set('resolution', 'normal');
-
-model.result.create('pg10', 'PlotGroup2D');
-
-model.result('pg10').create('surf1', 'Surface');
-model.result('pg10').label('Power density');
-model.result('pg10').feature('surf1').set('expr', 'Pdensity');
-model.result('pg10').feature('surf1').set('unit', 'W/m^3');
-model.result('pg10').feature('surf1').set('descr', 'power density');
-model.result('pg10').feature('surf1').set('resolution', 'normal');
-
-model.result.create('pg11', 'PlotGroup2D');
-
-model.result('pg11').create('str1', 'Streamline');
-model.result('pg11').create('con1', 'Contour');
-model.result('pg11').feature('str1').create('col1', 'Color');
-model.result('pg11').label('Flow field');
-model.result('pg11').set('titletype', 'manual');
-model.result('pg11').set('title', 'Streamline: Velocity field and Contour: Pressure(mFlibe)');
-model.result('pg11').feature('str1').set('data', 'cpl1');
-model.result('pg11').feature('str1').set('planecoordsys', 'cartesian');
-model.result('pg11').feature('str1').set('showzexpr', true);
-model.result('pg11').feature('str1').set('expr', {'u' 'v' 'w'});
-model.result('pg11').feature('str1').set('posmethod', 'magnitude');
-model.result('pg11').feature('str1').set('resolution', 'normal');
-model.result('pg11').feature('con1').set('expr', 'p/1900/9.81');
-model.result('pg11').feature('con1').set('unit', 'Pa');
-model.result('pg11').feature('con1').set('descr', 'p/1900/9.81');
-model.result('pg11').feature('con1').set('number', 50);
-model.result('pg11').feature('con1').set('coloring', 'uniform');
-model.result('pg11').feature('con1').set('color', 'black');
-model.result('pg11').feature('con1').set('resolution', 'normal');
-
-model.result.create('pg13', 'PlotGroup2D');
-model.result('pg13').create('surf1', 'Surface');
-model.result('pg13').label('Thermal flux');
-model.result('pg13').set('data', 'cpl2');
-model.result('pg13').set('titletype', 'manual');
-model.result('pg13').set('title', 'Thermal flux (1/(m<sup>2</sup>*s))');
-model.result('pg13').feature('surf1').set('expr', 'FluxN5+FluxN6+FluxN7+FluxN8');
-model.result('pg13').feature('surf1').set('unit', '1/(m^2*s)');
-model.result('pg13').feature('surf1').set('descr', 'FluxN5+FluxN6+FluxN7+FluxN8');
-model.result('pg13').feature('surf1').set('resolution', 'normal');
-
-model.result.create('pg14', 'PlotGroup1D');
-model.result.create('pg15', 'PlotGroup1D');
-model.result.create('pg16', 'PlotGroup1D');
-model.result.create('pg17', 'PlotGroup3D');
-model.result.create('pg18', 'PlotGroup1D');
-model.result.create('pg19', 'PlotGroup2D');
-model.result.create('pg20', 'PlotGroup2D');
-
-% model.result('pg14').set('probetag', 'window1');
-% model.result('pg14').create('tblp1', 'Table');
-% model.result('pg14').feature('tblp1').set('probetag', 'dom1');
-% model.result('pg14').label('Probe Plot Group 14');
-% model.result('pg14').set('data', 'none');
-% model.result('pg14').set('xlabel', 'Temperature (W), Probe Pint');
-% model.result('pg14').set('ylabel', 'Temperature (W), Probe Pint');
-% model.result('pg14').set('window', 'window1');
-% model.result('pg14').set('windowtitle', 'Probe Plot 1');
-% model.result('pg14').set('xlabelactive', false);
-% model.result('pg14').set('ylabelactive', false);
-% model.result('pg14').create('tblp1', 'Table');
-% model.result('pg14').feature('tblp1').label('Probe Table Graph 1');
-% model.result('pg14').feature('tblp1').set('plotcolumninput', 'manual');
+% % model.result.create('pg14', 'PlotGroup1D');
+% % model.result.create('pg15', 'PlotGroup1D');
+% % model.result.create('pg16', 'PlotGroup1D');
+% % model.result.create('pg17', 'PlotGroup3D');
+% % model.result.create('pg18', 'PlotGroup1D');
+% % model.result.create('pg19', 'PlotGroup2D');
+% % model.result.create('pg20', 'PlotGroup2D');
 % 
-% model.result('pg15').set('probetag', 'window2');
-% model.result('pg15').create('tblp1', 'Table');
-% model.result('pg15').feature('tblp1').set('probetag', 'dom2,dom3');
-% model.result('pg16').set('probetag', 'window3');
-% model.result('pg16').create('tblp1', 'Table');
-% model.result('pg16').feature('tblp1').set('probetag', 'dom4,dom5');
+% % model.result('pg14').set('probetag', 'window1');
+% % model.result('pg14').create('tblp1', 'Table');
+% % model.result('pg14').feature('tblp1').set('probetag', 'dom1');
+% % model.result('pg14').label('Probe Plot Group 14');
+% % model.result('pg14').set('data', 'none');
+% % model.result('pg14').set('xlabel', 'Temperature (W), Probe Pint');
+% % model.result('pg14').set('ylabel', 'Temperature (W), Probe Pint');
+% % model.result('pg14').set('window', 'window1');
+% % model.result('pg14').set('windowtitle', 'Probe Plot 1');
+% % model.result('pg14').set('xlabelactive', false);
+% % model.result('pg14').set('ylabelactive', false);
+% % model.result('pg14').create('tblp1', 'Table');
+% % model.result('pg14').feature('tblp1').label('Probe Table Graph 1');
+% % model.result('pg14').feature('tblp1').set('plotcolumninput', 'manual');
+% % 
+% % model.result('pg15').set('probetag', 'window2');
+% % model.result('pg15').create('tblp1', 'Table');
+% % model.result('pg15').feature('tblp1').set('probetag', 'dom2,dom3');
+% % model.result('pg16').set('probetag', 'window3');
+% % model.result('pg16').create('tblp1', 'Table');
+% % model.result('pg16').feature('tblp1').set('probetag', 'dom4,dom5');
+% 
+% 
+% 
+% % model.result('pg15').label('Probe Plot Group 15');
+% % model.result('pg15').set('xlabel', 'Temperature (W), Probe Pint');
+% % model.result('pg15').set('windowtitle', 'Probe Plot 2');
+% % model.result('pg15').set('xlabelactive', false);
+% % model.result('pg15').feature('tblp1').label('Probe Table Graph 1');
+% % model.result('pg16').label('Probe Plot Group 16');
+% % model.result('pg16').set('xlabel', 'Temperature (W), Probe Pint');
+% % model.result('pg16').set('windowtitle', 'Probe Plot 3');
+% % model.result('pg16').set('xlabelactive', false);
+% % model.result('pg16').feature('tblp1').label('Probe Table Graph 1');
+% 
+% model.result('pg17').set('data', 'dset2');
+% model.result('pg17').create('surf1', 'Surface');
+% model.result('pg17').feature('surf1').set('rangecoloractive', true);
+% model.result('pg17').feature('surf1').set('rangecolormax', 0.02);
+% model.result('pg17').feature('surf1').set('resolution', 'normal');
+% 
+% model.result('pg18').set('data', 'dset2');
+% model.result('pg18').create('lngr1', 'LineGraph');
+% model.result('pg18').feature('lngr1').selection.set([340 350]);
+% 
+% model.result('pg18').set('xlabel', 'Arc length');
+% model.result('pg18').set('ylabel', 'Temperature (K)');
+% model.result('pg18').set('xlabelactive', false);
+% model.result('pg18').set('ylabelactive', false);
+% model.result('pg18').feature('lngr1').set('expr', 'T_flibe');
+% model.result('pg18').feature('lngr1').set('unit', 'K');
+% model.result('pg18').feature('lngr1').set('descr', 'Temperature');
+% model.result('pg18').feature('lngr1').set('resolution', 'normal');
+% 
 
-
-
-% model.result('pg15').label('Probe Plot Group 15');
-% model.result('pg15').set('xlabel', 'Temperature (W), Probe Pint');
-% model.result('pg15').set('windowtitle', 'Probe Plot 2');
-% model.result('pg15').set('xlabelactive', false);
-% model.result('pg15').feature('tblp1').label('Probe Table Graph 1');
-% model.result('pg16').label('Probe Plot Group 16');
-% model.result('pg16').set('xlabel', 'Temperature (W), Probe Pint');
-% model.result('pg16').set('windowtitle', 'Probe Plot 3');
-% model.result('pg16').set('xlabelactive', false);
-% model.result('pg16').feature('tblp1').label('Probe Table Graph 1');
-
-model.result('pg17').set('data', 'dset2');
-model.result('pg17').create('surf1', 'Surface');
-model.result('pg17').feature('surf1').set('rangecoloractive', true);
-model.result('pg17').feature('surf1').set('rangecolormax', 0.02);
-model.result('pg17').feature('surf1').set('resolution', 'normal');
-
-model.result('pg18').set('data', 'dset2');
-model.result('pg18').create('lngr1', 'LineGraph');
-model.result('pg18').feature('lngr1').selection.set([340 350]);
-
-model.result('pg18').set('xlabel', 'Arc length');
-model.result('pg18').set('ylabel', 'Temperature (K)');
-model.result('pg18').set('xlabelactive', false);
-model.result('pg18').set('ylabelactive', false);
-model.result('pg18').feature('lngr1').set('expr', 'T_flibe');
-model.result('pg18').feature('lngr1').set('unit', 'K');
-model.result('pg18').feature('lngr1').set('descr', 'Temperature');
-model.result('pg18').feature('lngr1').set('resolution', 'normal');
-
-model.result('pg19').create('surf1', 'Surface');
-
-model.result('pg19').label('h_conv');
-model.result('pg19').set('titletype', 'manual');
-model.result('pg19').set('title', 'hconv(wakao)(W/m2.K)');
-model.result('pg19').feature('surf1').set('expr', 'h_conv');
-model.result('pg19').feature('surf1').set('unit', 'W/(m^2*K)');
-model.result('pg19').feature('surf1').set('descr', '(2+1.1*Pr^(1/3)*(rhoL*d*br.U/muL)^0.6)*kL/d');
-model.result('pg19').feature('surf1').set('resolution', 'normal');
-
-model.result('pg20').create('surf1', 'Surface');
-
-model.result('pg20').label('Re');
-model.result('pg20').set('titletype', 'manual');
-model.result('pg20').set('title', 'Re');
-model.result('pg20').feature('surf1').set('expr', 'rhoL*d*br.U/muL');
-model.result('pg20').feature('surf1').set('unit', '1');
-model.result('pg20').feature('surf1').set('descr', 'rhoL*d*br.U/muL');
-model.result('pg20').feature('surf1').set('titletype', 'manual');
-model.result('pg20').feature('surf1').set('title', 'Flibe temperature (degC)');
-model.result('pg20').feature('surf1').set('resolution', 'normal');
-
-model.result.create('pg23', 'PlotGroup2D');
-model.result('pg23').create('surf1', 'Surface');
-model.result('pg23').label('T_fuel-T_flibe');
-model.result('pg23').set('titletype', 'manual');
-model.result('pg23').set('title', 'Tfuel-Tflibe (degC)');
-model.result('pg23').feature('surf1').set('expr', '(T_fuel-T_flibe)');
-model.result('pg23').feature('surf1').set('unit', 'K');
-model.result('pg23').feature('surf1').set('descr', '(T_fuel-T_flibe)');
-model.result('pg23').feature('surf1').set('titletype', 'manual');
-model.result('pg23').feature('surf1').set('title', 'Flibe temperature (degC)');
-model.result('pg23').feature('surf1').set('resolution', 'normal');
-
-% exports
-model.result.export.create('img1', 'Image2D');
-model.result.export.create('img2', 'Image2D');
-model.result.export.create('img3', 'Image2D');
-model.result.export.create('img4', 'Image2D');
-model.result.export.create('img5', 'Image2D');
-model.result.export.create('img6', 'Image2D');
-model.result.export.create('img7', 'Image2D');
-model.result.export.create('img8', 'Image1D');
-model.result.export.create('img9', 'Image2D');
-
-model.result.export('img1').label('Pdensity');
-model.result.export('img1').set('plotgroup', 'pg8');
-model.result.export('img1').set('printlockratio', false);
-model.result.export('img1').set('pngfilename', 'power');
-model.result.export('img1').set('printunit', 'mm');
-model.result.export('img1').set('webunit', 'px');
-model.result.export('img1').set('printheight', '90');
-model.result.export('img1').set('webheight', '600');
-model.result.export('img1').set('printwidth', '120');
-model.result.export('img1').set('webwidth', '800');
-model.result.export('img1').set('printlockratio', 'off');
-model.result.export('img1').set('weblockratio', 'off');
-model.result.export('img1').set('printresolution', '300');
-model.result.export('img1').set('webresolution', '96');
-model.result.export('img1').set('size', 'manualprint');
-model.result.export('img1').set('antialias', 'on');
-model.result.export('img1').set('zoomextents', 'off');
-model.result.export('img1').set('title', 'on');
-model.result.export('img1').set('legend', 'on');
-model.result.export('img1').set('logo', 'off');
-model.result.export('img1').set('options', 'on');
-model.result.export('img1').set('fontsize', '9');
-model.result.export('img1').set('customcolor', [1 1 1]);
-model.result.export('img1').set('background', 'current');
-model.result.export('img1').set('axes', 'on');
-model.result.export('img1').set('qualitylevel', '92');
-model.result.export('img1').set('qualityactive', 'off');
-model.result.export('img1').set('imagetype', 'png');
-
-model.result.export('img2').label('thermal flux');
-model.result.export('img2').set('plotgroup', 'pg13');
-model.result.export('img2').set('printlockratio', false);
-model.result.export('img2').set('pngfilename', 'thermal_flux');
-model.result.export('img2').set('printunit', 'mm');
-model.result.export('img2').set('webunit', 'px');
-model.result.export('img2').set('printheight', '90');
-model.result.export('img2').set('webheight', '600');
-model.result.export('img2').set('printwidth', '120');
-model.result.export('img2').set('webwidth', '800');
-model.result.export('img2').set('printlockratio', 'off');
-model.result.export('img2').set('weblockratio', 'off');
-model.result.export('img2').set('printresolution', '300');
-model.result.export('img2').set('webresolution', '96');
-model.result.export('img2').set('size', 'manualprint');
-model.result.export('img2').set('antialias', 'on');
-model.result.export('img2').set('zoomextents', 'off');
-model.result.export('img2').set('title', 'on');
-model.result.export('img2').set('legend', 'on');
-model.result.export('img2').set('logo', 'off');
-model.result.export('img2').set('options', 'on');
-model.result.export('img2').set('fontsize', '9');
-model.result.export('img2').set('customcolor', [1 1 1]);
-model.result.export('img2').set('background', 'current');
-model.result.export('img2').set('axes', 'on');
-model.result.export('img2').set('qualitylevel', '92');
-model.result.export('img2').set('qualityactive', 'off');
-model.result.export('img2').set('imagetype', 'png');
-
-model.result.export('img3').label('fast flux');
-model.result.export('img3').set('plotgroup', 'pg9');
-model.result.export('img3').set('printlockratio', false);
-model.result.export('img3').set('pngfilename', 'fast_flux');
-model.result.export('img3').set('printunit', 'mm');
-model.result.export('img3').set('webunit', 'px');
-model.result.export('img3').set('printheight', '90');
-model.result.export('img3').set('webheight', '600');
-model.result.export('img3').set('printwidth', '120');
-model.result.export('img3').set('webwidth', '800');
-model.result.export('img3').set('printlockratio', 'off');
-model.result.export('img3').set('weblockratio', 'off');
-model.result.export('img3').set('printresolution', '300');
-model.result.export('img3').set('webresolution', '96');
-model.result.export('img3').set('size', 'manualprint');
-model.result.export('img3').set('antialias', 'on');
-model.result.export('img3').set('zoomextents', 'off');
-model.result.export('img3').set('title', 'on');
-model.result.export('img3').set('legend', 'on');
-model.result.export('img3').set('logo', 'off');
-model.result.export('img3').set('options', 'on');
-model.result.export('img3').set('fontsize', '9');
-model.result.export('img3').set('customcolor', [1 1 1]);
-model.result.export('img3').set('background', 'current');
-model.result.export('img3').set('axes', 'on');
-model.result.export('img3').set('qualitylevel', '92');
-model.result.export('img3').set('qualityactive', 'off');
-model.result.export('img3').set('imagetype', 'png');
-
-model.result.export('img4').label('fuel T');
-model.result.export('img4').set('plotgroup', 'pg7');
-model.result.export('img4').set('printlockratio', false);
-model.result.export('img4').set('pngfilename', 'T_fuel');
-model.result.export('img4').set('printunit', 'mm');
-model.result.export('img4').set('webunit', 'px');
-model.result.export('img4').set('printheight', '90');
-model.result.export('img4').set('webheight', '600');
-model.result.export('img4').set('printwidth', '120');
-model.result.export('img4').set('webwidth', '800');
-model.result.export('img4').set('printlockratio', 'off');
-model.result.export('img4').set('weblockratio', 'off');
-model.result.export('img4').set('printresolution', '300');
-model.result.export('img4').set('webresolution', '96');
-model.result.export('img4').set('size', 'manualprint');
-model.result.export('img4').set('antialias', 'on');
-model.result.export('img4').set('zoomextents', 'off');
-model.result.export('img4').set('title', 'on');
-model.result.export('img4').set('legend', 'on');
-model.result.export('img4').set('logo', 'off');
-model.result.export('img4').set('options', 'on');
-model.result.export('img4').set('fontsize', '9');
-model.result.export('img4').set('customcolor', [1 1 1]);
-model.result.export('img4').set('background', 'current');
-model.result.export('img4').set('axes', 'on');
-model.result.export('img4').set('qualitylevel', '92');
-model.result.export('img4').set('qualityactive', 'off');
-model.result.export('img4').set('imagetype', 'png');
-
-model.result.export('img5').label('flibe T');
-model.result.export('img5').set('printlockratio', false);
-model.result.export('img5').set('pngfilename', 'T_flibe');
-model.result.export('img5').set('printunit', 'mm');
-model.result.export('img5').set('webunit', 'px');
-model.result.export('img5').set('printheight', '90');
-model.result.export('img5').set('webheight', '600');
-model.result.export('img5').set('printwidth', '120');
-model.result.export('img5').set('webwidth', '800');
-model.result.export('img5').set('printlockratio', 'off');
-model.result.export('img5').set('weblockratio', 'off');
-model.result.export('img5').set('printresolution', '300');
-model.result.export('img5').set('webresolution', '96');
-model.result.export('img5').set('size', 'manualprint');
-model.result.export('img5').set('antialias', 'on');
-model.result.export('img5').set('zoomextents', 'off');
-model.result.export('img5').set('title', 'on');
-model.result.export('img5').set('legend', 'on');
-model.result.export('img5').set('logo', 'off');
-model.result.export('img5').set('options', 'on');
-model.result.export('img5').set('fontsize', '9');
-model.result.export('img5').set('customcolor', [1 1 1]);
-model.result.export('img5').set('background', 'current');
-model.result.export('img5').set('axes', 'on');
-model.result.export('img5').set('qualitylevel', '92');
-model.result.export('img5').set('qualityactive', 'off');
-model.result.export('img5').set('imagetype', 'png');
-
-model.result.export('img6').label('flow');
-model.result.export('img6').set('plotgroup', 'pg11');
-model.result.export('img6').set('printlockratio', false);
-model.result.export('img6').set('pngfilename', 'flow');
-model.result.export('img6').set('printunit', 'mm');
-model.result.export('img6').set('webunit', 'px');
-model.result.export('img6').set('printheight', '90');
-model.result.export('img6').set('webheight', '600');
-model.result.export('img6').set('printwidth', '120');
-model.result.export('img6').set('webwidth', '800');
-model.result.export('img6').set('printlockratio', 'off');
-model.result.export('img6').set('weblockratio', 'off');
-model.result.export('img6').set('printresolution', '300');
-model.result.export('img6').set('webresolution', '96');
-model.result.export('img6').set('size', 'manualprint');
-model.result.export('img6').set('antialias', 'on');
-model.result.export('img6').set('zoomextents', 'off');
-model.result.export('img6').set('title', 'on');
-model.result.export('img6').set('legend', 'on');
-model.result.export('img6').set('logo', 'off');
-model.result.export('img6').set('options', 'on');
-model.result.export('img6').set('fontsize', '9');
-model.result.export('img6').set('customcolor', [1 1 1]);
-model.result.export('img6').set('background', 'current');
-model.result.export('img6').set('axes', 'on');
-model.result.export('img6').set('qualitylevel', '92');
-model.result.export('img6').set('qualityactive', 'off');
-model.result.export('img6').set('imagetype', 'png');
-model.result.export('img7').label('deltaT');
-model.result.export('img7').set('plotgroup', 'pg23');
-model.result.export('img7').set('pngfilename', 'deltaT');
-model.result.export('img7').set('printunit', 'mm');
-model.result.export('img7').set('webunit', 'px');
-model.result.export('img7').set('printheight', '90');
-model.result.export('img7').set('webheight', '600');
-model.result.export('img7').set('printwidth', '120');
-model.result.export('img7').set('webwidth', '800');
-model.result.export('img7').set('printlockratio', 'off');
-model.result.export('img7').set('weblockratio', 'off');
-model.result.export('img7').set('printresolution', '300');
-model.result.export('img7').set('webresolution', '96');
-model.result.export('img7').set('size', 'manualprint');
-model.result.export('img7').set('antialias', 'on');
-model.result.export('img7').set('zoomextents', 'off');
-model.result.export('img7').set('title', 'on');
-model.result.export('img7').set('legend', 'on');
-model.result.export('img7').set('logo', 'off');
-model.result.export('img7').set('options', 'on');
-model.result.export('img7').set('fontsize', '9');
-model.result.export('img7').set('customcolor', [1 1 1]);
-model.result.export('img7').set('background', 'current');
-model.result.export('img7').set('axes', 'on');
-model.result.export('img7').set('qualitylevel', '92');
-model.result.export('img7').set('qualityactive', 'off');
-model.result.export('img7').set('imagetype', 'png');
-model.result.export('img8').label('outlet_T_flibe');
-model.result.export('img8').set('plotgroup', 'pg18');
-model.result.export('img8').set('pngfilename', 'outlet_T_flibe');
-model.result.export('img8').set('printunit', 'mm');
-model.result.export('img8').set('webunit', 'px');
-model.result.export('img8').set('printheight', '90');
-model.result.export('img8').set('webheight', '600');
-model.result.export('img8').set('printwidth', '120');
-model.result.export('img8').set('webwidth', '800');
-model.result.export('img8').set('printlockratio', 'off');
-model.result.export('img8').set('weblockratio', 'off');
-model.result.export('img8').set('printresolution', '300');
-model.result.export('img8').set('webresolution', '96');
-model.result.export('img8').set('size', 'manualprint');
-model.result.export('img8').set('antialias', 'on');
-model.result.export('img8').set('zoomextents', 'off');
-model.result.export('img8').set('title', 'on');
-model.result.export('img8').set('legend', 'on');
-model.result.export('img8').set('logo', 'off');
-model.result.export('img8').set('options', 'on');
-model.result.export('img8').set('fontsize', '9');
-model.result.export('img8').set('customcolor', [1 1 1]);
-model.result.export('img8').set('background', 'current');
-model.result.export('img8').set('axes', 'on');
-model.result.export('img8').set('showgrid', 'on');
-model.result.export('img8').set('qualitylevel', '92');
-model.result.export('img8').set('qualityactive', 'off');
-model.result.export('img8').set('imagetype', 'png');
-model.result.export('img9').label('h_conv');
-model.result.export('img9').set('plotgroup', 'pg19');
-model.result.export('img9').set('pngfilename', 'h_conv');
-model.result.export('img9').set('printunit', 'mm');
-model.result.export('img9').set('webunit', 'px');
-model.result.export('img9').set('printheight', '90');
-model.result.export('img9').set('webheight', '600');
-model.result.export('img9').set('printwidth', '120');
-model.result.export('img9').set('webwidth', '800');
-model.result.export('img9').set('printlockratio', 'off');
-model.result.export('img9').set('weblockratio', 'off');
-model.result.export('img9').set('printresolution', '300');
-model.result.export('img9').set('webresolution', '96');
-model.result.export('img9').set('size', 'manualprint');
-model.result.export('img9').set('antialias', 'on');
-model.result.export('img9').set('zoomextents', 'off');
-model.result.export('img9').set('title', 'on');
-model.result.export('img9').set('legend', 'on');
-model.result.export('img9').set('logo', 'off');
-model.result.export('img9').set('options', 'on');
-model.result.export('img9').set('fontsize', '9');
-model.result.export('img9').set('customcolor', [1 1 1]);
-model.result.export('img9').set('background', 'current');
-model.result.export('img9').set('axes', 'on');
-model.result.export('img9').set('qualitylevel', '92');
-model.result.export('img9').set('qualityactive', 'off');
-model.result.export('img9').set('imagetype', 'png');
-
-
+% % exports
+% %model = export_image(model, 'img1', 'pg8');
+% 
+% 
+% % model.result.export.create('img2', 'Image2D');
+% % model.result.export.create('img3', 'Image2D');
+% % model.result.export.create('img4', 'Image2D');
+% % model.result.export.create('img5', 'Image2D');
+% % model.result.export.create('img6', 'Image2D');
+% % model.result.export.create('img7', 'Image2D');
+% % model.result.export.create('img8', 'Image1D');
+% % model.result.export.create('img9', 'Image2D');
+% 
+% 
+% 
+% % model.result.export('img2').label('thermal flux');
+% % model.result.export('img2').set('plotgroup', 'pg13');
+% % model.result.export('img2').set('printlockratio', false);
+% % model.result.export('img2').set('pngfilename', 'thermal_flux');
+% % model.result.export('img2').set('printunit', 'mm');
+% % model.result.export('img2').set('webunit', 'px');
+% % model.result.export('img2').set('printheight', '90');
+% % model.result.export('img2').set('webheight', '600');
+% % model.result.export('img2').set('printwidth', '120');
+% % model.result.export('img2').set('webwidth', '800');
+% % model.result.export('img2').set('printlockratio', 'off');
+% % model.result.export('img2').set('weblockratio', 'off');
+% % model.result.export('img2').set('printresolution', '300');
+% % model.result.export('img2').set('webresolution', '96');
+% % model.result.export('img2').set('size', 'manualprint');
+% % model.result.export('img2').set('antialias', 'on');
+% % model.result.export('img2').set('zoomextents', 'off');
+% % model.result.export('img2').set('title', 'on');
+% % model.result.export('img2').set('legend', 'on');
+% % model.result.export('img2').set('logo', 'off');
+% % model.result.export('img2').set('options', 'on');
+% % model.result.export('img2').set('fontsize', '9');
+% % model.result.export('img2').set('customcolor', [1 1 1]);
+% % model.result.export('img2').set('background', 'current');
+% % model.result.export('img2').set('axes', 'on');
+% % model.result.export('img2').set('qualitylevel', '92');
+% % model.result.export('img2').set('qualityactive', 'off');
+% % model.result.export('img2').set('imagetype', 'png');
+% % 
+% % model.result.export('img3').label('fast flux');
+% % model.result.export('img3').set('plotgroup', 'pg9');
+% % model.result.export('img3').set('printlockratio', false);
+% % model.result.export('img3').set('pngfilename', 'fast_flux');
+% % model.result.export('img3').set('printunit', 'mm');
+% % model.result.export('img3').set('webunit', 'px');
+% % model.result.export('img3').set('printheight', '90');
+% % model.result.export('img3').set('webheight', '600');
+% % model.result.export('img3').set('printwidth', '120');
+% % model.result.export('img3').set('webwidth', '800');
+% % model.result.export('img3').set('printlockratio', 'off');
+% % model.result.export('img3').set('weblockratio', 'off');
+% % model.result.export('img3').set('printresolution', '300');
+% % model.result.export('img3').set('webresolution', '96');
+% % model.result.export('img3').set('size', 'manualprint');
+% % model.result.export('img3').set('antialias', 'on');
+% % model.result.export('img3').set('zoomextents', 'off');
+% % model.result.export('img3').set('title', 'on');
+% % model.result.export('img3').set('legend', 'on');
+% % model.result.export('img3').set('logo', 'off');
+% % model.result.export('img3').set('options', 'on');
+% % model.result.export('img3').set('fontsize', '9');
+% % model.result.export('img3').set('customcolor', [1 1 1]);
+% % model.result.export('img3').set('background', 'current');
+% % model.result.export('img3').set('axes', 'on');
+% % model.result.export('img3').set('qualitylevel', '92');
+% % model.result.export('img3').set('qualityactive', 'off');
+% % model.result.export('img3').set('imagetype', 'png');
+% % 
+% % model.result.export('img4').label('fuel T');
+% % model.result.export('img4').set('plotgroup', 'pg7');
+% % model.result.export('img4').set('printlockratio', false);
+% % model.result.export('img4').set('pngfilename', 'T_fuel');
+% % model.result.export('img4').set('printunit', 'mm');
+% % model.result.export('img4').set('webunit', 'px');
+% % model.result.export('img4').set('printheight', '90');
+% % model.result.export('img4').set('webheight', '600');
+% % model.result.export('img4').set('printwidth', '120');
+% % model.result.export('img4').set('webwidth', '800');
+% % model.result.export('img4').set('printlockratio', 'off');
+% % model.result.export('img4').set('weblockratio', 'off');
+% % model.result.export('img4').set('printresolution', '300');
+% % model.result.export('img4').set('webresolution', '96');
+% % model.result.export('img4').set('size', 'manualprint');
+% % model.result.export('img4').set('antialias', 'on');
+% % model.result.export('img4').set('zoomextents', 'off');
+% % model.result.export('img4').set('title', 'on');
+% % model.result.export('img4').set('legend', 'on');
+% % model.result.export('img4').set('logo', 'off');
+% % model.result.export('img4').set('options', 'on');
+% % model.result.export('img4').set('fontsize', '9');
+% % model.result.export('img4').set('customcolor', [1 1 1]);
+% % model.result.export('img4').set('background', 'current');
+% % model.result.export('img4').set('axes', 'on');
+% % model.result.export('img4').set('qualitylevel', '92');
+% % model.result.export('img4').set('qualityactive', 'off');
+% % model.result.export('img4').set('imagetype', 'png');
+% % 
+% % model.result.export('img5').label('flibe T');
+% % model.result.export('img5').set('printlockratio', false);
+% % model.result.export('img5').set('pngfilename', 'T_flibe');
+% % model.result.export('img5').set('printunit', 'mm');
+% % model.result.export('img5').set('webunit', 'px');
+% % model.result.export('img5').set('printheight', '90');
+% % model.result.export('img5').set('webheight', '600');
+% % model.result.export('img5').set('printwidth', '120');
+% % model.result.export('img5').set('webwidth', '800');
+% % model.result.export('img5').set('printlockratio', 'off');
+% % model.result.export('img5').set('weblockratio', 'off');
+% model.result.export('img5').set('printresolution', '300');
+% model.result.export('img5').set('webresolution', '96');
+% model.result.export('img5').set('size', 'manualprint');
+% model.result.export('img5').set('antialias', 'on');
+% model.result.export('img5').set('zoomextents', 'off');
+% model.result.export('img5').set('title', 'on');
+% model.result.export('img5').set('legend', 'on');
+% model.result.export('img5').set('logo', 'off');
+% model.result.export('img5').set('options', 'on');
+% model.result.export('img5').set('fontsize', '9');
+% model.result.export('img5').set('customcolor', [1 1 1]);
+% model.result.export('img5').set('background', 'current');
+% model.result.export('img5').set('axes', 'on');
+% model.result.export('img5').set('qualitylevel', '92');
+% model.result.export('img5').set('qualityactive', 'off');
+% model.result.export('img5').set('imagetype', 'png');
+% 
+% model.result.export('img6').label('flow');
+% model.result.export('img6').set('plotgroup', 'pg11');
+% model.result.export('img6').set('printlockratio', false);
+% model.result.export('img6').set('pngfilename', 'flow');
+% model.result.export('img6').set('printunit', 'mm');
+% model.result.export('img6').set('webunit', 'px');
+% model.result.export('img6').set('printheight', '90');
+% model.result.export('img6').set('webheight', '600');
+% model.result.export('img6').set('printwidth', '120');
+% model.result.export('img6').set('webwidth', '800');
+% model.result.export('img6').set('printlockratio', 'off');
+% model.result.export('img6').set('weblockratio', 'off');
+% model.result.export('img6').set('printresolution', '300');
+% model.result.export('img6').set('webresolution', '96');
+% model.result.export('img6').set('size', 'manualprint');
+% model.result.export('img6').set('antialias', 'on');
+% model.result.export('img6').set('zoomextents', 'off');
+% model.result.export('img6').set('title', 'on');
+% model.result.export('img6').set('legend', 'on');
+% model.result.export('img6').set('logo', 'off');
+% model.result.export('img6').set('options', 'on');
+% model.result.export('img6').set('fontsize', '9');
+% model.result.export('img6').set('customcolor', [1 1 1]);
+% model.result.export('img6').set('background', 'current');
+% model.result.export('img6').set('axes', 'on');
+% model.result.export('img6').set('qualitylevel', '92');
+% model.result.export('img6').set('qualityactive', 'off');
+% model.result.export('img6').set('imagetype', 'png');
+% model.result.export('img7').label('deltaT');
+% model.result.export('img7').set('plotgroup', 'pg23');
+% model.result.export('img7').set('pngfilename', 'deltaT');
+% model.result.export('img7').set('printunit', 'mm');
+% model.result.export('img7').set('webunit', 'px');
+% model.result.export('img7').set('printheight', '90');
+% model.result.export('img7').set('webheight', '600');
+% model.result.export('img7').set('printwidth', '120');
+% model.result.export('img7').set('webwidth', '800');
+% model.result.export('img7').set('printlockratio', 'off');
+% model.result.export('img7').set('weblockratio', 'off');
+% model.result.export('img7').set('printresolution', '300');
+% model.result.export('img7').set('webresolution', '96');
+% model.result.export('img7').set('size', 'manualprint');
+% model.result.export('img7').set('antialias', 'on');
+% model.result.export('img7').set('zoomextents', 'off');
+% model.result.export('img7').set('title', 'on');
+% model.result.export('img7').set('legend', 'on');
+% model.result.export('img7').set('logo', 'off');
+% model.result.export('img7').set('options', 'on');
+% model.result.export('img7').set('fontsize', '9');
+% model.result.export('img7').set('customcolor', [1 1 1]);
+% model.result.export('img7').set('background', 'current');
+% model.result.export('img7').set('axes', 'on');
+% model.result.export('img7').set('qualitylevel', '92');
+% model.result.export('img7').set('qualityactive', 'off');
+% model.result.export('img7').set('imagetype', 'png');
+% model.result.export('img8').label('outlet_T_flibe');
+% model.result.export('img8').set('plotgroup', 'pg18');
+% model.result.export('img8').set('pngfilename', 'outlet_T_flibe');
+% model.result.export('img8').set('printunit', 'mm');
+% model.result.export('img8').set('webunit', 'px');
+% model.result.export('img8').set('printheight', '90');
+% model.result.export('img8').set('webheight', '600');
+% model.result.export('img8').set('printwidth', '120');
+% model.result.export('img8').set('webwidth', '800');
+% model.result.export('img8').set('printlockratio', 'off');
+% model.result.export('img8').set('weblockratio', 'off');
+% model.result.export('img8').set('printresolution', '300');
+% model.result.export('img8').set('webresolution', '96');
+% model.result.export('img8').set('size', 'manualprint');
+% model.result.export('img8').set('antialias', 'on');
+% model.result.export('img8').set('zoomextents', 'off');
+% model.result.export('img8').set('title', 'on');
+% model.result.export('img8').set('legend', 'on');
+% model.result.export('img8').set('logo', 'off');
+% model.result.export('img8').set('options', 'on');
+% model.result.export('img8').set('fontsize', '9');
+% model.result.export('img8').set('customcolor', [1 1 1]);
+% model.result.export('img8').set('background', 'current');
+% model.result.export('img8').set('axes', 'on');
+% model.result.export('img8').set('showgrid', 'on');
+% model.result.export('img8').set('qualitylevel', '92');
+% model.result.export('img8').set('qualityactive', 'off');
+% model.result.export('img8').set('imagetype', 'png');
+% model.result.export('img9').label('h_conv');
+% model.result.export('img9').set('plotgroup', 'pg19');
+% model.result.export('img9').set('pngfilename', 'h_conv');
+% model.result.export('img9').set('printunit', 'mm');
+% model.result.export('img9').set('webunit', 'px');
+% model.result.export('img9').set('printheight', '90');
+% model.result.export('img9').set('webheight', '600');
+% model.result.export('img9').set('printwidth', '120');
+% model.result.export('img9').set('webwidth', '800');
+% model.result.export('img9').set('printlockratio', 'off');
+% model.result.export('img9').set('weblockratio', 'off');
+% model.result.export('img9').set('printresolution', '300');
+% model.result.export('img9').set('webresolution', '96');
+% model.result.export('img9').set('size', 'manualprint');
+% model.result.export('img9').set('antialias', 'on');
+% model.result.export('img9').set('zoomextents', 'off');
+% model.result.export('img9').set('title', 'on');
+% model.result.export('img9').set('legend', 'on');
+% model.result.export('img9').set('logo', 'off');
+% model.result.export('img9').set('options', 'on');
+% model.result.export('img9').set('fontsize', '9');
+% model.result.export('img9').set('customcolor', [1 1 1]);
+% model.result.export('img9').set('background', 'current');
+% model.result.export('img9').set('axes', 'on');
+% model.result.export('img9').set('qualitylevel', '92');
+% model.result.export('img9').set('qualityactive', 'off');
+% model.result.export('img9').set('imagetype', 'png');
+% 
+% 
