@@ -1,7 +1,7 @@
 function model = create_streamline_plot(model)
 
 plotNb = mphglobal(model, 'plotNb')+1;
-model.param.set('plotNb', plot_nb);
+model.param.set('plotNb', plotNb);
 
 name = ['pg', num2str(plotNb)];    
 model.result.create(name, 'PlotGroup2D');

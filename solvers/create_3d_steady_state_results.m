@@ -55,68 +55,7 @@ model = create_a_surf_plot(model, 'cpl1', 'rhoL*d*br.U/muL', ...
 % % Streamline
 model = create_streamline_plot(model);
 
-% % model.result.create('pg14', 'PlotGroup1D');
-% % model.result.create('pg15', 'PlotGroup1D');
-% % model.result.create('pg16', 'PlotGroup1D');
-% % model.result.create('pg17', 'PlotGroup3D');
-% % model.result.create('pg18', 'PlotGroup1D');
-% % model.result.create('pg19', 'PlotGroup2D');
-% % model.result.create('pg20', 'PlotGroup2D');
-% 
-% % model.result('pg14').set('probetag', 'window1');
-% % model.result('pg14').create('tblp1', 'Table');
-% % model.result('pg14').feature('tblp1').set('probetag', 'dom1');
-% % model.result('pg14').label('Probe Plot Group 14');
-% % model.result('pg14').set('data', 'none');
-% % model.result('pg14').set('xlabel', 'Temperature (W), Probe Pint');
-% % model.result('pg14').set('ylabel', 'Temperature (W), Probe Pint');
-% % model.result('pg14').set('window', 'window1');
-% % model.result('pg14').set('windowtitle', 'Probe Plot 1');
-% % model.result('pg14').set('xlabelactive', false);
-% % model.result('pg14').set('ylabelactive', false);
-% % model.result('pg14').create('tblp1', 'Table');
-% % model.result('pg14').feature('tblp1').label('Probe Table Graph 1');
-% % model.result('pg14').feature('tblp1').set('plotcolumninput', 'manual');
-% % 
-% % model.result('pg15').set('probetag', 'window2');
-% % model.result('pg15').create('tblp1', 'Table');
-% % model.result('pg15').feature('tblp1').set('probetag', 'dom2,dom3');
-% % model.result('pg16').set('probetag', 'window3');
-% % model.result('pg16').create('tblp1', 'Table');
-% % model.result('pg16').feature('tblp1').set('probetag', 'dom4,dom5');
-% 
-% 
-% 
-% % model.result('pg15').label('Probe Plot Group 15');
-% % model.result('pg15').set('xlabel', 'Temperature (W), Probe Pint');
-% % model.result('pg15').set('windowtitle', 'Probe Plot 2');
-% % model.result('pg15').set('xlabelactive', false);
-% % model.result('pg15').feature('tblp1').label('Probe Table Graph 1');
-% % model.result('pg16').label('Probe Plot Group 16');
-% % model.result('pg16').set('xlabel', 'Temperature (W), Probe Pint');
-% % model.result('pg16').set('windowtitle', 'Probe Plot 3');
-% % model.result('pg16').set('xlabelactive', false);
-% % model.result('pg16').feature('tblp1').label('Probe Table Graph 1');
-% 
-% model.result('pg17').set('data', 'dset2');
-% model.result('pg17').create('surf1', 'Surface');
-% model.result('pg17').feature('surf1').set('rangecoloractive', true);
-% model.result('pg17').feature('surf1').set('rangecolormax', 0.02);
-% model.result('pg17').feature('surf1').set('resolution', 'normal');
-% 
-% model.result('pg18').set('data', 'dset2');
-% model.result('pg18').create('lngr1', 'LineGraph');
-% model.result('pg18').feature('lngr1').selection.set([340 350]);
-% 
-% model.result('pg18').set('xlabel', 'Arc length');
-% model.result('pg18').set('ylabel', 'Temperature (K)');
-% model.result('pg18').set('xlabelactive', false);
-% model.result('pg18').set('ylabelactive', false);
-% model.result('pg18').feature('lngr1').set('expr', 'T_flibe');
-% model.result('pg18').feature('lngr1').set('unit', 'K');
-% model.result('pg18').feature('lngr1').set('descr', 'Temperature');
-% model.result('pg18').feature('lngr1').set('resolution', 'normal');
-% 
+
 
 % % exports
 % %model = export_image(model, 'img1', 'pg8');

@@ -9,9 +9,14 @@ function model = create_a_surf_plot(model, dataset, expr, label, unit, descr, ti
             'requires at most 3 optional inputs');
     end
     
+    global plotNb
     
-    plotNb = mphglobal(model, 'plotNb')+1;
-    model.param.set('plotNb', plot_nb);
+    if exist('plotNb', 'var')== 1
+        plotNb = plotNb + 2;
+    else
+        plotNb = mphglobal(model, 'plotNb')+5;
+    end
+    model.param.set('plotNb', plotNb);
     name = ['pg', num2str(plotNb)];
     
     model.result.create(name, 'PlotGroup2D');
