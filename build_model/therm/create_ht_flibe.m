@@ -35,7 +35,9 @@ if isTMSR
     model.physics('ht_flibe').feature('fluid1').set('minput_pressure', '0');
     model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0'; '0'; 'v_inlet'});
     %   model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0' 'v_inlet' '0'});
-
+else
+    model.physics('ht_flibe').feature('fluid1').set('minput_pressure_src', 'root.mod1.br.pA');
+    model.physics('ht_flibe').feature('fluid1').set('minput_velocity_src', 'root.mod1.u');
 end
     
 model.physics('ht_flibe').prop('RadiationProperty').set('fieldName', 'root.J');
