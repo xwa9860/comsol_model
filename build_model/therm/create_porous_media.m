@@ -63,7 +63,7 @@ model.component('mod1').physics('br').feature('out2').set('p0', '0');
 model.physics('br').create('out3', 'OutletBoundary', dimNb-1);
 model.physics('br').feature('out3').selection.set(out_bound3);
 model.physics('br').feature('out3').set('BoundaryCondition', 'Pressure');
-model.component('mod1').physics('br').feature('out3').set('p0', '0*rhoL*g');
+model.component('mod1').physics('br').feature('out3').set('p0', '-0.1*rhoL*g');
 
 % bottom inlet
 model.physics('br').create('inl1', 'InletBoundary', dimNb-1);

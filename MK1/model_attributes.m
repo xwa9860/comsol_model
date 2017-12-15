@@ -26,7 +26,7 @@ unb = 16; %total number of universes computed in serpent for cross sections
 region=5; % temperature group number
 region_coated=4; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
-OpPower = '0[MW]'; %string, input to comsol global variable 'Pop'
+OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
 
 %% define transient study parameters
 tf = 20; %second, finishing time of the transient
@@ -116,7 +116,7 @@ in_bound1= [63, 64, 71, 72, 203, 207, 246, 256] ;
 % center inlet
 in_bound2 = [107, 108, 118, 123, 130, 139, 147, 151, 158, 167, 225, 238, 290, 294, 305, 312, 326, 330, 335, 341];
 % upper inlet
-in_bound3 = [73, 74, 208, 253] ;
+%in_bound3 = [73, 74, 208, 253] ;
 
 % lower outlet
 out_bound1 = [39, 40, 191, 272]; 
@@ -132,7 +132,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1
 
 %% ---------------------- flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
-inlet_temp_bound = [in_bound1, in_bound2, in_bound3];
+inlet_temp_bound = [in_bound1, in_bound2];
 
 
 %% ----------------------- neutron diffusion module

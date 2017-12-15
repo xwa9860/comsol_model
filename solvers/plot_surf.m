@@ -1,4 +1,4 @@
-function model = create_a_surf_plot(model, dataset, expr, label, unit, descr, title)
+function model = plot_surf(model, dataset, expr, label, unit, descr, title)
     % give the plot a name in form of 'pg' + an incremental number,
     % this number is made global, so it's alway incremented whenever
     % this function is called.
@@ -10,12 +10,13 @@ function model = create_a_surf_plot(model, dataset, expr, label, unit, descr, ti
     end
     
     global plotNb
-    
-    if exist('plotNb', 'var')== 1
-        plotNb = plotNb + 2;
+    % https://www.mathworks.com/matlabcentral/answers/99602-how-can-i-use-global-variables-and-matlab-workspaces
+    if ~isempty(plotNb)
+        plotNb = plotNb + 1;
     else
-        plotNb = mphglobal(model, 'plotNb')+5;
+        plotNb = mphglobal(model, 'plotNb')+1;
     end
+    
     model.param.set('plotNb', plotNb);
     name = ['pg', num2str(plotNb)];
     
@@ -34,12 +35,13 @@ function model = create_a_surf_plot(model, dataset, expr, label, unit, descr, ti
     if nargin > 5
          surf.set('descr', descr);
     end
-    
+   
     if nargin > 6
         surf.set('titletype', 'manual');
         surf.set('title', title);
     end
     
     surf.set('resolution', 'normal');
-    
+
+    model = export_image(model, name, label, name, label, 2);
 end

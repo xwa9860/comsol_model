@@ -1,6 +1,13 @@
-function model = create_streamline_plot(model)
+function model = plot_streamline(model)
 
-plotNb = mphglobal(model, 'plotNb')+1;
+global plotNb
+% https://www.mathworks.com/matlabcentral/answers/99602-how-can-i-use-global-variables-and-matlab-workspaces
+if ~isempty(plotNb)
+    plotNb = plotNb + 1;
+else
+    plotNb = mphglobal(model, 'plotNb')+1;
+end
+    
 model.param.set('plotNb', plotNb);
 
 name = ['pg', num2str(plotNb)];    
@@ -31,6 +38,5 @@ con.set('coloring', 'uniform');
 con.set('color', 'black');
 con.set('resolution', 'normal');
 
- 
-% 
-% % 
+export_image(model, name, 'Flowfield', name, 'steamlines', 2)
+end

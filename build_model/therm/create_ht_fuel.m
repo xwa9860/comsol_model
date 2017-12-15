@@ -29,8 +29,6 @@ model.physics('ht_fuel').feature('solid1').set('Cp_mat', 'userdef');
 model.physics('ht_fuel').feature('solid1').set('Cp', 'cp_fuel');
 model.physics('ht_fuel').feature('solid1').label('Heat Transfer in Solids(smeared fuel pebbles)');
 
-
-
 model.physics('ht_fuel').feature('hs1').set('P0', '1E7');
 model.physics('ht_fuel').feature('hs1').set('Q0', 'Pdensity*Pop/Pint');
 model.physics('ht_fuel').feature('hs1').label('Nuclear heat generation');

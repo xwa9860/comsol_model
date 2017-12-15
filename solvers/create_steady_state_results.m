@@ -4,31 +4,31 @@ model.result.dataset('dset3').set('solution', 'sol15');
 % dset3: scaling study results
 %% plot
 temp_unit = 'degC'; % using celsius to plot temperature
-model = create_a_surf_plot(model, 'dset2', 'T_fuel', 'T_fuel(steady state)', temp_unit);
+model = plot_surf(model, 'dset2', 'T_fuel', 'T_fuel(steady state)', temp_unit);
 
 
-model = create_a_surf_plot(model, 'dset2', 'T_flibe', 'T_flibe(steady state)', temp_unit);
+model = plot_surf(model, 'dset2', 'T_flibe', 'T_flibe(steady state)', temp_unit);
 
 
-model = create_a_surf_plot(model, 'dset2', 'Pdensity', 'Pdensity(steady state)');
+model = plot_surf(model, 'dset2', 'Pdensity', 'Pdensity(steady state)');
 
 
 %fast flux surface plot
-model = create_a_surf_plot(model, 'dset3', 'FluxN1+FluxN2+FluxN3+FluxN4', 'fast flux(steady state)');
+model = plot_surf(model, 'dset3', 'FluxN1+FluxN2+FluxN3+FluxN4', 'fast flux(steady state)');
 
 
 % thermal flux surface plot
-model = create_a_surf_plot(model, 'dset3', 'FluxN5+FluxN6+FluxN7+FluxN8', 'thermal flux(steady state)');
+model = plot_surf(model, 'dset3', 'FluxN5+FluxN6+FluxN7+FluxN8', 'thermal flux(steady state)');
 
 
 % Tp11-44 plot
 for i =1:pebbles_region-1
     for j = 1:(region_fuel_kernel+region_coated)
-        model = create_a_surf_plot(model, 'dset2', ['Tp',num2str(i),num2str(j)], ['Tp',num2str(i),num2str(j),'(steady state)'], temp_unit);
+        model = plot_surf(model, 'dset2', ['Tp',num2str(i),num2str(j)], ['Tp',num2str(i),num2str(j),'(steady state)'], temp_unit);
     end
 end
 %Tp44
-model = create_a_surf_plot(model, 'dset2', 'Tp44', 'Tp44(steady state)', temp_unit);
+model = plot_surf(model, 'dset2', 'Tp44', 'Tp44(steady state)', temp_unit);
 
 
 %% export power density on a mesh
