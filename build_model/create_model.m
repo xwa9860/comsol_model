@@ -1,4 +1,4 @@
-
+global isTMSR isMultiScale
 fprintf('creating a model object in the server\n')
 run('create_comsol_model.m');
 

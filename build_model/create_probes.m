@@ -55,6 +55,25 @@ model.probe('dom5').set('table', 'tbl1');
 model.probe('dom5').set('window', 'window3');
 model.probe('dom5').set('unit', 'degC');
 
+% Boundary probe for average outlet temperature
+model.component('mod1').probe.create('bnd1', 'Boundary');
+model.component('mod1').probe('bnd1').label('TL_out');
+model.component('mod1').probe('bnd1').set('probename', 'TL_out');
+model.component('mod1').probe('bnd1').set('expr', 'T_flibe');
+model.component('mod1').probe('bnd1').set('unit', 'degC');
+model.component('mod1').probe('bnd1').set('descr', 'Temperature');
+model.component('mod1').probe('bnd1').selection.set([61 62 67 68 202 205 254 260]);
+
+% Boundary probe for average inlet temperature
+model.component('mod1').probe.create('bnd2', 'Boundary');
+model.component('mod1').probe('bnd2').selection.set([63 64 71 72 203 207 246 256]);
+model.component('mod1').probe('bnd2').label('TL_in');
+model.component('mod1').probe('bnd2').set('expr', 'T_flibe');
+model.component('mod1').probe('bnd2').set('unit', 'degC');
+model.component('mod1').probe('bnd2').set('descr', 'Temperature');
+model.component('mod1').probe('bnd2').set('table', 'tbl3');
+model.component('mod1').probe('bnd2').set('window', 'window4');
+
 if isTMSR
     %Tp11
     model.probe.create('dom6', 'Domain');

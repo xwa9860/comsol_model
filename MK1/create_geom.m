@@ -123,7 +123,7 @@ model.geom('geom1').feature('wp1').geom.feature('pol6').set('table', {'1.25' '1.
 '0.89' '4.9285';  ...
 '1.25' '4.305'; ...
 '1.25' '4.305-Houtlet'}); %outlet boundary lower limit
-
+global is_rounded_geom
 if is_rounded_geom
 model.component('mod1').geom('geom1').feature('wp1').geom.create('b1', 'BezierPolygon');
 model.component('mod1').geom('geom1').feature('wp1').geom.feature('b1').set('p', [0.342 0.575 0.71 0.35; 4.3 4.58 4.9285 4.305]);

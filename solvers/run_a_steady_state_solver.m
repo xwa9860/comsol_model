@@ -1,4 +1,4 @@
-function model = run_steady_state_solver(model, lambda_eigen, saveToFile)
+function model = run_a_steady_state_solver(model, lambda_eigen, saveToFile)
 %% steady state calculation
     global output_path;
     fprintf('\nRun steady state study\n');
@@ -7,7 +7,7 @@ function model = run_steady_state_solver(model, lambda_eigen, saveToFile)
     % activate the lambda variable
     model.variable('var19').active(true);
     model.param.set('eigenMode', '1', 'binary value for NON eigenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
-   
+    tic;
     model.sol('sol13').runAll;
-
+    toc;
     mphsave(model, [output_path, saveToFile]);

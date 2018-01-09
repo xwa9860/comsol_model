@@ -1,4 +1,10 @@
 close all;
+% keff and packing fraction
+pf = [0.3 0.4 0.5 0.6 0.7 0.74];
+keff = [9.36977E-01 9.59871E-01 9.64715E-01 9.67163E-01 9.55416E-01 9.49354E-01];
+plot(pf, keff, 'o');
+xlabel('packing fraction of pebbles');
+ylabel('Keff');
 
 % mk1
 R = 0.025:0.05:1.755; % center of the bins

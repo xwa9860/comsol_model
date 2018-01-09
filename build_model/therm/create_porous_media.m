@@ -5,6 +5,7 @@
 % model.func('an9').set('expr', '(1-bottomInletFraction)/0.54*0.06*(z^2 - z0)');
 % model.func('an9').set('plotargs', {'z' '0' '1'; 'z0' '0' '1'});
 % model.func('an9').set('funcname', 'vel_in');
+global pm_domains out_bound1 out_bound2 out_bound3 in_bound1 in_bound2;
 
 % create Brinkman module
 model.physics.create('br', 'Brinkman', 'geom1');
