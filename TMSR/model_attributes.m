@@ -1,7 +1,8 @@
 % TMSR 
 %% Define global variables for the model that can be used across the files and functions
-global data_path fuel_data_path; 
+global general_path data_path fuel_data_path; 
 global output_path;
+general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
 output_path = 'results\TMSR\';
 

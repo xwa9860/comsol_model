@@ -1,10 +1,12 @@
 %Compute temperature reactivity feedback and plot the comparison
 %between this model and serpent
+global general_path;
 
 %% fuel
 fuel_temps = [300, 600, 900, 1200, 1500];
 drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps);
-drho_fuel_serpent = read_keffs([data_path, 'temp_coef/fuel/'], universes('fuel'), fuel_temps);
+drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps);
+
 % set fuel temperature back
 model.param.set('T0_fuel', '800[degC]', 'initial temperature');
 fprintf('Run eigenvalue study');
@@ -14,13 +16,19 @@ fprintf('\nThe eigenvalue with initial temperatures is\n');
 fprintf('%.10f \n', lambda_eigen);
 
 %% flibe
-flibe_density = [17, 18, 19, 20, 21]*100;
-flibe_temps = (2413-flibe_density)/0.488;
+global reactor;
+switch reactor
+    case 'TMSR'
+        flibe_density = [17, 18, 19, 20, 21]*100;
+        flibe_temps = round((2413-flibe_density)/0.488);
+    case 'Mk1'
+        flibe_temps = [650 700 1000 1300];
+end
 drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps);
-drho_flibe_serpent = read_keffs([data_path, 'temp_coef/flibe/'], universes('salt'), flibe_temps);
+drho_flibe_serpent = read_keffs([general_path, 'temp_coef/flibe/'],  flibe_temps);
 %compute the drho with raw flibe cross sections taken directly from serpent
 %file, without data fitting
-drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;
+%drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;
 % set flibe temperature back
 model.param.set('T0_flibe', '672[degC]', 'initial temperature');
 
@@ -51,21 +59,13 @@ ylabel('Reactivity');
 xlabel('Temperature(K)');
 hold off;
         
-function drho = read_keffs(folder, row, temps)
-    rownb = row;
-    unb = 4;
-    for caseNb = 1:5
-        file_name = [folder, 'case_', num2str(caseNb),'.m']; 
-        run(file_name);
+function drho= read_keffs(file_path, temps)
+    
+    for i=1:length(temps)
+        keffs(i) = read_keff([file_path, num2str(temps(i)), '/serp_full_core_res.m']);
     end
-
-    for caseNb = 1:5
-        read_1d_array(IMP_KEFF, rownb, 1);
-        keff_serpent_fuel(caseNb) = read_1d_array(IMP_KEFF, rownb, 1);
-        rownb = rownb + unb;
-    end
-
-    drho = calc_delta_reactivity(keff_serpent_fuel, 3, 'SERPENT');
+    
+    drho = calc_delta_reactivity(keffs, 3, 'SERPENT');
     
     [p, some] = polyfit(temps, drho, 1);
     fprintf('\n The feedback coef in serpent is %4.10f\n', p(1));
@@ -75,7 +75,7 @@ end
 
 function drho_comsol = compute_drho(model, temp_var, temps)
     
-    for caseNb = 1:5
+    for caseNb = 1:length(temps)
         model.param.set(temp_var, num2str(temps(caseNb)), 'initial temperature');
         model.sol('sol16').runAll;
         lambda_eigen = mphglobal(model, 'lambda');
@@ -88,7 +88,7 @@ function drho_comsol = compute_drho(model, temp_var, temps)
     drho_comsol = calc_delta_reactivity(eigens, 3, 'COMSOL');
 
     % set back to nominal
-    model.param.set(temp_var, num2str(temps(3)), 'initial temperature');
+    model.param.set(temp_var, num2str(temps(round(length(temps)/2))), 'initial temperature');
 
 
 end

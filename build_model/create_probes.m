@@ -71,7 +71,7 @@ model.component('mod1').probe('bnd2').label('TL_in');
 model.component('mod1').probe('bnd2').set('expr', 'T_flibe');
 model.component('mod1').probe('bnd2').set('unit', 'degC');
 model.component('mod1').probe('bnd2').set('descr', 'Temperature');
-model.component('mod1').probe('bnd2').set('table', 'tbl3');
+%model.component('mod1').probe('bnd2').set('table', 'tbl3');
 model.component('mod1').probe('bnd2').set('window', 'window4');
 
 if isTMSR

@@ -17,8 +17,11 @@ flag: whether 'log_temp_dep' or 'lin_temp_dep'
         
     if length(var_size) == 2 
         if var_size(1) ~= length(temp_vars)+1 || var_size(2)~= gnb
+            fprintf('temp var size:');
             size(temp_vars)
-            error(['coefficient value dimension doesnot match temp variables',...
+            fprintf('coefs size');
+            var_size
+            error(['coefficient value dimension doesnot match temp variables, ',...
             'should be temp_vars_length * gnb or temp_vars_length * gnb *gnb'])
         end
         % if the array is 1D or a constant, name the variables like d1, d2

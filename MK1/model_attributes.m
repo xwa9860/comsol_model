@@ -5,21 +5,35 @@
 
 % This file defines model attributes
 %--------------------------------------------------
+global reactor;
+reactor = 'Mk1';
 
 %% Define global variables for the model that can be used across the files and functions
-global data_path fuel_data_path rod_data_path; 
+global general_path data_path fuel_data_path rod_data_path; 
 global dimNb dnb gnb unb seg_nb;
 global domains gr_comps;
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
 global output_path
+global fuel_comp
 
-data_path = 'MK1\XS_data_fresh\';
-fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-rod_data_path = 'MK1\XS_rod\';
-output_path = 'results\Mk1\fresh_RI\';
+fuel_comp = 'fresh';
+general_path = 'MK1\';
 
+switch fuel_comp
+    case 'fresh'
+        data_path = 'MK1\XS_data_fresh\';
+        fuel_data_path = 'MK1\XS_data_fresh\fuel\';
+        rod_data_path = 'MK1\XS_data_rod_fresh\';
+        output_path = 'results\Mk1\fresh_RI\';
+    case 'eq'
+        data_path = 'MK1\XS_data\';
+        fuel_data_path = 'MK1\XS_data\fuel\';
+        rod_data_path = 'MK1\XS_data_rod\';
+        output_path = 'results\Mk1\RI\';
+end
+        
 dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
 gnb = 8; % energy group number
@@ -63,7 +77,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 global universes;
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
 
 %% for XS definition
 global temp_indep_comps control_rods;
