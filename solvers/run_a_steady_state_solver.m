@@ -1,7 +1,6 @@
 function model = run_a_steady_state_solver(model, lambda_eigen, saveToFile)
 %% steady state calculation
     global output_path;
-    fprintf('\nRun steady state study\n');
     % set lambda obtained from eigenvalue solver, 
     model.param.set('lambda_critical', lambda_eigen, 'lambda_engeinvalue to get to criticality');
     % activate the lambda variable

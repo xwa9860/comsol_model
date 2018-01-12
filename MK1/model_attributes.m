@@ -25,7 +25,7 @@ switch fuel_comp
     case 'fresh'
         data_path = 'MK1\XS_data_fresh\';
         fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-        rod_data_path = 'MK1\XS_data_rod_fresh\';
+        rod_data_path = 'MK1\XS_data_fresh_rod\';
         output_path = 'results\Mk1\fresh_RI\';
     case 'eq'
         data_path = 'MK1\XS_data\';
@@ -77,7 +77,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 global universes;
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
 
 %% for XS definition
 global temp_indep_comps control_rods;

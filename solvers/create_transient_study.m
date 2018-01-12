@@ -43,7 +43,7 @@ function model = create_transient_study(model, transient_type)
         model.variable('var24').set('c_min', '461540[J/K]', 'min(mCp_air, mCp_flibe)');
         model.variable('var24').set('T_air_in', '418.6[C]', 'cold air inlet temperature');
         model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet_OC');
-        model.component('mod1').variable('var24').label('T_inlet_OC');
+        model.variable('var24').label('T_inlet_OC');
         
      case 'over_cooling'
         % define Overcooling transient parameters
@@ -137,38 +137,38 @@ function model = create_transient_study(model, transient_type)
     model.study('std4').feature('time').set('solnum', 'auto');
 
 
-    model.sol('sol4').feature('v1').set('notsolnum', 'auto');
-    model.sol('sol4').feature('v1').set('notsolmethod', 'sol');
-    model.sol('sol4').feature('v1').set('initsol', 'sol15');
-    model.sol('sol4').feature('v1').set('notsol', 'sol15');
-    model.sol('sol4').feature('v1').set('initmethod', 'sol');
-    model.sol('sol4').feature('v1').set('solnum', 'auto');
- 
-    model.sol('sol4').feature('t1').set('estrat', 'exclude');
-    model.sol('sol4').feature('t1').set('stabcntrl', true);
-    model.sol('sol4').feature('t1').set('tout', 'tsteps');
-    model.sol('sol4').feature('t1').set('keeplog', true);
-    model.sol('sol4').feature('t1').set('tlist', ...
-        ['range(0,', num2str(dt), ',', num2str(tf), ')']);
-    model.sol('sol4').feature('t1').set('bwinitstepfrac', '0.1');
-    model.sol('sol4').feature('t1').set('maxorder', '1');
-    %model.sol('sol4').feature('t1').set('maxstepbdf', '0.1');
-    model.sol('sol4').feature('t1').set('probefreq', 'tout');
-    model.sol('sol4').feature('t1').set('maxstepbdfactive', true);
-    model.sol('sol4').feature('t1').set('atolglobal', '2');
-    model.sol('sol4').feature('t1').set('eventtol', '2');
-    model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
-    model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
-    model.sol('sol4').feature('t1').set('plot', 'on');
-    model.sol('sol4').feature('t1').feature('fc1').set('damp', '0.9');
-    model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
-    model.sol('sol4').feature('t1').feature('fc1').set('ntermconst', 'itertol');
-    model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'onevery');
-    model.sol('sol4').feature('t1').feature('i1').set('maxlinit', '100');
-    model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('relax', '0.8');
-    model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridization', 'multi');
-    model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridvar', {'mod1_FluxN7' 'mod1_FluxN8' 'mod1_FluxN5' 'mod1_FluxN6' 'mod1_FluxN3' 'mod1_FluxN4' 'mod1_FluxN1' 'mod1_FluxN2'});
-    % save the timesteps that is specified in the list
-    model.sol('sol4').feature('t1').set('tout', 'tlist');
-    model.sol('sol4').feature('t1').set('reacf', 'off');
+%     model.sol('sol4').feature('v1').set('notsolnum', 'auto');
+%     model.sol('sol4').feature('v1').set('notsolmethod', 'sol');
+%     model.sol('sol4').feature('v1').set('initsol', 'sol15');
+%     model.sol('sol4').feature('v1').set('notsol', 'sol15');
+%     model.sol('sol4').feature('v1').set('initmethod', 'sol');
+%     model.sol('sol4').feature('v1').set('solnum', 'auto');
+%  
+%     model.sol('sol4').feature('t1').set('estrat', 'exclude');
+%     model.sol('sol4').feature('t1').set('stabcntrl', true);
+%     model.sol('sol4').feature('t1').set('tout', 'tsteps');
+%     model.sol('sol4').feature('t1').set('keeplog', true);
+%     model.sol('sol4').feature('t1').set('tlist', ...
+%         ['range(0,', num2str(dt), ',', num2str(tf), ')']);
+%     model.sol('sol4').feature('t1').set('bwinitstepfrac', '0.1');
+%     model.sol('sol4').feature('t1').set('maxorder', '1');
+%     %model.sol('sol4').feature('t1').set('maxstepbdf', '0.1');
+%     model.sol('sol4').feature('t1').set('probefreq', 'tout');
+%     model.sol('sol4').feature('t1').set('maxstepbdfactive', true);
+%     model.sol('sol4').feature('t1').set('atolglobal', '2');
+%     model.sol('sol4').feature('t1').set('eventtol', '2');
+%     model.sol('sol4').feature('t1').set('initialstepbdfactive', true);
+%     model.sol('sol4').feature('t1').set('tstepsbdf', 'strict');
+%     model.sol('sol4').feature('t1').set('plot', 'on');
+%     model.sol('sol4').feature('t1').feature('fc1').set('damp', '0.9');
+%     model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
+%     model.sol('sol4').feature('t1').feature('fc1').set('ntermconst', 'itertol');
+%     model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'onevery');
+%     model.sol('sol4').feature('t1').feature('i1').set('maxlinit', '100');
+%     model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('relax', '0.8');
+%     model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridization', 'multi');
+%     model.sol('sol4').feature('t1').feature('i1').feature('ilDef').set('hybridvar', {'mod1_FluxN7' 'mod1_FluxN8' 'mod1_FluxN5' 'mod1_FluxN6' 'mod1_FluxN3' 'mod1_FluxN4' 'mod1_FluxN1' 'mod1_FluxN2'});
+%     % save the timesteps that is specified in the list
+%     model.sol('sol4').feature('t1').set('tout', 'tlist');
+%     model.sol('sol4').feature('t1').set('reacf', 'off');
 end
