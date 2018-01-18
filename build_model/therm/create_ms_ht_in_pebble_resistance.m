@@ -1,9 +1,18 @@
+%% 
+switch reactor
+case 'Mk1' 
+    ...
+        case 'TMSR'
+        ..
+        end
 %% multi-scale treatment to get the temperature profile inside a fuel pebble
 % thermal resistance
 model.physics.create('htpb', 'CoefficientFormPDE', 'geom1');
 model.physics('htpb').identifier('htpb');
 model.physics('htpb').field('dimensionless').field('Tp');
+
 model.physics('htpb').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14'});
+
 model.physics('htpb').selection.set([2]);
 model.physics('htpb').label('Heat diffusion in pebble');
 model.physics('htpb').prop('Units').set('SourceTermQuantity', 'powerdensity');
