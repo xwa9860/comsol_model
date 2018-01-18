@@ -1,4 +1,6 @@
-global reactor
+global reactor;
+global pebbles_region;
+
 %% multi-scale treatment to get the temperature profile inside a fuel pebble
 % thermal resistance
 model.physics.create('ht_fuel', 'CoefficientFormPDE', 'geom1');

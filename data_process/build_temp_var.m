@@ -7,6 +7,7 @@ function temp_var_pb = build_temp_var()
         
         global fuel_comp;
         global reactor;
+        global isMultiScale;
         switch reactor
             case 'Mk1'
                 switch fuel_comp

@@ -30,6 +30,7 @@ model.physics('ht_flibe').feature('ins1').label('Thermal Insulation');
 
 
 if isTMSR
+    global out_flow_bound;
     model.physics('ht_flibe').create('ofl1', 'ConvectiveOutflow', dimNb-1);    
     model.physics('ht_flibe').feature('ofl1').selection.set(out_flow_bound);
     model.physics('ht_flibe').feature('ofl1').label('Outflow');

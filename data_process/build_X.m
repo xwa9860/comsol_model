@@ -1,5 +1,6 @@
 function input = build_X(tot_case_nb)
-global reactor fuel_data_path;
+% build the input matrix for fitting the cross sections
+global reactor fuel_data_path isMultiScale;
 switch reactor
     case 'TMSR'
         if isMultiScale
@@ -44,7 +45,7 @@ switch reactor
         input = [ones(50, 1) log(fuel_temps) raw_flibe_temps'];   
         
 end
-fprintf('input matrix x has size:');
-size(input)
+% fprintf('input matrix x has size:');
+% size(input)
 end
     

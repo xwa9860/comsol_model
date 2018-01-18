@@ -1,3 +1,4 @@
+global dimNb;
 model.geom.create('geom1', dimNb);
    
 if dimNb ==2

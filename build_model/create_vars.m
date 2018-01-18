@@ -132,6 +132,7 @@ end
 
 %% lower flibe region for TMSR
 if isTMSR     
+    global data_path
     model.variable.create('var17');
     model.variable('var17').model('mod1');
     model = process_flibe(model, [data_path, 'flibe\'], 'var17', universes('salt'));

@@ -55,6 +55,8 @@ model.probe('dom5').set('table', 'tbl1');
 model.probe('dom5').set('window', 'window3');
 model.probe('dom5').set('unit', 'degC');
 
+global reactor;
+if strcmp(reactor, 'Mk1')
 % Boundary probe for average outlet temperature
 model.component('mod1').probe.create('bnd1', 'Boundary');
 model.component('mod1').probe('bnd1').label('TL_out');
@@ -73,6 +75,7 @@ model.component('mod1').probe('bnd2').set('unit', 'degC');
 model.component('mod1').probe('bnd2').set('descr', 'Temperature');
 %model.component('mod1').probe('bnd2').set('table', 'tbl3');
 model.component('mod1').probe('bnd2').set('window', 'window4');
+end
 
 if isTMSR
     %Tp11
