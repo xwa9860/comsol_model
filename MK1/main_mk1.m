@@ -5,7 +5,7 @@ fprintf('Define parameters used in matlab\n');
 run('model_attributes.m');
 
 fprintf('Solver sequence\n');
-isControlRodRemoval = true;
+isControlRodRemoval = false;
 isLoadScalingFromFile = false;
 
 if isLoadScalingFromFile
