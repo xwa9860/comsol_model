@@ -103,7 +103,8 @@ function model = search_control_rod_positions(model)
         % rods insertion, need to increase the rod_height
         % The proportional controller 30 is chosen based on control rods
         % worth in this height region. 
-        rod_height = rod_height + 30 * (lambda_eigen - target_eigen);
+        rod_height = max(rod_height + 30 * (lambda_eigen - target_eigen), 0);
+        fprintf('searching new rod height %f', rod_height);
     end
 
     %% start a new iteration, this time iterate between steady state and eigenvalue 

@@ -25,7 +25,7 @@ switch fuel_comp
     case 'fresh'
         data_path = 'MK1\XS_data_fresh\';
         fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-        rod_data_path = 'MK1\XS_data_fresh_rod\';
+        rod_data_path = 'MK1\XS_data_rod_fresh\';
         output_path = 'results\Mk1\fresh_RI\';
     case 'eq'
         data_path = 'MK1\XS_data\';

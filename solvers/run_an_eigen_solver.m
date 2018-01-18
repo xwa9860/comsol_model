@@ -1,18 +1,29 @@
 function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitialRun)
     tic
-    global dimNb;
+    global dimNb reactor;
     % set to eigenvalue mode
     model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
     % desable lambda
     model.variable('var19').active(false);
     
+    % setting the neighborhood of the eigenvalue and the number of
+    % eigenvalues wanted
+    model.study('std2').label('Eigenvalue study');
+    model.study('std2').feature('eigv').set('neigs', 1);
+    model.study('std2').feature('eigv').set('eigunit', '');
+    switch reactor
+        case 'TMSR'
+            model.study('std2').feature('eigv').set('shift', '1');
+        case 'Mk1'
+            model.study('std2').feature('eigv').set('shift', '0.8');
+    end
+    
+    model.study('std2').feature('eigv').set('shiftactive', true);
+        
+        
     if isInitialRun
         % taking initial values from initial values
-        model.study('std2').label('Eigenvalue study');
-        model.study('std2').feature('eigv').set('neigs', 1);
-        % model.study('std2').feature('eigv').set('eigunit', '');
-        model.study('std2').feature('eigv').set('shift', '1');
-        model.study('std2').feature('eigv').set('shiftactive', true);
+
         model.study('std2').feature('eigv').set('useinitsol', true);
         model.study('std2').feature('eigv').set('neigsactive', false);
     else
@@ -23,7 +34,6 @@ function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitial
         model.study('std2').feature('eigv').set('usesol', 'on');
         model.study('std2').feature('eigv').set('eigwhich', 'sr');
         model.study('std2').feature('eigv').set('notstudy', 'std5');
-        model.study('std2').feature('eigv').set('shift', '1');
         model.study('std2').feature('eigv').set('useinitsol', 'on');        
     end
 

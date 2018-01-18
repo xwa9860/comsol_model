@@ -17,7 +17,6 @@ return:
     if nargin == 3
         isCR = false;
     end
-
     
     for i=1:value_nb
         k=i*2-1;
