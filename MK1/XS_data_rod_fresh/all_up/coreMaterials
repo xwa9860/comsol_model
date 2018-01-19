@@ -1,0 +1,121 @@
+
+mat Flibe924 -1.963 tmp 923 rgb 0 181 238
+ 3006.09c 2.45846e-05
+3007.09c 1.99998e+00
+4009.09c 1.00000e+00
+9019.09c 4.00000e+00
+
+mat Graphite924 -1.74 moder grph_Graphite924 6000 tmp 923 rgb 139 147 147
+ 6000.09c 1.00000e+00
+therm grph_Graphite924 gre7.20t
+
+mat CG1074 -1.594 moder grph_CG1074 6000 tmp 1073 rgb 255 75 134
+ %graphite core in fuel pebble
+6000.09c 1.0
+therm grph_CG1074 gre7.22t
+
+mat Shell1074 -1.75 moder grph_Shell1074 6000 tmp 1073 rgb 255 75 134
+ %Graphite shell(outermost layer of fuel pebble)
+6000.09c 1.0
+therm grph_Shell1074 gre7.22t
+
+mat fuel1pbw0 -10.5 tmp 1073 rgb 255 75 134
+ 92235.09c 19.9
+92238.09c 80.1
+12000.09c 150.0
+8016.09c 100.0
+
+mat Buffer1074 -1.05 moder grph_Buffer1074 6000 tmp 1073
+ %Buffer layer in triso particle
+6000.09c 5.26449E-02
+therm grph_Buffer1074 gre7.22t
+
+mat iPyC1074 -1.9 moder grph_iPyC1074 6000 tmp 1073
+ %inner pyrocarbon layer in triso particle
+6000.09c 9.52621E-02
+therm grph_iPyC1074 gre7.22t
+
+mat SiC1074 -3.18 tmp 1073
+ %silicon carbon layer in triso particle
+6000.09c 4.7724E-02
+14028.09c 4.77240E-02
+
+mat oPyC1074 -1.9 moder grph_oPyC1074 6000 tmp 1073
+ %outer pyrocarbon layer in triso particle
+6000.09c 9.52621E-02
+therm grph_oPyC1074 gre7.22t
+
+mat Matrix1074 -1.704 moder grph_Matrix1074 6000 tmp 1073 rgb 255 75 134
+ %matrix in triso particle
+6000.09c 8.77414E-02
+5010.09c 9.64977E-09
+5011.09c 3.90864E-08
+therm grph_Matrix1074 gre7.22t
+
+mat Flibe874 -1.987 tmp 873 rgb 0 181 238
+ 3006.06c 2.45846e-05
+3007.06c 1.99998e+00
+4009.06c 1.00000e+00
+9019.06c 4.00000e+00
+
+mat fuel1pba10 -10.5 tmp 1073 rgb 255 75 134
+ 92235.09c 19.9
+92238.09c 80.1
+12000.09c 150.0
+8016.09c 100.0
+
+mat fuel1pba30 -10.5 tmp 1073 rgb 255 75 134
+ 92235.09c 19.9
+92238.09c 80.1
+12000.09c 150.0
+8016.09c 100.0
+
+mat fuel1pba20 -10.5 tmp 1073 rgb 255 75 134
+ 92235.09c 19.9
+92238.09c 80.1
+12000.09c 150.0
+8016.09c 100.0
+
+mat fuel1pba40 -10.5 tmp 1073 rgb 255 75 134
+ 92235.09c 19.9
+92238.09c 80.1
+12000.09c 150.0
+8016.09c 100.0
+
+mat BGraphite874 -1.74 moder grph_BGraphite874 6000 tmp 873 rgb 141 155 178
+ 6000.06c 8.77414e-02
+5010.06c 9.64977e-09
+5011.06c 3.90864e-08
+therm grph_BGraphite874 gre7.20t
+
+mat B4C -2.52 tmp 873
+ 6000.06c 1.0
+5010.06c 0.8
+5011.06c 3.2
+mat SiC874 -3.18 tmp 873
+ %silicon carbon layer in triso particle
+6000.06c 4.7724E-02
+14028.06c 4.77240E-02
+
+mat SS316874 -8.03 tmp 873 rgb 0 8 20
+ 6000.06c 6.66667e-03
+28000.06c 2.14286e-01
+24000.06c 3.54167e-01
+42000.06c 2.97619e-02
+26000.06c 1.25663e+00
+14000.06c 3.57143e-02
+25055.06c 3.63636e-02
+15031.06c 1.45161e-03
+16000.06c 9.37500e-04
+
+mat Graphite874 -1.74 moder grph_Graphite874 6000 tmp 873 rgb 139 147 147
+ 6000.06c 1.00000e+00
+therm grph_Graphite874 gre7.20t
+
+mat GraphiteCoolMixT -1.81 moder grph_GraphiteCoolMixT 6000 tmp 873 rgb 13 226 162
+ 6000.06c 8.70000e-02
+9019.06c 3.13277e-02
+3006.06c 1.92545e-07
+3007.06c 1.56626e-02
+4009.06c 7.83132e-03
+therm grph_GraphiteCoolMixT gre7.20t

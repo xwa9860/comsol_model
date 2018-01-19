@@ -1,3 +1,4 @@
+global isSp3 dimNb dirichelet_b;
 % add delayed neutrons 
 model.physics.create('neutrondiffusion', 'CoefficientFormPDE', 'geom1');
 model.physics('neutrondiffusion').identifier('neutrondiffusion');

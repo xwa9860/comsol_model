@@ -18,7 +18,7 @@ function model = create_eigenvalue_solver(model, isTMSR)
 
     model.sol('sol16').attach('std2');
     model.sol('sol16').feature('e1').set('neigs', 1);
-    model.sol('sol16').feature('e1').set('shift', '1');
+    model.sol('sol16').feature('e1').set('shift', '0.8');
     model.sol('sol16').feature('e1').set('maxeigit', 100);
     model.sol('sol16').feature('e1').set('krylovdim', 10);
     model.sol('sol16').feature('e1').set('keeplog', true);

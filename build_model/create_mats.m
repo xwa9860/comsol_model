@@ -1,3 +1,4 @@
+global main_pm_domains domains gr_comps;
 %% liquid in porous medium regions
 model.material.create('mat1', 'Common', 'mod1');
 model.material('mat1').selection.set(main_pm_domains);

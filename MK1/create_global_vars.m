@@ -34,5 +34,5 @@ model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary conditio
 % model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
 
 %% power
-model.param.set('Pop', OpPower);
+model.param.set('Pop', 'Pnominal');
 model.param.set('Pnominal', '234*10^6[W]', 'Total nominal power');

@@ -44,8 +44,8 @@ model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
 model.param.set('porosity', '0.4', 'portion of coolant in the fuel region');
 
 
-%model.param.set('Pnominal', '10*10^6[W]', 'Total nominal power');
-model.param.set('Pop', OpPower, 'operation power');
+model.param.set('Pnominal', '10*10^6[W]', 'Total nominal power');
+model.param.set('Pop', 'Pnominal', 'operation power');
 model.param.set('h_conv', '6000[W/m^2/K]', 'placeholder');
 
 

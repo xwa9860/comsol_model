@@ -1,0 +1,35 @@
+
+%---FuelA1
+%---act
+surf 616 cylz 0.000000 0.000000 35.000000 180.500000 430.500000
+surf 617 cylz 0.000000 0.000000 46.100000 180.500000 430.500000
+surf 619 pz 180.500000
+surf 618 pz 430.500000
+cell 195 280 fill 216  616 -617 619 -618 
+%%---FCC unit cell lattice
+surf 699 cube 0. 0. 0. 4.550828
+cell 226  283 fill 215 -699
+lat 216 6 0. 0. 4.550828 283
+
+%%---Pebble unit cell with position from input file
+pbed 215 214 "fpb_pos2_60"
+%%---Coolant in the unit cell
+
+%--FuelFCCCoolant
+surf 700 inf
+cell 227 214 Flibe924 -700
+%%---Pebbles in the unit cell(pbed)
+%%---Fuel pebble
+cell 228 213 CG1074 -696
+cell 229 213 fill 212 696 -697
+%---Triso particle 
+particle 211
+fuel1pba10 0.0200
+Buffer1074 0.0300
+iPyC1074 0.0335
+SiC1074 0.0370
+oPyC1074 0.0405
+Matrix1074
+%%---Triso  lattice
+lat 212 6 0. 0. 0.08860629 211
+cell 230 213 Shell1074 697

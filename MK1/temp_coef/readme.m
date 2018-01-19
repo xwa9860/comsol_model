@@ -1,0 +1,1 @@
+no control rod inserted in the model

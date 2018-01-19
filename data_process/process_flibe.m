@@ -15,7 +15,7 @@ flibe_density = [17, 18, 19, 20, 21]*100;
 flibe_temp = (2279.92-flibe_density)/0.488+273.15;
 flibe_temp = horzcat(ones(5,1), flibe_temp');
 
-fixed_data = read_fixed({[data_path, 'case_1.m']}, u_flibe, isCR, '');
+fixed_data = read_fixed({[data_path, '19/tmsr_sf1_res.m']}, u_flibe, isCR, '');
 model = set_a_XS_map(model, comsol_var_name, fixed_data, isCR);
 
 flibe_data = read_dep(data_path, u_flibe, tot_case_nb, isCR, '');

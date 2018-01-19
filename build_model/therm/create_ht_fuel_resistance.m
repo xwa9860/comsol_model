@@ -1,12 +1,29 @@
+global reactor;
+global pebbles_region;
+
 %% multi-scale treatment to get the temperature profile inside a fuel pebble
 % thermal resistance
 model.physics.create('ht_fuel', 'CoefficientFormPDE', 'geom1');
 model.physics('ht_fuel').identifier('ht_fuel');
 model.physics('ht_fuel').field('dimensionless').field('Tp');
-model.physics('ht_fuel').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14' ...
-    'Tp21' 'Tp22' 'Tp23' 'Tp24' ...
-    'Tp31' 'Tp32' 'Tp33' 'Tp34'...
-    'Tp44'});
+
+%{ 
+naming conventions:
+'Tp1': graphite kernel
+'Tp21', ..., 'TP24':fuel
+'TP5': graphite shell
+%}
+
+switch reactor
+    case 'TMSR'
+    model.physics('ht_fuel').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14' ...
+        'Tp21' 'Tp22' 'Tp23' 'Tp24' ...
+        'Tp31' 'Tp32' 'Tp33' 'Tp34'...
+        'Tp44'});
+    
+    case 'Mk1'
+        ...
+end
 model.physics('ht_fuel').selection.set([2]);
 model.physics('ht_fuel').label('Heat diffusion in pebble');
 model.physics('ht_fuel').prop('Units').set('SourceTermQuantity', 'powerdensity');

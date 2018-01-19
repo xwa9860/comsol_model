@@ -1,3 +1,5 @@
+global gnb dnb dimNb;
+global isSp3;
 %% Set cross section expressions in COMSOL neutron diffusion equation
 init = model.physics('neutrondiffusion').feature('init1');
 cfeq = model.physics('neutrondiffusion').feature('cfeq1');

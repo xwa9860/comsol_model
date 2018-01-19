@@ -1,4 +1,4 @@
-
+global isTMSR isMultiScale
 fprintf('creating a model object in the server\n')
 run('create_comsol_model.m');
 
@@ -13,7 +13,7 @@ run('create_fcns.m');
 
 fprintf('creating geometry\n')
 run('create_geom.m');
-
+run('create_mesh.m');
 tic
 fprintf('creating variables\n')
 run('create_vars.m');

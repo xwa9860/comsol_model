@@ -1,19 +1,4 @@
-% create functions 
-%define step function for reactivity insertion
-model.func.create('step1', 'Step');
-model.func('step1').label('step_fun');
-model.func('step1').set('funcname', 'step_fun');
-model.func('step1').set('to', 'reactivity_insertion+1');
-model.func('step1').set('smooth', '0');
-model.func('step1').set('from', '1');
-model.func('step1').set('location', '0.1');
 
-%define ramp function for overcooling 
-model.func.create('rm1', 'Ramp');
-model.func('rm1').set('cutoffactive', 'on');
-model.func('rm1').set('slope', 'OCSlope');
-model.func('rm1').set('location', 'OCOnset');
-model.func('rm1').set('cutoff', '-100');
 
 % flibe density function
 model.func.create('an4', 'Analytic');

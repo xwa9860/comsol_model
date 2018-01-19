@@ -5,6 +5,7 @@
 % model.func('an9').set('expr', '(1-bottomInletFraction)/0.54*0.06*(z^2 - z0)');
 % model.func('an9').set('plotargs', {'z' '0' '1'; 'z0' '0' '1'});
 % model.func('an9').set('funcname', 'vel_in');
+global pm_domains out_bound1 out_bound2 out_bound3 in_bound1 in_bound2;
 
 % create Brinkman module
 model.physics.create('br', 'Brinkman', 'geom1');
@@ -27,6 +28,10 @@ model.physics('br').prop('PhysicalModelProperty').set('StokesFlowProp', '0');
 model.physics('br').prop('AdvancedSettingProperty').set('locCFL', '1.3^min(niterCMP-1,9)+if(niterCMP>25,9*1.3^min(niterCMP-25,9),0)+if(niterCMP>50,90*1.3^min(niterCMP-50,9),0)');
 model.physics('br').prop('ConsistentStabilization').set('CrosswindDiffusionOldFormNS', '1');
 
+% include gravity and use reduced pressure
+model.physics('br').prop('PhysicalModelProperty').set('IncludeGravity', true);
+model.physics('br').prop('PhysicalModelProperty').set('UseReducedPressure', true);
+
 model.physics('br').feature('fmp1').create('fd1', 'Forchheimer', dimNb);
 model.physics('br').feature('fmp1').feature('fd1').selection.set(pm_domains);
 model.physics('br').feature('fmp1').feature('fd1').set('betaF', 'bF');
@@ -41,24 +46,25 @@ model.physics('br').feature('fmp1').feature('fd1').label('Forchheimer Drag');
 model.physics('br').create('out1', 'OutletBoundary', dimNb-1);
 model.physics('br').feature('out1').selection.set(out_bound1);
 model.physics('br').feature('out1').set('BoundaryCondition', 'Pressure');
-model.component('mod1').physics('br').feature('out1').set('p0', '0.15*rhoL*g');
+model.component('mod1').physics('br').feature('out1').set('p0', '0');
 
 %middle outlet 
-model.component('mod1').func.create('an7', 'Analytic');
-model.component('mod1').func('an7').label('Outlet pressure');
-model.component('mod1').func('an7').set('expr', '(4.9285-x)*0.15/(4.9285-4.305)');
-model.component('mod1').func('an7').set('plotargs', {'x' '4.305' '4.9285'});
+% model.component('mod1').func.create('an7', 'Analytic');
+% model.component('mod1').func('an7').label('Outlet pressure');
+% model.component('mod1').func('an7').set('expr', '(4.9285-x)*0.15/(4.9285-4.305)');
+% model.component('mod1').func('an7').set('plotargs', {'x' '4.305' '4.9285'});
 
 model.physics('br').create('out2', 'OutletBoundary', dimNb-1);
 model.physics('br').feature('out2').selection.set(out_bound2);
 model.physics('br').feature('out2').set('BoundaryCondition', 'Pressure');
-model.component('mod1').physics('br').feature('out2').set('p0', 'an7(z)*rhoL*g');
+%model.component('mod1').physics('br').feature('out2').set('p0', 'an7(z)*rhoL*g');
+model.component('mod1').physics('br').feature('out2').set('p0', '0');
 
 % upper outlet
 model.physics('br').create('out3', 'OutletBoundary', dimNb-1);
 model.physics('br').feature('out3').selection.set(out_bound3);
 model.physics('br').feature('out3').set('BoundaryCondition', 'Pressure');
-model.component('mod1').physics('br').feature('out3').set('p0', '0*rhoL*g');
+model.component('mod1').physics('br').feature('out3').set('p0', '-0.1*rhoL*g');
 
 % bottom inlet
 model.physics('br').create('inl1', 'InletBoundary', dimNb-1);
@@ -93,13 +99,13 @@ model.component('mod1').physics('br').feature('inl2').set('om0', '20[1/s]');
 % model.physics('br').feature('inl2').set('om0', '20[1/s]');
 
 % upper inlet
-model.physics('br').create('inl3', 'InletBoundary', dimNb-1);
-model.physics('br').feature('inl3').selection.set(in_bound3);
-model.component('mod1').physics('br').feature('inl3').set('BoundaryCondition', 'MassFlow');
-model.component('mod1').physics('br').feature('inl3').set('ComponentWise', 'VelocityFieldComponentWise');
-model.component('mod1').physics('br').feature('inl3').set('U0in', 0.02);
-%model.component('mod1').physics('br').feature('inl3').set('u0', {'x*0.01'; 'y*0.01'; '0.005'});
-model.component('mod1').physics('br').feature('inl3').set('mfr', '10[kg/s]');
+% model.physics('br').create('inl3', 'InletBoundary', dimNb-1);
+% model.physics('br').feature('inl3').selection.set(in_bound3);
+% model.component('mod1').physics('br').feature('inl3').set('BoundaryCondition', 'MassFlow');
+% model.component('mod1').physics('br').feature('inl3').set('ComponentWise', 'VelocityFieldComponentWise');
+% model.component('mod1').physics('br').feature('inl3').set('U0in', 0.02);
+% %model.component('mod1').physics('br').feature('inl3').set('u0', {'x*0.01'; 'y*0.01'; '0.005'});
+% model.component('mod1').physics('br').feature('inl3').set('mfr', '10[kg/s]');
 
 
 % wall 

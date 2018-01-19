@@ -1,7 +1,8 @@
-if isVerbose
-    fprintf('defining geometry and thermal properties variables\n')
-end
-
+global isTMSR dimNb
+global xs_name_unit_map;
+global domains universes fuel_univ fuel_domNb temp_indep_comps;
+global rod_positions control_rods;
+fprintf('defining geometry and thermal properties variables\n')
 
 model.variable.create('var1');
 model.variable('var1').model('mod1');
@@ -36,6 +37,7 @@ model.variable('var3').set('kL', '1.091[W/m/K]', 'salt thermal conductivity, 650
 model.variable('var3').set('betaL', '0.00025[1/K]', 'salt thermal expansion coefficient, constant');
 model.variable('var3').set('Tav', '650[degC]', 'salt reference temp for beta');
 model.variable('var3').set('Pr', 'muL*cpL/kL');
+
 if isTMSR
     model.variable('var3').set('h_conv', '6000');
 else
@@ -60,7 +62,6 @@ model.variable('var4').label('fuel thermal properties');
 
 %% cross section data
 fprintf('defining cross-section variables\n')
-global xs_name_unit_map
 nameSet =   {'scat', 'nsf', 'rem', 'tot', 'diff2', 'beta', 'betas', ...
     'lambdas', 'kappa', 'diff1', 'invV', 'fiss', 'chit', 'chip', 'chid'};
 unitSet = {'[1/cm]', '[1/cm]', '[1/cm]', '[1/cm]', '[cm]', '', '', ...
@@ -131,6 +132,7 @@ end
 
 %% lower flibe region for TMSR
 if isTMSR     
+    global data_path
     model.variable.create('var17');
     model.variable('var17').model('mod1');
     model = process_flibe(model, [data_path, 'flibe\'], 'var17', universes('salt'));
@@ -142,9 +144,8 @@ end
 
 
 %% variables used to compute power density
-if isVerbose
-    fprintf('defining other non-cross-section variables\n')
-end
+fprintf('defining other non-cross-section variables\n')
+
 model.variable.create('var18');
 model.variable('var18').model('mod1');
 model.variable('var18').set('Pdensity', ...

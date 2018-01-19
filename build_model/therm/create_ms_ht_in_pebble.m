@@ -3,6 +3,8 @@ model.physics.create('ht_fuel', 'CoefficientFormPDE', 'geom1');
 model.physics('ht_fuel').identifier('ht_fuel');
 model.physics('ht_fuel').field('dimensionless').field('Tp');
 
+% naming conventions: 
+% 
 % Tp0 Tp10 Tp20 Tp30 are zeros
 % Tp4 = surface temperature
 model.physics('ht_fuel').field('dimensionless').component({'Tp11' 'Tp12' 'Tp13' 'Tp14' 'Tp1'...

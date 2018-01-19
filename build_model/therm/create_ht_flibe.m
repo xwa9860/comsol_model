@@ -1,4 +1,7 @@
+
+global flibe_domains dimNb fuel_domNb inlet_temp_bound
 model.physics.create('ht_flibe', 'HeatTransferInFluids', 'geom1');
+model.physics('ht_flibe').identifier('ht_flibe');
 model.physics('ht_flibe').label('Heat Transfer - Flibe');
 model.physics('ht_flibe').field('temperature').field('T_flibe');
 model.physics('ht_flibe').selection.set(flibe_domains);
@@ -27,6 +30,7 @@ model.physics('ht_flibe').feature('ins1').label('Thermal Insulation');
 
 
 if isTMSR
+    global out_flow_bound;
     model.physics('ht_flibe').create('ofl1', 'ConvectiveOutflow', dimNb-1);    
     model.physics('ht_flibe').feature('ofl1').selection.set(out_flow_bound);
     model.physics('ht_flibe').feature('ofl1').label('Outflow');
@@ -34,7 +38,9 @@ if isTMSR
     model.physics('ht_flibe').feature('fluid1').set('minput_pressure', '0');
     model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0'; '0'; 'v_inlet'});
     %   model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0' 'v_inlet' '0'});
-
+else
+    model.physics('ht_flibe').feature('fluid1').set('minput_pressure_src', 'root.mod1.br.pA');
+    model.physics('ht_flibe').feature('fluid1').set('minput_velocity_src', 'root.mod1.u');
 end
     
 model.physics('ht_flibe').prop('RadiationProperty').set('fieldName', 'root.J');

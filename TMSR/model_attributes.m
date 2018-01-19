@@ -1,11 +1,20 @@
 % TMSR 
+global reactor;
+reactor = 'TMSR';
+
 %% Define global variables for the model that can be used across the files and functions
-global data_path fuel_data_path; 
-global output_path;
+
+global general_path data_path fuel_data_path; 
+global dimNb dnb gnb unb ;
+global isTMSR isVerbose isMultiScale isSp3;
+global is_get_coef_from_file;
+global output_path
+global domains gr_comps universes;
+
+general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
 output_path = 'results\TMSR\';
 
-global dimNb dnb gnb unb;
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
@@ -15,10 +24,9 @@ region_coated=1; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 
 
-global isTMSR isVerbose isMultiScale  isSp3;
-global is_get_coef_from_file;
 isVerbose = true;
 is_get_coef_from_file = false;
+
 %Define input variables for the model 
 isMultiScale= true;
 if isMultiScale
@@ -29,7 +37,7 @@ end
 
 isSp3 = false;
 isTMSR = true;
-rod = false;
+hasRods = false;
 
 
 domainNames = {'fuel', 'salt', 'gr'};
@@ -78,19 +86,4 @@ else
 dirichelet_b = [2 5 7 11 14];
 end
 
-
-
 OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
-
-%% define transient study parameters
-tf = 20; %second, finishing time of the transient
-dt = 0.1; %second, time step to record the results(not the timestep that the solver takes)
-
-%% define reactivity insertion value, 0 means that this simulation is not
-% about reactivity insertion
-rho_ext = 0;% reactivity insertion value 
-
-
-%% define Overcooling transient parameters
-OCOnset = 100; %s, starting time of overcooling, a very large time means the overcooling is not simulated
-OCSlope = -10; %K/s, speed of decrease in inlet coolant temperature
