@@ -5,7 +5,7 @@ fprintf('Define parameters used in matlab\n');
 run('model_attributes.m');
 
 fprintf('Solver sequence\n');
-isControlRodRemoval = false;
+isControlRodRemoval = true;
 isLoadScalingFromFile = false;
 
 if isLoadScalingFromFile
@@ -21,6 +21,7 @@ end
 %% Transient calculation
 fprintf('\nRunning transient...\n');
 model = create_transient_study(model, 'control_rods_removal');
+%model = create_transient_study(model, 'ext_RI');
 %model = create_transient_study(model, 'over_cooling');
 %model.sol('sol4').runAll;
 %run('create_transient_results')

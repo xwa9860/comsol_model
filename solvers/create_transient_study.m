@@ -13,8 +13,7 @@ function model = create_transient_study(model, transient_type)
 
     switch transient_type
      case 'ext_RI'
-        % define reactivity insertion value, 0 means that this simulation is not
-        % about reactivity insertion
+        % define reactivity insertion value
         rho_ext = 0;% reactivity insertion value 
 
         model.param.set('reactivity_insertion', num2str(rho_ext), 'external reactivity insertion');
@@ -30,20 +29,14 @@ function model = create_transient_study(model, transient_type)
         
         model.variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
         
-        model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet_OC');
+
+        
+        
      case 'control_rods_removal'   
         % change control rod positions
         model.param.set('h_CRCC3', 5.7285);
         model.param.set('h_CRCC6', 5.7285);
         
-        model.variable.create('var24');
-        model.variable('var24').set('T_inlet_OC', 'TL_out - Q_real/mL/cpL', 'inlet coolant temperature during overcooling');
-        model.variable('var24').set('Q_real', 'c_min*(TL_out-T_air_in)*eta');
-        model.variable('var24').set('eta', '0.9', 'heat exchanger efficiency');
-        model.variable('var24').set('c_min', '461540[J/K]', 'min(mCp_air, mCp_flibe)');
-        model.variable('var24').set('T_air_in', '418.6[C]', 'cold air inlet temperature');
-        model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet_OC');
-        model.variable('var24').label('T_inlet_OC');
         
      case 'over_cooling'
         % define Overcooling transient parameters

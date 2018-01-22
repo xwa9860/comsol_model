@@ -1,4 +1,4 @@
-global isTMSR dimNb
+global isTMSR dimNb reactor;
 global xs_name_unit_map;
 global domains universes fuel_univ fuel_domNb temp_indep_comps;
 global rod_positions control_rods;
@@ -169,3 +169,15 @@ model.variable('var_T_fuel').model('mod1');
 for i = 1:24
 model.variable('var_T_fuel').set(['T_fuel_', num2str(i)], 'T_fuel');
 end
+
+% if reactor == 'Mk1'
+%  % adding a heat exchanger model to Mk1, not tested
+%     model.variable.create('var24');
+%     model.variable('var24').model('mod1');
+%     model.variable('var24').set('T_inlet_loop', '(TL_out - Q_real/mL/cpL)*str(t-120)', 'inlet coolant temperature that is computed from the core outlet temeprature');
+%     model.variable('var24').set('Q_real', 'c_min*(TL_out-T_air_in)*eta', 'real heat exchanger power');
+%     model.variable('var24').set('eta', '0.9', 'heat exchanger efficiency');
+%     model.variable('var24').set('c_min', '461540[J/K]', 'min(mCp_air, mCp_flibe)');
+%     model.variable('var24').set('T_air_in', '418.6[C]', 'cold air inlet temperature');        
+%     model.variable('var24').label('T_inlet_loop');
+% end

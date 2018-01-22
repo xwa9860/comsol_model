@@ -12,6 +12,7 @@ reactor = 'Mk1';
 global general_path data_path fuel_data_path rod_data_path; 
 global dimNb dnb gnb unb seg_nb;
 global domains gr_comps;
+global universes;
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
@@ -25,13 +26,13 @@ switch fuel_comp
     case 'fresh'
         data_path = 'MK1\XS_data_fresh\';
         fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-        rod_data_path = 'MK1\XS_data_rod\';
+        rod_data_path = 'MK1\XS_data_rod_fresh\';
         output_path = 'results\Mk1\fresh_RI\';
     case 'eq'
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';
         rod_data_path = 'MK1\XS_data_rod\';
-        output_path = 'results\Mk1\RI\';
+        output_path = 'results\Mk1\temp_fb\';
 end
         
 dimNb = 3; % 3D model
@@ -74,7 +75,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
     6, 5, 4, 3, 2, 1, ...
     18, 19, 20, 14, 15, 16, 17, 21, 22];
 
-global universes;
+
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
 is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
