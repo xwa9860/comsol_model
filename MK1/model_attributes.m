@@ -19,7 +19,7 @@ global is_get_coef_from_file;
 global output_path
 global fuel_comp
 
-fuel_comp = 'fresh';
+fuel_comp = 'eq';
 general_path = 'MK1\';
 
 switch fuel_comp
@@ -32,7 +32,7 @@ switch fuel_comp
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';
         rod_data_path = 'MK1\XS_data_rod\';
-        output_path = 'results\Mk1\temp_fb\';
+        output_path = 'results\Mk1\eq_RI\';
 end
         
 dimNb = 3; % 3D model
