@@ -31,6 +31,20 @@ model.param.set('bottomInletFraction', '0.3', 'fraction of mass flow rate going 
 model.param.set('Pci0', '1.3', 'center inlet pressure head (m) (boundary condition)');
 model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary condition)');
 
+% radius of graphite kernal
+model.param.set('r0','0[m]');
+model.param.set('r1', '0.017334031858766[m]');
+model.param.set('r2', '0.021839511618407[m]');
+model.param.set('r3', '0.025000000000000[m]');
+model.param.set('r4', '0.027500000000000[m]');
+
+% radius of fuel kernal
+model.param.set('R0', '0[m]');
+model.param.set('R1', '0.000173340318588[m]');
+model.param.set('R2', '0.000218395116184[m]');
+model.param.set('R3', '0.000250000000000[m]');
+model.param.set('R4', '0.092000000000000[m]');
+
 % model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
 
 %% power

@@ -10,6 +10,7 @@ global isTMSR isVerbose isMultiScale isSp3;
 global is_get_coef_from_file;
 global output_path
 global domains gr_comps universes;
+global pebbles_region region_coated region_fuel_kernel
 
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';

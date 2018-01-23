@@ -17,6 +17,7 @@ global rod_positions seg_heights;
 global is_get_coef_from_file;
 global output_path
 global fuel_comp
+global pebbles_region region_coated region_fuel_kernel
 
 fuel_comp = 'fresh';
 general_path = 'MK1\';
@@ -38,8 +39,8 @@ dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
 gnb = 8; % energy group number
 unb = 16; %total number of universes computed in serpent for cross sections
-region=5; % temperature group number
-region_coated=4; %temperature of TRISTO coat
+pebbles_region=3; % temperature group number
+region_coated=1; %temperature of TRISTO coat
 region_fuel_kernel=3; %termperature of fuel kernel
 OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
 
