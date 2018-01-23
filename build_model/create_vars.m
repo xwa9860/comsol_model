@@ -53,11 +53,8 @@ model.variable('var4').set('rho_fuel', '1810[kg/m^3]', 'sinap ppt(Overview of TM
 model.variable('var4').set('k_fuel', '15[W/m/K]');
 model.variable('var4').set('cp_fuel', '1744[J/kg/K]', 'graphite fuel heat capacity');
 model.variable('var4').selection.geom('geom1', dimNb);
-if isTMSR
-model.variable('var4').selection.set(domains('fuel'));
-else
-model.variable('var4').selection.set(cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})));
-end
+model.variable('var4').selection.set(fuel_domNb);
+
 model.variable('var4').label('fuel thermal properties');
 
 %% cross section data

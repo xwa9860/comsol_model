@@ -1,3 +1,4 @@
+global fuel_domNb;
 % create table to store probe values
 model.result.table.create('tbl1', 'Table');
 model.result.table('tbl1').set('tablebuffersize', '100000');
@@ -5,6 +6,7 @@ model.result.table('tbl1').set('tablebuffersize', '100000');
 % domain probe for integrated total core power
 model.probe.create('dom1', 'Domain');
 model.probe('dom1').model('mod1');
+model.probe('dom1').selection.set(fuel_domNb);
 model.probe('dom1').label('Probe Pint');
 model.probe('dom1').set('table', 'tbl1');
 model.probe('dom1').set('descr', 'integrated total core power');
@@ -48,6 +50,7 @@ model.probe('dom4').set('unit', 'degC');
 
 % domain probe for maximum flibe temperature(only in the upper region)
 model.probe.duplicate('dom5', 'dom4');
+model.probe('dom5').selection.set(fuel_domNb);
 model.probe('dom5').set('expr', 'T_flibe');
 model.probe('dom5').label('max flibe temp');
 model.probe('dom5').set('probename', 'T_flibe_max');

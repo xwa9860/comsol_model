@@ -16,8 +16,9 @@ global universes;
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
-global output_path
-global fuel_comp
+global output_path;
+global fuel_comp;
+global fuel_domNb fuel_univ;
 
 fuel_comp = 'eq';
 general_path = 'MK1\';
@@ -101,7 +102,6 @@ seg_heights = [572.85, 430.85, 272, 112.5, 41.6]*0.01;
 
 % for setting fuel XS and heat generation domains in fuel heat transfer
 % module
-global fuel_domNb fuel_univ
 fuel_domNb = cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})); 
 
