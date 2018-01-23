@@ -31,8 +31,8 @@ set pop 10000 2000 500
 set bc 1
 set ures 1
 set power 2.36E8
-% OR, ORCC, CR, CRCC1, CRCC2, CRCC3, CRCC4, Barrel, Dcmer, Vessel, Blanket, FuelW, FuelA1, FuelA2, FuelA3, FuelA4
-set gcu 196 197 1 2 48 94 140 272 273 274 265 209 216 223 230 237
+% CRCC1, CRCC2, CRCC3, CRCC4
+set gcu  2 48 94 140
 set nfg 8
 5.8e-8
 1.9e-7

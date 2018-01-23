@@ -1,4 +1,5 @@
 global main_pm_domains domains gr_comps;
+
 %% liquid in porous medium regions
 model.material.create('mat1', 'Common', 'mod1');
 model.material('mat1').selection.set(main_pm_domains);
@@ -28,7 +29,7 @@ end
 
 %% graphite
 model.material.create('mat2', 'Common', 'mod1');
-valueSet = values(domains,gr_comps);
+valueSet = values(domains, gr_comps);
 model.material('mat2').selection.set(cell2mat(valueSet));
 model.material('mat2').label('graphite based on built in steel');
 model.material('mat2').propertyGroup('def').set('porosity', '0.2');

@@ -61,7 +61,7 @@ function model = start_from_begining(output_path)
     end
 
     % run the following line only if temperature feedback coefficients are needed
-    % run('calc_temperature_feedback_coefs.m'); 
+     %run('calc_temperature_feedback_coefs.m'); 
     
     %% 1st steady state solution with eigenvalue power and flux distribution
     % - create steady state solver
@@ -70,7 +70,12 @@ function model = start_from_begining(output_path)
     fprintf('\nRun steady state study\n');
     model = create_steady_state_solver(model);
     model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
-    run('create_3d_steady_state_results');
+    switch reactor
+        case 'Mk1'
+            run('create_3d_steady_state_results');
+        case 'TMSR'
+            run('create_steady_state_results');
+    end
 
     % Iterate betwen eigenvalue and steady state computation until the result converges
     model = iterate_ss_eigen(model, 'ss.mph', 'eigen.mph'); 
