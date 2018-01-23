@@ -1,5 +1,5 @@
 global reactor;
-global pebbles_region;
+global pebbles_region region_coated region_fuel_kernel;
 
 %% multi-scale treatment to get the temperature profile inside a fuel pebble
 % thermal resistance

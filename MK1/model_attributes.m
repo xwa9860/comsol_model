@@ -12,26 +12,28 @@ reactor = 'Mk1';
 global general_path data_path fuel_data_path rod_data_path; 
 global dimNb dnb gnb unb seg_nb;
 global domains gr_comps;
+global universes;
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
-global output_path
-global fuel_comp
+global output_path;
+global fuel_comp;
+global fuel_domNb fuel_univ;
 
-fuel_comp = 'fresh';
+fuel_comp = 'eq';
 general_path = 'MK1\';
 
 switch fuel_comp
     case 'fresh'
         data_path = 'MK1\XS_data_fresh\';
         fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-        rod_data_path = 'MK1\XS_data_rod\';
+        rod_data_path = 'MK1\XS_data_rod_fresh\';
         output_path = 'results\Mk1\fresh_RI\';
     case 'eq'
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';
         rod_data_path = 'MK1\XS_data_rod\';
-        output_path = 'results\Mk1\RI\';
+        output_path = 'results\Mk1\eq_RI\';
 end
         
 dimNb = 3; % 3D model
@@ -74,7 +76,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
     6, 5, 4, 3, 2, 1, ...
     18, 19, 20, 14, 15, 16, 17, 21, 22];
 
-global universes;
+
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
 is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
@@ -100,7 +102,6 @@ seg_heights = [572.85, 430.85, 272, 112.5, 41.6]*0.01;
 
 % for setting fuel XS and heat generation domains in fuel heat transfer
 % module
-global fuel_domNb fuel_univ
 fuel_domNb = cell2mat(values(domains, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'})); 
 

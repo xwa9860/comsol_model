@@ -5,11 +5,19 @@ reactor = 'TMSR';
 %% Define global variables for the model that can be used across the files and functions
 
 global general_path data_path fuel_data_path; 
-global dimNb dnb gnb unb ;
-global isTMSR isVerbose isMultiScale isSp3;
+global dimNb dnb gnb unb OpPower;
+global isTMSR isVerbose isMultiScale isSp3 hasRods;
 global is_get_coef_from_file;
 global output_path
-global domains gr_comps universes;
+% domain numbers and universe numbers
+global domains gr_comps fuel_domNb universes temp_indep_comps fuel_univ;
+global flibe_domains;
+global pm_domains main_pm_domains;
+% pebble design
+global pebbles_region region_coated region_fuel_kernel;
+
+% boundaries
+global dirichelet_b inlet_temp_bound out_flow_bound;
 
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';

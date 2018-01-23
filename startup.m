@@ -11,11 +11,11 @@ addpath([mydir, 'data_process'])
 addpath([mydir, 'utilities'])
 addpath([mydir, 'solvers'])
 addpath([mydir, 'tests'])
-%addpath([mydir, 'TMSR'])
-%addpath([mydir, 'TMSR\XS_data'])
+addpath([mydir, 'TMSR'])
+addpath([mydir, 'TMSR\XS_data'])
 addpath([mydir, 'results'])
 
-addpath([mydir, 'MK1'])
+%addpath([mydir, 'MK1'])
 %addpath([mydir, 'MK1\XS_data'])
 clear mydir mname
 

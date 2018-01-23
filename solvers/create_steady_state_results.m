@@ -1,7 +1,6 @@
 model.result.dataset('dset2').set('solution', 'sol13');
 % dset2 is the steady state results
-model.result.dataset('dset3').set('solution', 'sol15');
-% dset3: scaling study results
+
 %% plot
 temp_unit = 'degC'; % using celsius to plot temperature
 model = plot_surf(model, 'dset2', 'T_fuel', 'T_fuel(steady state)', temp_unit);
@@ -13,12 +12,6 @@ model = plot_surf(model, 'dset2', 'T_flibe', 'T_flibe(steady state)', temp_unit)
 model = plot_surf(model, 'dset2', 'Pdensity', 'Pdensity(steady state)');
 
 
-%fast flux surface plot
-model = plot_surf(model, 'dset3', 'FluxN1+FluxN2+FluxN3+FluxN4', 'fast flux(steady state)');
-
-
-% thermal flux surface plot
-model = plot_surf(model, 'dset3', 'FluxN5+FluxN6+FluxN7+FluxN8', 'thermal flux(steady state)');
 
 
 % Tp11-44 plot
