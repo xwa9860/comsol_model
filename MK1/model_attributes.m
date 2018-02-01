@@ -87,7 +87,7 @@ temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
 control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
 
-rod_positions = ones(9, 1) * 5.7285; % current control rods position(height in meter)
+rod_positions = ones(9, 1) * 430.85; % current control rods position(height in meter)
 % heights where the 4 axial segments of control rods are seperated, from
 % top to bottom
 seg_nb = 4;
@@ -109,6 +109,7 @@ fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'f
 global porous_media
 porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'};
 
+flibe_domains = fuel_domNb; % used for flibe temperature probe
 
 %% --------------------- porous media module
 %boundary numbers used in comsol
