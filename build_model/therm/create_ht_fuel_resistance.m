@@ -31,8 +31,10 @@ model.physics('ht_fuel').prop('Units').set('DependentVariableQuantity', 'tempera
 cfeq = model.physics('ht_fuel').feature('cfeq1');
 init = model.physics('ht_fuel').feature('init1');
 
-%% set k values
-[k_coat, cp_coat, rho_coat] = calc_thermal_properties();
+%% get thermal_properties
+[k_coat, cp_coat, rho_coat] = calc_triso_thermal_properties();
+[k_fuel, cp_fuel, rho_fuel] = calc_pb_thermal_properties();
+
 
 %% set matrix c
 k=0;
