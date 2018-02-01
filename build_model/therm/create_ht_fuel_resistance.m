@@ -32,18 +32,7 @@ cfeq = model.physics('ht_fuel').feature('cfeq1');
 init = model.physics('ht_fuel').feature('init1');
 
 %% set k values
-k_fuel=15;k_Opyc=4;k_Sic=30;k_IPyC=4;k_buffer=0.5;k_wo2=3.5;
-% k_coat=[k_wo2,k_buffer,k_IPyC, k_Sic, k_Opyc];
-k_coat=[repmat(k_wo2,1,3),k_IPyC];
-
-cp_fuel=1744;cp_Opyc=2000;cp_Sic=1300;cp_IPyC=2000;cp_buffer=2000;cp_wo2=400;
-% cp_coat=[cp_wo2,cp_buffer,cp_IPyC, cp_Sic, cp_Opyc];
-cp_coat=[repmat(cp_wo2,1,3),cp_IPyC];
-
-
-rho_fuel=1810;rho_Opyc=1900;rho_Sic=3200;rho_IPyC=1900;rho_buffer=1000;rho_wo2=10500;
-% rho_coat=[rho_wo2,rho_buffer,rho_IPyC, rho_Sic, rho_Opyc];
-rho_coat=[repmat(rho_wo2,1,3),rho_IPyC];
+[k_coat, cp_coat, rho_coat] = calc_thermal_properties();
 
 %% set matrix c
 k=0;
