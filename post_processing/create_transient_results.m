@@ -1,5 +1,5 @@
 function model = create_transient_results(model)
-global output_path;
+
 
 model.result.dataset('dset4').set('solution', 'sol4');
 %dset4: transient study results
@@ -12,9 +12,9 @@ model.result.dataset('rev1').set('revangle', 225);
 
 [model, flibe_3d_nb] = plot_surf(model, 'rev1', 'T_flibe', 3, 'T_flibe', 'degC', 'flibe temperature');
 [model, fuel_3d_nb] = plot_surf(model, 'rev1', 'Tp11', 3, 'Tp11', 'degC', 'fuel temperature');
-saveToFile = [output_path, 'flibe_temp.gif'];
+saveToFile = 'flibe_temp.gif';
 model = create_animation(model, ['pg', num2str(flibe_3d_nb)], saveToFile);
-saveToFile = [output_path, 'fuel_temp.gif'];
+saveToFile = 'fuel_temp.gif';
 model = create_animation(model, ['pg', num2str(fuel_3d_nb)], saveToFile);
 
 end
