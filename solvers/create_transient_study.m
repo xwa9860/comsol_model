@@ -8,7 +8,7 @@ function model = create_transient_study(model, transient_type)
 
     %% set parameters for different transient types 
     %% define transient study parameters
-    tf = 20; %second, finishing time of the transient
+    tf = 100; %second, finishing time of the transient
     dt = 0.1; %second, time step to record the results(not the timestep that the solver takes)
 
     switch transient_type
@@ -124,39 +124,39 @@ function model = create_transient_study(model, transient_type)
     global isTMSR
     if isTMSR
 
-        model.sol('sol4').create('st1', 'StudyStep');
-model.sol('sol4').create('v1', 'Variables');
-model.sol('sol4').create('t1', 'Time');
-model.sol('sol4').feature('t1').create('ps1', 'PreviousSolution');
-model.sol('sol4').feature('t1').create('fc1', 'FullyCoupled');
-model.sol('sol4').feature('t1').create('d1', 'Direct');
-model.sol('sol4').feature('t1').create('i1', 'Iterative');
-model.sol('sol4').feature('t1').create('i2', 'Iterative');
-model.sol('sol4').feature('t1').feature('i1').create('mg1', 'Multigrid');
-model.sol('sol4').feature('t1').feature('i2').create('mg1', 'Multigrid');
-model.sol('sol4').feature('t1').feature.remove('fcDef');
-model.sol('sol4').feature('v1').set('initmethod', 'sol');
-model.sol('sol4').feature('v1').set('initsol', 'sol15');
-model.sol('sol4').feature('v1').set('solnum', 'auto');
-model.sol('sol4').feature('v1').set('clist', {'range(0,0.1,100)' '0.02[s]'});
-model.sol('sol4').feature('t1').set('tlist', 'range(0,0.1,100)');
-model.sol('sol4').feature('t1').set('maxorder', 2);
-model.sol('sol4').feature('t1').set('estrat', 'exclude');
-model.sol('sol4').feature('t1').set('plot', true);
-model.sol('sol4').feature('t1').set('probefreq', 'tout');
-model.sol('sol4').feature('t1').feature('ps1').set('prevcomp', {'mod1_ht_flibe_dt2Inv_T'});
-model.sol('sol4').feature('t1').feature('ps1').set('linsolver', 'lumped');
-model.sol('sol4').feature('t1').feature('ps1').set('prevcompdamp', 0.35);
-model.sol('sol4').feature('t1').feature('ps1').set('prevcompdampactive', true);
-model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
-model.sol('sol4').feature('t1').feature('fc1').set('maxiter', 5);
-model.sol('sol4').feature('t1').feature('fc1').set('damp', 0.9);
-model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'once');
-model.sol('sol4').feature('t1').feature('fc1').set('stabacc', 'aacc');
-model.sol('sol4').feature('t1').feature('fc1').set('aaccdim', 5);
-model.sol('sol4').feature('t1').feature('i1').label('Algebraic Multigrid Solver (ht_flibe)');
-model.sol('sol4').feature('t1').feature('i1').feature('mg1').set('prefun', 'saamg');
-model.sol('sol4').feature('t1').feature('i2').label('Geometric Multigrid Solver (ht_flibe)');
+    model.sol('sol4').create('st1', 'StudyStep');
+    model.sol('sol4').create('v1', 'Variables');
+    model.sol('sol4').create('t1', 'Time');
+    model.sol('sol4').feature('t1').create('ps1', 'PreviousSolution');
+    model.sol('sol4').feature('t1').create('fc1', 'FullyCoupled');
+    model.sol('sol4').feature('t1').create('d1', 'Direct');
+    model.sol('sol4').feature('t1').create('i1', 'Iterative');
+    model.sol('sol4').feature('t1').create('i2', 'Iterative');
+    model.sol('sol4').feature('t1').feature('i1').create('mg1', 'Multigrid');
+    model.sol('sol4').feature('t1').feature('i2').create('mg1', 'Multigrid');
+    model.sol('sol4').feature('t1').feature.remove('fcDef');
+    model.sol('sol4').feature('v1').set('initmethod', 'sol');
+    model.sol('sol4').feature('v1').set('initsol', 'sol15');
+    model.sol('sol4').feature('v1').set('solnum', 'auto');
+    model.sol('sol4').feature('v1').set('clist', {'range(0,0.1,100)' '0.02[s]'});
+    model.sol('sol4').feature('t1').set('tlist', 'range(0,0.1,100)');
+    model.sol('sol4').feature('t1').set('maxorder', 2);
+    model.sol('sol4').feature('t1').set('estrat', 'exclude');
+    model.sol('sol4').feature('t1').set('plot', true);
+    model.sol('sol4').feature('t1').set('probefreq', 'tout');
+    model.sol('sol4').feature('t1').feature('ps1').set('prevcomp', {'mod1_ht_flibe_dt2Inv_T'});
+    model.sol('sol4').feature('t1').feature('ps1').set('linsolver', 'lumped');
+    model.sol('sol4').feature('t1').feature('ps1').set('prevcompdamp', 0.35);
+    model.sol('sol4').feature('t1').feature('ps1').set('prevcompdampactive', true);
+    model.sol('sol4').feature('t1').feature('fc1').set('linsolver', 'd1');
+    model.sol('sol4').feature('t1').feature('fc1').set('maxiter', 5);
+    model.sol('sol4').feature('t1').feature('fc1').set('damp', 0.9);
+    model.sol('sol4').feature('t1').feature('fc1').set('jtech', 'once');
+    model.sol('sol4').feature('t1').feature('fc1').set('stabacc', 'aacc');
+    model.sol('sol4').feature('t1').feature('fc1').set('aaccdim', 5);
+    model.sol('sol4').feature('t1').feature('i1').label('Algebraic Multigrid Solver (ht_flibe)');
+    model.sol('sol4').feature('t1').feature('i1').feature('mg1').set('prefun', 'saamg');
+    model.sol('sol4').feature('t1').feature('i2').label('Geometric Multigrid Solver (ht_flibe)');
     model.sol('sol4').runAll;
     model = create_transient_results(model);
     end

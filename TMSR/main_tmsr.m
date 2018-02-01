@@ -23,5 +23,4 @@ end
 fprintf('\nRunning transient...\n');
 model = create_transient_study(model, 'ext_RI');
 %model = create_transient_study(model, 'over_cooling');
-%model.sol('sol4').runAll;
-%run('create_transient_results')
+

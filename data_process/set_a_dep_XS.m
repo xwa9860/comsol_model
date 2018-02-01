@@ -1,6 +1,8 @@
 function model = set_a_dep_XS(model, comsol_var_name, XS_name, temp_vars, coefs, flag)
 %{
 set a temperature dependent cross section matrix to comsol model via matlab livelink for comsol
+NOTE: not used any more, set_a_fixed_xs is used instead because all XS are expressed in terms of log(lin)
+or the original temperature
 
 model: comsol model
 comsol_var_name: name of the comsol variable
