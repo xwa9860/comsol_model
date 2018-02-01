@@ -3,7 +3,7 @@ function model = export_image(model, image_name, label, ...
     if image_dim == 1
         model.result.export.create(image_name, 'Image1D');
     else    
-    model.result.export.create(image_name, 'Image2D');
+        model.result.export.create(image_name, 'Image2D');
     end
     img = model.result.export(image_name);
     img.label(label);
