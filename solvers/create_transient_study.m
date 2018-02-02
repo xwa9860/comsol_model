@@ -12,7 +12,7 @@ function model = create_transient_study(model, transient_type)
     dt = 0.1; %second, time step to record the results(not the timestep that the solver takes)
 
     switch transient_type
-     case 'ext_RI'
+     case 'ext_RI_step'
         % define reactivity insertion value
         rho_ext = 0.00650;% reactivity insertion value 
 
@@ -30,7 +30,17 @@ function model = create_transient_study(model, transient_type)
         model.variable('var19').set('lambda', 'step_fun(t/1[s])*lambda_critical');
         
 
-        
+     case 'ext_RI_ramp'
+            duration = 30; %seconds
+            model.func.create('rm1', 'Ramp');
+            model.func('rm1').set('location', 10);
+            model.func('rm1').set('slope', ['reactivity_insertion/', num2str(duration)]);
+            model.func('rm1').set('cutoff', 'reactivity_insertion');
+            model.func('rm1').set('cutoffactive', true);
+            model.func('rm1').set('smoothzonecutoff', 0);
+            model.func('rm1').set('smoothzonecutoffactive', true);
+            model.variable('var19').set('lambda', 'lambda_critical*(1+rm1(t/1[s]))');
+
         
      case 'control_rods_removal'   
         % change control rod positions

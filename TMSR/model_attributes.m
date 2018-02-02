@@ -19,6 +19,11 @@ global pebbles_region region_coated region_fuel_kernel;
 % boundaries
 global dirichelet_b inlet_temp_bound out_flow_bound;
 
+
+% solver mode
+global transient_type
+transient_type = 'ext_RI_step';
+
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
 output_path = 'results\TMSR\multiscale_RI\';

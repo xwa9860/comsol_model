@@ -20,6 +20,15 @@ global output_path;
 global fuel_comp;
 global fuel_domNb fuel_univ;
 
+% solver mode
+global transient_type
+transient_type = 'ext_RI_step';
+%model = create_transient_study(model, 'control_rods_removal');
+%model = create_transient_study(model, 'ext_RI_ramp');
+%model = create_transient_study(model, 'overcooling');
+
+
+
 fuel_comp = 'eq';
 general_path = 'MK1\';
 

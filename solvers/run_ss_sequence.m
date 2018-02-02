@@ -6,7 +6,15 @@ final steady state results
 the function can either run the solvers step-by-step or load some
 intermediate results from files
 %}
+isLoadScalingFromFile = false;
 
+if isLoadScalingFromFile
+    if isControlRodRemoval
+        model = mphload([output_path, 'scaling_cr.mph']);
+    else
+        model = mphload([output_path, 'scaling.mph']);
+    end
+else
     global output_path;
     isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
     isLoadSSFromFile = false; % boolean, loading steady state results from file
@@ -42,7 +50,7 @@ intermediate results from files
 
 
 end
-
+end
 function model = start_from_begining(output_path)
     %% 1st eigenvalue solution
     isLoad1stEigenFromFile = false; %load the first eigenvalue solution(with initial temperature conditions) from file
