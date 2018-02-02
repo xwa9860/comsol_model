@@ -23,7 +23,7 @@ model.probe('dom2').selection.set(fuel_domNb);
 model.probe('dom2').label('average_fuel_temp_probe');
 model.probe('dom2').set('table', 'tbl1');
 if isMultiScale
-    model.probe('dom2').set('expr', '1/17*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp44)');
+    model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp44)');
 else
     model.probe('dom2').set('expr', 'T_fuel');
 end
