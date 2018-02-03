@@ -1,6 +1,6 @@
 % Model,RI.mph
 % Version,COMSOL 5.3.1.180
-% Date,"Feb 2 2018, 22:42"
+% Date,"Feb 3 2018, 11:01"
 % Table,Table 1 - 
 % Time (s),"Temperature (W), Probe Pint","Temperature (degC), average_fuel_temp_probe","Temperature (degC), average_flibe_temp_probe","Temperature (degC), max fuel temp","Temperature (degC), max flibe temp"
 0,1.0000001507143822E7,720.2646006426945,700.5823328470453,764.5689671976435,761.0691711966268

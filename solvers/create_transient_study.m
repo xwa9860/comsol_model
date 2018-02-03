@@ -53,7 +53,7 @@ function model = create_transient_study(model, transient_type)
         model.param.set('h_CRCC6', 5.7285);
         
         
-     case 'over_cooling'
+     case 'overcooling'
         % define Overcooling transient parameters
         OCOnset = 10; %s, starting time of overcooling, a very large time might mean the overcooling is not simulated
         OCSlope = -10; %K/s, speed of decrease in inlet coolant temperature
