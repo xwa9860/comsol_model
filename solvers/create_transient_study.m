@@ -31,8 +31,13 @@ function model = create_transient_study(model, transient_type)
         
 
      case 'ext_RI_ramp'
+            rho_ext = 0.00650;% reactivity insertion value 
+
+            model.param.set('reactivity_insertion', num2str(rho_ext), 'external reactivity insertion');
+
             duration = 30; %seconds
             model.func.create('rm1', 'Ramp');
+            model.func('rm1').label('rm1');
             model.func('rm1').set('location', 10);
             model.func('rm1').set('slope', ['reactivity_insertion/', num2str(duration)]);
             model.func('rm1').set('cutoff', 'reactivity_insertion');

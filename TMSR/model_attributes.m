@@ -22,11 +22,11 @@ global dirichelet_b inlet_temp_bound out_flow_bound;
 
 % solver mode
 global transient_type
-transient_type = 'ext_RI_step';
+transient_type = 'ext_RI_step';% 'overcooling';
 
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
-output_path = 'results\TMSR\multiscale_RI\';
+output_path = 'results\TMSR\non_multiscale_RI\';
 
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
@@ -41,7 +41,7 @@ isVerbose = true;
 is_get_coef_from_file = true;
 
 %Define input variables for the model 
-isMultiScale= true;
+isMultiScale= false;
 if isMultiScale
     fuel_data_path = 'TMSR\XS_data\multi_fuel_3_3\';
 else
