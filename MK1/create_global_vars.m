@@ -33,10 +33,9 @@ model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary conditio
 
 % radius of graphite kernal
 model.param.set('r0','0[m]');
-model.param.set('r1', '0.017334031858766[m]');
-model.param.set('r2', '0.021839511618407[m]');
-model.param.set('r3', '0.025000000000000[m]');
-model.param.set('r4', '0.027500000000000[m]');
+model.param.set('r1', '0.015[m]');
+model.param.set('r2', '0.017[m]');
+model.param.set('r3', '0.018[m]');
 
 % radius of fuel kernal
 model.param.set('R0', '0[m]');
@@ -45,6 +44,12 @@ model.param.set('R2', '0.000218395116184[m]');
 model.param.set('R3', '0.000250000000000[m]');
 model.param.set('R4', '0.092000000000000[m]');
 
+
+%volume for each part
+model.param.set('V_fuel', '4/3*pi*0.00025^3/3[m^3]');
+model.param.set('V_coat', '4/3*pi*(0.00046^3-0.00025^3)[m^3]');
+model.param.set('V_graphite_core', '4/3*pi*(0.015^3)[m^3]');
+model.param.set('V_graphite_shell', '4/3*pi*(0.018^3-0.017^3)[m^3]');
 % model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
 
 %% power
