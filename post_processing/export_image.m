@@ -13,9 +13,9 @@ function model = export_image(model, image_name, label, ...
     
     img.set('printunit', 'mm');
     img.set('webunit', 'px');
-    img.set('printheight', '90');
+    img.set('printheight', '110'); %used
     img.set('webheight', '600');
-    img.set('printwidth', '120');
+    img.set('printwidth', '80'); %used
     img.set('webwidth', '800');
     img.set('printlockratio', 'off');
     img.set('weblockratio', 'off');
