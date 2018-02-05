@@ -11,7 +11,8 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
     %}
 
     global fuel_data_path;
-    global isTMSR isMultiScale is_get_coef_from_file;
+    global isTMSR isMultiScale;
+    global is_get_coef_from_file;
     %is_get_coef_from_file: boolean, getting coefficient values from file.
     %if false, compute the coefficients
     global fuel_comp;
