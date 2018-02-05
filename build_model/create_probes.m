@@ -1,4 +1,6 @@
 global fuel_domNb;
+global isMultiScale;
+global flibe_domains;
 % create table to store probe values
 model.result.table.create('tbl1', 'Table');
 model.result.table('tbl1').set('tablebuffersize', '100000');
@@ -20,15 +22,20 @@ model.probe('dom2').model('mod1');
 model.probe('dom2').selection.set(fuel_domNb);
 model.probe('dom2').label('average_fuel_temp_probe');
 model.probe('dom2').set('table', 'tbl1');
-model.probe('dom2').set('descr', 'T_fuel');
+if isMultiScale
+    model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp44)');
+else
+    model.probe('dom2').set('expr', 'T_fuel');
+end
 model.probe('dom2').set('window', 'window2');
-model.probe('dom2').set('expr', 'T_fuel');
+model.probe('dom2').set('descr', 'T_fuel');
 model.probe('dom2').set('unit', 'degC');
 
-% domain probe for average flibe temperature(only in the upper region)
+% domain probe for average flibe temperature
 model.probe.create('dom3', 'Domain');
 model.probe('dom3').model('mod1');
-model.probe('dom3').selection.set(fuel_domNb);
+
+model.probe('dom3').selection.set(flibe_domains );
 model.probe('dom3').label('average_flibe_temp_probe');
 model.probe('dom3').set('table', 'tbl1');
 model.probe('dom3').set('descr', 'T_flibe');
@@ -43,7 +50,13 @@ model.probe('dom4').label('max fuel temp');
 model.probe('dom4').set('probename', 'T_fuel_max');
 model.probe('dom4').set('type', 'maximum');
 model.probe('dom4').selection.set(fuel_domNb);
+if isMultiScale
+    % the maximum of the inner most fuel layer
+    model.probe('dom4').set('expr', 'Tp11');
+else
 model.probe('dom4').set('expr', 'T_fuel');
+end
+
 model.probe('dom4').set('table', 'tbl1');
 model.probe('dom4').set('window', 'window3');
 model.probe('dom4').set('unit', 'degC');
@@ -80,7 +93,7 @@ model.component('mod1').probe('bnd2').set('descr', 'Temperature');
 model.component('mod1').probe('bnd2').set('window', 'window4');
 end
 
-if isTMSR
+if isTMSR && isMultiScale
     %Tp11
     model.probe.create('dom6', 'Domain');
     model.probe('dom6').model('mod1');

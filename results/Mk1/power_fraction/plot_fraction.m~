@@ -1,0 +1,18 @@
+%% read fractions into an array
+burnup = [1 5 2 6 3 7 4 8];
+for i = 1:8
+    det = eval(['DET', num2str(i)]);
+    fracw(burnup(i)) = det(11);
+end
+fracw
+
+bar(1:8, fracw);
+
+for i = 1:8
+    det = eval(['DET', num2str(i+8)]);
+    fraca(burnup(i)) = det(11);
+end
+fraca
+
+
+bar_fig = fu

@@ -1,0 +1,57 @@
+%%---Cross section data library path
+set title "FHR core"
+set acelib "/global/home/groups/co_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
+include "Blanket"
+include "FuelW"
+include "Downcomer"
+include "FuelA1"
+include "FuelA3"
+include "FuelA2"
+include "FuelA4"
+include "OR"
+include "CRCC"
+include "Vessel"
+include "CR"
+include "ORCC"
+include "Corebarrel"
+
+%%---Core as a whole, universe 0
+surf 688 cylz 0.000000 0.000000 175.000000 41.600000 572.850000
+surf 690 pz 41.600000
+surf 689 pz 572.850000
+cell 215 0 fill 385  -688 690 -689 
+
+%---Outside
+cell 372 0 outside 688
+include "coreMaterials"
+%%---Neutron source and BC
+
+%%---set pop neutron-per-cycle cycles skip-cycles
+set pop 10000 2000 500
+set bc 1
+set ures 1
+set power 2.36E8
+
+ %% detector for power fraction in different burnups
+det 1  dm fuel1pbw1 dr -8 fuel1pbw1
+det 2  dm fuel1pbw2 dr -8 fuel1pbw2
+det 3  dm fuel1pbw3 dr -8 fuel1pbw3
+det 4  dm fuel1pbw4 dr -8 fuel1pbw4
+det 5  dm fuel1pbw5 dr -8 fuel1pbw5
+det 6  dm fuel1pbw6 dr -8 fuel1pbw6
+det 7  dm fuel1pbw7 dr -8 fuel1pbw7
+det 8  dm fuel1pbw8 dr -8 fuel1pbw8
+
+det 9  dm fuel1pba11 dr -8 fuel1pba11
+det 10  dm fuel1pba12 dr -8 fuel1pba12
+det 11  dm fuel1pba13 dr -8 fuel1pba13
+det 12  dm fuel1pba14 dr -8 fuel1pba14
+det 13  dm fuel1pba15 dr -8 fuel1pba15
+det 14  dm fuel1pba16 dr -8 fuel1pba16
+det 15  dm fuel1pba17 dr -8 fuel1pba17
+det 16  dm fuel1pba18 dr -8 fuel1pba18
+
+%%---Plot the geometry
+plot 1 700 700 0 %% yz cross plane at x=0
+plot 2 700 700 0 %% xz cross plane at y=0
+plot 3 700 700 300 %% xy cross plane at z=300

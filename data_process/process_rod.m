@@ -1,10 +1,12 @@
 function model = process_rod(model, comsol_var_name, pos_var_name)
     %{ 
-    This function get the neutronics data from serpent output file for
+    This function get the neutronics data from serpent output files for
     control rod channels and input them in the comsol model 
 
         comsol_var_name: the name of the comsol variable that these control rod
-        cross-sections are associated to
+        cross-sections are associated to, e.g.: 'xs_rodCRCC1'
+        pos_var_name: the name of the comsol variable that these control rod
+        position is associated to, e.g.: 'h_CRCC1'
     %}
 
     global rod_data_path;

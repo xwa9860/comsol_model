@@ -26,7 +26,7 @@ fprintf('creating physics\n')
 if ~isTMSR
     run('create_porous_media');
 end
-%Heat transfer modules
+% Heat transfer modules
 run('create_ht_flibe.m');
 
 if isMultiScale

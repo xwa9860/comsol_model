@@ -1,5 +1,5 @@
 % calculate the radius for each radial zone in a fuel pebble
-R = 0.03; % pb radius in meter
+R = 0.03; % Mk1 pebble radius in meter
 R_inside=0.03-5/1000;
 zone_nb = 3; % number of zones
 V_zone = 4/3*pi*R_inside^3/zone_nb;%volume for each zone in a pebble
@@ -14,5 +14,5 @@ r_2_re=nthroot(cal_radius,3);
 r_3_re=nthroot(V_zone*2/(4/3)/pi,3);
 r_4_re=nthroot(V_zone*3/(4/3)/pi,3);
 r_5_re=R-5/1000/2;
-r=[r_2_re,r_3_re,r_4_re,r_5_re]
+r = [r_2_re,r_3_re,r_4_re,r_5_re];
 

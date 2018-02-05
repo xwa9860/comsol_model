@@ -10,7 +10,7 @@ global isTMSR isVerbose isMultiScale isSp3 hasRods;
 global is_get_coef_from_file;
 global output_path
 
-% domain numbers and universe numbers
+% domain numbers and ....universe numbers
 global domains gr_comps fuel_domNb universes temp_indep_comps fuel_univ;
 global flibe_domains;
 global pm_domains main_pm_domains;
@@ -21,9 +21,14 @@ global pebbles_region region_coated region_fuel_kernel;
 % boundaries
 global dirichelet_b inlet_temp_bound out_flow_bound;
 
+
+% solver mode
+global transient_type
+transient_type = 'overcooling'; %'ext_RI_step';% 'overcooling';
+
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
-output_path = 'results\TMSR\';
+output_path = 'results\TMSR\multiscale_OC\';
 
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
@@ -35,7 +40,7 @@ region_fuel_kernel=3; %termperature of fuel kernel
 
 
 isVerbose = true;
-is_get_coef_from_file = false;
+is_get_coef_from_file = true;
 
 %Define input variables for the model 
 isMultiScale= true;
@@ -75,7 +80,7 @@ fuel_univ = [universes('fuel')];
 
 % for porous media mmtm module and material properties
 porous_media = {'fuel'};
-valueSet = values(domains,porous_media);
+valueSet = values(domains, porous_media);
 pm_domains = cell2mat(valueSet);
 main_pm_domains = pm_domains;
 

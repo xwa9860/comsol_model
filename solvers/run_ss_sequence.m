@@ -6,7 +6,15 @@ final steady state results
 the function can either run the solvers step-by-step or load some
 intermediate results from files
 %}
+isLoadScalingFromFile = false;
 
+if isLoadScalingFromFile
+    if isControlRodRemoval
+        model = mphload([output_path, 'scaling_cr.mph']);
+    else
+        model = mphload([output_path, 'scaling.mph']);
+    end
+else
     global output_path;
     isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
     isLoadSSFromFile = false; % boolean, loading steady state results from file
@@ -42,7 +50,7 @@ intermediate results from files
 
 
 end
-
+end
 function model = start_from_begining(output_path)
     %% 1st eigenvalue solution
     isLoad1stEigenFromFile = false; %load the first eigenvalue solution(with initial temperature conditions) from file
@@ -87,9 +95,9 @@ function model = search_control_rod_positions(model)
 % Insert control rods until keff = keff_no_rods * (1-1.4%),
 % assuming 1.4% excess reactivity during online refueling operation
     global control_rods domains;
-    
+    excess_rho = 0.02500; % 1.4/100;
     lambda_eigen = mphglobal(model, 'lambda');
-    target_eigen = lambda_eigen * (1+0.0014);
+    target_eigen = lambda_eigen * (1+excess_rho);
     fprintf('\nTarget eigenvalue is\n');
     fprintf('%.10f \n', target_eigen);
     rod_height = 4.5; % initial rod height to start searching

@@ -35,22 +35,22 @@ model.geom('geom1').feature('wp1').geom.feature('pol2').set('table', {'0.45' '0.
 '0.35' '1.4482';  ...
 '0.45' '1.275'});
 
-model.component('mod1').geom('geom1').feature('wp1').geom.create('r4', 'Rectangle');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r4').label('FuelA1');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r4').set('pos', [0.35 1.805]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.461-0.35' '4.305-1.805'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r5').label('FuelA2');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r5').set('pos', [0.461 1.805]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r5').set('size', {'0.583-0.461' '4.305-1.805'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('r6', 'Rectangle');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r6').label('FuelA3');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r6').set('pos', [0.583 1.805]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r6').set('size', {'0.96-0.583' '4.305-1.805'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('r7', 'Rectangle');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r7').label('FuelA4');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r7').set('pos', {'.96' '1.805'});
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('r7').set('size', {'1.05-0.96' '4.305-1.805'});
+model.geom('geom1').feature('wp1').geom.create('r4', 'Rectangle');
+model.geom('geom1').feature('wp1').geom.feature('r4').label('FuelA1');
+model.geom('geom1').feature('wp1').geom.feature('r4').set('pos', [0.35 1.805]);
+model.geom('geom1').feature('wp1').geom.feature('r4').set('size', {'0.461-0.35' '4.305-1.805'});
+model.geom('geom1').feature('wp1').geom.create('r5', 'Rectangle');
+model.geom('geom1').feature('wp1').geom.feature('r5').label('FuelA2');
+model.geom('geom1').feature('wp1').geom.feature('r5').set('pos', [0.461 1.805]);
+model.geom('geom1').feature('wp1').geom.feature('r5').set('size', {'0.583-0.461' '4.305-1.805'});
+model.geom('geom1').feature('wp1').geom.create('r6', 'Rectangle');
+model.geom('geom1').feature('wp1').geom.feature('r6').label('FuelA3');
+model.geom('geom1').feature('wp1').geom.feature('r6').set('pos', [0.583 1.805]);
+model.geom('geom1').feature('wp1').geom.feature('r6').set('size', {'0.96-0.583' '4.305-1.805'});
+model.geom('geom1').feature('wp1').geom.create('r7', 'Rectangle');
+model.geom('geom1').feature('wp1').geom.feature('r7').label('FuelA4');
+model.geom('geom1').feature('wp1').geom.feature('r7').set('pos', {'.96' '1.805'});
+model.geom('geom1').feature('wp1').geom.feature('r7').set('size', {'1.05-0.96' '4.305-1.805'});
 
 %blanket
 model.geom('geom1').feature('wp1').geom.create('pol3', 'Polygon');
@@ -125,40 +125,40 @@ model.geom('geom1').feature('wp1').geom.feature('pol6').set('table', {'1.25' '1.
 '1.25' '4.305-Houtlet'}); %outlet boundary lower limit
 global is_rounded_geom
 if is_rounded_geom
-model.component('mod1').geom('geom1').feature('wp1').geom.create('b1', 'BezierPolygon');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b1').set('p', [0.342 0.575 0.71 0.35; 4.3 4.58 4.9285 4.305]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b1').set('degree', [2 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b1').set('w', [1 1 1 1 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.create('dif1', 'Difference');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif1').set('selresult', true);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif1').set('intbnd', false);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif1').selection('input').set({'pol2'});
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif1').selection('input2').set({'b1'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('b5', 'BezierPolygon');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b5').set('p', [0.342 0.575 0.71 0.35; 4.3 4.58 4.9285 4.305]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b5').set('degree', [2 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b5').set('w', [1 1 1 1 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.create('uni1', 'Union');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni1').set('selresult', true);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni1').set('intbnd', false);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni1').selection('input').set({'b5' 'pol1'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('b3', 'BezierPolygon');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b3').set('p', [0.45 0.45 0.35 0.45; 1.2 1.275 1.4482 1.275]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b3').set('degree', [2 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b3').set('w', [1 1 1 1 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.create('dif2', 'Difference');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif2').set('intbnd', false);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif2').selection('input').set({'uni1'});
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('dif2').selection('input2').set({'b3'});
-model.component('mod1').geom('geom1').feature('wp1').geom.create('b4', 'BezierPolygon');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b4').set('p', [0.45 0.45 0.35 0.45; 1.2 1.275 1.4482 1.275]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b4').set('degree', [2 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('b4').set('w', [1 1 1 1 1]);
-model.component('mod1').geom('geom1').feature('wp1').geom.create('uni2', 'Union');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni2').set('selresult', true);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni2').set('selresultshow', 'all');
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni2').set('intbnd', false);
-model.component('mod1').geom('geom1').feature('wp1').geom.feature('uni2').selection('input').set({'b4' 'dif1'});
+model.geom('geom1').feature('wp1').geom.create('b1', 'BezierPolygon');
+model.geom('geom1').feature('wp1').geom.feature('b1').set('p', [0.342 0.575 0.71 0.35; 4.3 4.58 4.9285 4.305]);
+model.geom('geom1').feature('wp1').geom.feature('b1').set('degree', [2 1]);
+model.geom('geom1').feature('wp1').geom.feature('b1').set('w', [1 1 1 1 1]);
+model.geom('geom1').feature('wp1').geom.create('dif1', 'Difference');
+model.geom('geom1').feature('wp1').geom.feature('dif1').set('selresult', true);
+model.geom('geom1').feature('wp1').geom.feature('dif1').set('intbnd', false);
+model.geom('geom1').feature('wp1').geom.feature('dif1').selection('input').set({'pol2'});
+model.geom('geom1').feature('wp1').geom.feature('dif1').selection('input2').set({'b1'});
+model.geom('geom1').feature('wp1').geom.create('b5', 'BezierPolygon');
+model.geom('geom1').feature('wp1').geom.feature('b5').set('p', [0.342 0.575 0.71 0.35; 4.3 4.58 4.9285 4.305]);
+model.geom('geom1').feature('wp1').geom.feature('b5').set('degree', [2 1]);
+model.geom('geom1').feature('wp1').geom.feature('b5').set('w', [1 1 1 1 1]);
+model.geom('geom1').feature('wp1').geom.create('uni1', 'Union');
+model.geom('geom1').feature('wp1').geom.feature('uni1').set('selresult', true);
+model.geom('geom1').feature('wp1').geom.feature('uni1').set('intbnd', false);
+model.geom('geom1').feature('wp1').geom.feature('uni1').selection('input').set({'b5' 'pol1'});
+model.geom('geom1').feature('wp1').geom.create('b3', 'BezierPolygon');
+model.geom('geom1').feature('wp1').geom.feature('b3').set('p', [0.45 0.45 0.35 0.45; 1.2 1.275 1.4482 1.275]);
+model.geom('geom1').feature('wp1').geom.feature('b3').set('degree', [2 1]);
+model.geom('geom1').feature('wp1').geom.feature('b3').set('w', [1 1 1 1 1]);
+model.geom('geom1').feature('wp1').geom.create('dif2', 'Difference');
+model.geom('geom1').feature('wp1').geom.feature('dif2').set('intbnd', false);
+model.geom('geom1').feature('wp1').geom.feature('dif2').selection('input').set({'uni1'});
+model.geom('geom1').feature('wp1').geom.feature('dif2').selection('input2').set({'b3'});
+model.geom('geom1').feature('wp1').geom.create('b4', 'BezierPolygon');
+model.geom('geom1').feature('wp1').geom.feature('b4').set('p', [0.45 0.45 0.35 0.45; 1.2 1.275 1.4482 1.275]);
+model.geom('geom1').feature('wp1').geom.feature('b4').set('degree', [2 1]);
+model.geom('geom1').feature('wp1').geom.feature('b4').set('w', [1 1 1 1 1]);
+model.geom('geom1').feature('wp1').geom.create('uni2', 'Union');
+model.geom('geom1').feature('wp1').geom.feature('uni2').set('selresult', true);
+model.geom('geom1').feature('wp1').geom.feature('uni2').set('selresultshow', 'all');
+model.geom('geom1').feature('wp1').geom.feature('uni2').set('intbnd', false);
+model.geom('geom1').feature('wp1').geom.feature('uni2').selection('input').set({'b4' 'dif1'});
 end
 model.geom('geom1').create('rev1', 'Revolve');
 model.geom('geom1').feature('rev1').set('angtype', 'full');
@@ -217,10 +217,10 @@ for cr = 1:8
         sprintf('0.35*cos((%f+15)[deg])', ang) sprintf('0.35*sin((%f+15)[deg])', ang)});   
 end
 
-model.component('mod1').geom('geom1').feature('wp2').geom.create('uni1', 'Union');
-model.component('mod1').geom('geom1').feature('wp2').geom.feature('uni1').selection('input').set({'ic1' 'ic2' 'ic3' 'ic4' 'ic5' 'ic6' 'ic7' 'ic8'});
-model.component('mod1').geom('geom1').feature('wp2').geom.create('int9', 'Intersection');
-model.component('mod1').geom('geom1').feature('wp2').geom.feature('int9').selection('input').set({'c9' 'uni1'});
+model.geom('geom1').feature('wp2').geom.create('uni1', 'Union');
+model.geom('geom1').feature('wp2').geom.feature('uni1').selection('input').set({'ic1' 'ic2' 'ic3' 'ic4' 'ic5' 'ic6' 'ic7' 'ic8'});
+model.geom('geom1').feature('wp2').geom.create('int9', 'Intersection');
+model.geom('geom1').feature('wp2').geom.feature('int9').selection('input').set({'c9' 'uni1'});
 
 model.geom('geom1').create('ext1', 'Extrude');
 model.geom('geom1').feature('ext1').label('contro_rod_channels');
