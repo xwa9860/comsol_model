@@ -1,5 +1,5 @@
 
-model.param.set('v_inlet', '0.14*0.4[m/s]', 'upwards velocity, uniform in the core 0.13*0.4[m/s]');
+model.param.set('v_inlet', '0.14[m/s]', 'upwards velocity, uniform in the core 0.14[m/s]');
 model.param.set('T0_flibe', '1051[K]', 'initial temperature for flibe salt, 672[degC] for TMSR');
 model.param.set('T_inlet', '672[degC]','nominal value is 672');
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel pebbles, 800[degC]');
@@ -27,7 +27,7 @@ model.param.set('R4', '0.092000000000000[m]');
 %volume for each part
 model.param.set('V_fuel', '4/3*pi*0.00025^3/3[m^3]');
 model.param.set('V_coat', '4/3*pi*(0.00046^3-0.00025^3)[m^3]');
-model.param.set('V_graphite', '4/3*pi*(0.06^3-0.055^3)[m^3]');
+model.param.set('V_graphite_shell', '4/3*pi*(0.06^3-0.055^3)[m^3]');
 
 % Tp0 is zero
 model.param.set('Tp0', '0');

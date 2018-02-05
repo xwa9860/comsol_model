@@ -14,8 +14,7 @@ function model = set_a_fixed_XS(model, comsol_var_name, XS_name, values, isCR)
         % if the values array is 1D or a constant, name the variables like d1, d2
         if var_size(1) == 1 && (var_size(2) == 1 || var_size(2) == gnb || var_size(2) == dnb)
             model = set_a_1d_XS(model, comsol_var_name, XS_name, values, isCR);
-        else
-            var_size
+        else           
             error(['coefficient value dimension doesnot match temp variables',...
             'should be 1 * gnb or 1 * 1'])
         end
