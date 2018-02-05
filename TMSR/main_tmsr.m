@@ -5,16 +5,8 @@ close all;
 fprintf('Define paramet used in the matlab model\n')
 run('model_attributes.m');
 
-fprintf('Solver sequence\n');
-global transient_type;
-switch transient_type
-    case 'control_rods_removal'
-        isControlRodRemoval = true;
-    otherwise
-        isControlRodRemoval = false;
-end
-            
-model = run_ss_sequence(isControlRodRemoval);
+fprintf('Solver sequence\n');        
+model = run_ss_sequence();
 
 %% Transient calculation
 fprintf('\nRunning transient...\n');

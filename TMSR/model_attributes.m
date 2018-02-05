@@ -34,10 +34,9 @@ dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 unb = 4;
-pebbles_region=4; % temperature group number
-region_coated=1; %temperature of TRISTO coat
-region_fuel_kernel=3; %termperature of fuel kernel
-
+pebbles_region = 4; % number of regions in a fuel pebble, e.g.: sublayers in fuel(containing triso particles), shell
+region_coated=1; % number of regions in TRISO coat
+region_fuel_kernel=3; % number of regions in the fuel kernel in a TRISO particle
 
 isVerbose = true;
 is_get_coef_from_file = true;

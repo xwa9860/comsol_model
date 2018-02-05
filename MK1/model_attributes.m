@@ -25,13 +25,13 @@ global fuel_domNb fuel_univ;
 % solver mode
 global transient_type
 transient_type = 'ext_RI_step';
-%model = create_transient_study(model, 'control_rods_removal');
-%model = create_transient_study(model, 'ext_RI_ramp');
-%model = create_transient_study(model, 'overcooling');
+%'control_rods_removal';
+%'ext_RI_ramp';
+%'overcooling';
 
 
 
-fuel_comp = 'eq';
+fuel_comp = 'fresh';
 general_path = 'MK1\';
 
 switch fuel_comp
@@ -39,7 +39,7 @@ switch fuel_comp
         data_path = 'MK1\XS_data_fresh\';
         fuel_data_path = 'MK1\XS_data_fresh\fuel\';
         rod_data_path = 'MK1\XS_data_rod_fresh\';
-        output_path = 'results\Mk1\fresh_RI\';
+        output_path = 'results\Mk1\fresh_ext_RI\';
     case 'eq'
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';
@@ -51,9 +51,9 @@ dimNb = 3; % 3D model
 dnb = 6; % delayed neutron precursor group number
 gnb = 8; % energy group number
 unb = 16; %total number of universes computed in serpent for cross sections
-pebbles_region=3; % temperature group number
-region_coated=1; %temperature of TRISTO coat
-region_fuel_kernel=3; %termperature of fuel kernel
+pebbles_region = 3; % number of regions in a fuel pebble, e.g.: graphte kernel, fuel(containing triso particles), shell
+region_coated=1; % number of regions in TRISO coat
+region_fuel_kernel=3; % number of regions in the fuel kernel in a TRISO particle
 OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
 
 
