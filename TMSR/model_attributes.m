@@ -9,10 +9,12 @@ global dimNb dnb gnb unb OpPower;
 global isTMSR isVerbose isMultiScale isSp3 hasRods;
 global is_get_coef_from_file;
 global output_path
+
 % domain numbers and ....universe numbers
 global domains gr_comps fuel_domNb universes temp_indep_comps fuel_univ;
 global flibe_domains;
 global pm_domains main_pm_domains;
+
 % pebble design
 global pebbles_region region_coated region_fuel_kernel;
 

@@ -27,7 +27,7 @@ model.param.set('R4', '0.092000000000000[m]');
 %volume for each part
 model.param.set('V_fuel', '4/3*pi*0.00025^3/3[m^3]');
 model.param.set('V_coat', '4/3*pi*(0.00046^3-0.00025^3)[m^3]');
-model.param.set('V_graphite', '4/3*pi*(0.06^3-0.055^3)[m^3]');
+model.param.set('V_graphite_shell', '4/3*pi*(0.06^3-0.055^3)[m^3]');
 
 % Tp0 is zero
 model.param.set('Tp0', '0');

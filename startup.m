@@ -12,11 +12,10 @@ addpath([mydir, 'utilities'])
 addpath([mydir, 'solvers'])
 addpath([mydir, 'post_processing'])
 addpath([mydir, 'tests'])
-
 addpath([mydir, 'results'])
-
-%addpath([mydir, 'MK1\'])
-%addpath([mydir, 'MK1\XS_data'])
+% 
+% addpath([mydir, 'MK1\'])
+% addpath([mydir, 'MK1\XS_data'])
 addpath([mydir, 'TMSR'])
 addpath([mydir, 'TMSR\XS_data'])
 
