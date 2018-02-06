@@ -16,18 +16,18 @@ run('create_geom.m');
 run('create_mesh.m');
 tic
 fprintf('creating variables\n')
-run('create_vars.m');
+% run('create_vars.m');
 toc
 
 fprintf('creating materials\n')
 run('create_mats.m');
 
 fprintf('creating physics\n')
-if ~isTMSR
-    run('create_porous_media');
-end
+% if ~isTMSR
+%     run('create_porous_media');
+% end
 % Heat transfer modules
-run('create_ht_flibe.m');
+% run('create_ht_flibe.m');
 
 if isMultiScale
     run('create_ht_fuel_resistance.m');
