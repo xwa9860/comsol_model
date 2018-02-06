@@ -48,6 +48,7 @@ init = model.physics('ht_fuel').feature('init1');
 %% get thermal_properties
 [k_triso, cp_triso, rho_triso] = calc_triso_thermal_properties();
 [k_fuel, cp_fuel, rho_fuel] = calc_pb_thermal_properties();
+[k_gr, cp_gr, rho_gr] = [193, 684, 1960];
 k_g_core = 193;
 k_g_shell = 193;
 
@@ -296,7 +297,7 @@ for n=1:pebbles_region
                 
             case 'Mk1'
                 if n==1
-                    cfeq.setIndex('da',['eigenMode*rho_fuel*cp_fuel*V_graphite_core'],k);
+                    cfeq.setIndex('da',['eigenMode*', num2str(rho_gr), '*', num2str(cp_gr), '*V_graphite_core'],k);
                     k=k+region_coated+region_fuel_kernel+pebbles_region;
                 else
                     for i=1:region_coated+region_fuel_kernel
@@ -319,7 +320,7 @@ for n=1:pebbles_region
     else
         for i=1:1
             for j=1:1
-                cfeq.setIndex('da',['eigenMode*rho_fuel*cp_fuel*V_graphite_shell'],k);
+                cfeq.setIndex('da',['eigenMode*', num2str(rho_gr), '*', num2str(cp_fuel), '*V_graphite_shell'],k);
                 switch reactor
                     case 'TMSR'
                 k=k+3*(region_coated+region_fuel_kernel)+2;
