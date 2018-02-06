@@ -107,7 +107,7 @@ function model = search_control_rod_positions(model)
 % Insert control rods until keff = keff_no_rods * (1-1.4%),
 % assuming 1.4% excess reactivity during online refueling operation
     global control_rods domains;
-    excess_rho = 0.02500; % 1.4/100;
+    excess_rho = 1.4/100; % 0.025 is for PWRs
     lambda_eigen = mphglobal(model, 'lambda');
     target_eigen = lambda_eigen * (1+excess_rho);
     fprintf('\nTarget eigenvalue is\n');

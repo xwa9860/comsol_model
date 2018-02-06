@@ -1,6 +1,7 @@
 function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitialRun)
     tic
     global dimNb reactor;
+    global output_path;
     % set to eigenvalue mode
     model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
     % desable lambda
@@ -61,7 +62,6 @@ function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitial
     fprintf('%.10f \n', lambda_eigen);
 
     %% post_processing
-    global output_path
     if dimNb == 3 && isInitialRun
         model = create_3d_eigen_results(model, output_path);
     end
