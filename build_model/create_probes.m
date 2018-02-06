@@ -252,8 +252,9 @@ if isMultiScale
         model.probe('dom18').set('table', 'tbl1');
         model.probe('dom18').set('descr', 'Tp4');
         model.probe('dom18').set('window', 'window2');
-        model.probe('dom18').set('expr', 'Tp44');
+        model.probe('dom18').set('expr', 'Tp4');
         model.probe('dom18').set('unit', 'degC');
+        
         case 'Mk1'
         %Tp1
         model.probe.create('dom6', 'Domain');
