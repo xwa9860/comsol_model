@@ -54,4 +54,4 @@ model.param.set('V_graphite_shell', '4/3*pi*(0.018^3-0.017^3)[m^3]');
 
 %% power
 model.param.set('Pop', 'Pnominal');
-model.param.set('Pnominal', '0[W]', 'Total nominal power 234MW');
+model.param.set('Pnominal', '236[MW]', 'Total nominal power 236MW');

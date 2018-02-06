@@ -59,7 +59,7 @@ unb = 16; %total number of universes computed in serpent for cross sections
 pebbles_region = 3; % number of regions in a fuel pebble, e.g.: graphte kernel, fuel(containing triso particles), shell
 region_coated=1; % number of regions in TRISO coat
 region_fuel_kernel=3; % number of regions in the fuel kernel in a TRISO particle
-OpPower = '0';%'236[MW]'; %string, input to comsol global variable 'Pop'
+OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
 
 
 %% modeling options that you can switch on and off 

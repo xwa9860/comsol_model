@@ -8,5 +8,5 @@ fprintf('Solver sequence\n');
 model = run_ss_sequence();
 
 %% Transient calculation
-% % fprintf('\nRunning transient...\n');
-% % model = create_transient_study(model, transient_type);
+fprintf('\nRunning transient...\n');
+model = create_transient_study(model, transient_type);
