@@ -136,19 +136,19 @@ for n=1:pebbles_region
                                     '+(k_fuel*r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/11558) )'],k);
                                 
                                 %-- Tp23
-                                kkkk=k-region_coated+region_fuel_kernel+pebbles_region;
+                                kkkk=k-region_coated-region_fuel_kernel-pebbles_region+1;
                                 cfeq.setIndex('a', ['(-4)*pi*',num2str(k_triso(i)),'*'...
                                     'R',num2str(i-1),'*R',num2str(i),'/(R',num2str(i),'-R',num2str(i-1),')'],kkkk);
                                 %++ Tp3
                                 kk=k+region_coated+region_fuel_kernel+pebbles_region-1;
                                 cfeq.setIndex('a', ['(-4)*pi*k_fuel*'...
-                                    'r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')'],kk);
+                                    'r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/11558'],kk);
                                 
                                 %-- Tp1
                                 
                                 kkk=k-3*(region_coated+region_fuel_kernel+pebbles_region)-3;
                                 cfeq.setIndex('a', ['(-4)*pi*k_fuel*'...
-                                    'r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')'],kkk);
+                                    'r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')/11558'],kkk);
                              else
                                cfeq.setIndex('a',num2str(0),k);   
                             end
