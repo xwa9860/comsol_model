@@ -16,18 +16,18 @@ run('create_geom.m');
 run('create_mesh.m');
 tic
 fprintf('creating variables\n')
-% run('create_vars.m');
+run('create_vars.m');
 toc
 
 fprintf('creating materials\n')
 run('create_mats.m');
 
 fprintf('creating physics\n')
-% if ~isTMSR
-%     run('create_porous_media');
-% end
+if ~isTMSR
+    run('create_porous_media');
+end
 % Heat transfer modules
-% run('create_ht_flibe.m');
+run('create_ht_flibe.m');
 
 if isMultiScale
     run('create_ht_fuel_resistance.m');
@@ -49,4 +49,4 @@ run('create_neutron_diffusion.m');
 %Math operatoins, such as integration, for probes
 run('create_operations.m');
 %Probes to get desired variable values during transient
-% run('create_probes.m');
+run('create_probes.m');
