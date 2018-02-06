@@ -11,16 +11,21 @@ reactor = 'Mk1';
 %% Define global variables for the model that can be used across the files and functions
 global general_path data_path fuel_data_path rod_data_path; 
 global dimNb dnb gnb unb seg_nb;
-global domains gr_comps;
-global universes;
+
 global isTMSR isVerbose isMultiScale is_rounded_geom isSp3;
 global rod_positions seg_heights;
 global is_get_coef_from_file;
 
-global pebbles_region region_coated region_fuel_kernel
-global output_path;
+% domain numbers and ....universe numbers
+global pebbles_region region_coated region_fuel_kernel;
+global flibe_domains inlet_temp_bound;
 global fuel_comp;
 global fuel_domNb fuel_univ;
+global domains gr_comps;
+global universes;
+
+global output_path;
+
 
 % solver mode
 global transient_type
@@ -54,7 +59,7 @@ unb = 16; %total number of universes computed in serpent for cross sections
 pebbles_region = 3; % number of regions in a fuel pebble, e.g.: graphte kernel, fuel(containing triso particles), shell
 region_coated=1; % number of regions in TRISO coat
 region_fuel_kernel=3; % number of regions in the fuel kernel in a TRISO particle
-OpPower = '236[MW]'; %string, input to comsol global variable 'Pop'
+OpPower = '0';%'236[MW]'; %string, input to comsol global variable 'Pop'
 
 
 %% modeling options that you can switch on and off 
@@ -120,7 +125,7 @@ fuel_univ = cell2mat(values(universes, {'fuelU', 'fuelB', 'fuela1', 'fuela2', 'f
 global porous_media
 porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'};
 
-flibe_domains = fuel_domNb; % used for flibe temperature probe
+
 
 %% --------------------- porous media module
 %boundary numbers used in comsol
@@ -146,7 +151,7 @@ pm_domains = cell2mat(valueSet);
 main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 
 %% ---------------------- flibe heat transfer module
-global flibe_domains inlet_temp_bound;
+
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 inlet_temp_bound = [in_bound1, in_bound2];
 

@@ -258,7 +258,7 @@ for n=1:pebbles_region
                         
                 end
                 cfeq.setIndex('a', ['4*pi*k_fuel*r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')'...
-                    '+  h_conv*pb_area/11000 '],k);
+                    '+ h_conv*pb_area/11000 '],k);
                 %                 k=k+3*(region_coated+region_fuel_kernel)+2;
                 switch reactor
                     case 'TMSR'
