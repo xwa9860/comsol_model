@@ -48,7 +48,8 @@ init = model.physics('ht_fuel').feature('init1');
 %% get thermal_properties
 [k_triso, cp_triso, rho_triso] = calc_triso_thermal_properties();
 [k_fuel, cp_fuel, rho_fuel] = calc_pb_thermal_properties();
-[k_gr, cp_gr, rho_gr] = [193, 684, 1960];
+[k_gr, cp_gr, rho_gr] = calc_gr_properties();
+
 k_g_core = 193;
 k_g_shell = 193;
 
