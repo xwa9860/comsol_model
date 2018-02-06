@@ -132,8 +132,8 @@ for n=1:pebbles_region
                                 
                                 cfeq.setIndex('a', ['4*pi'...
                                     '*((',num2str(k_triso(i)),'*R',num2str(i),'*R',num2str(i-1),'/(R',num2str(i),'-R',num2str(i-1),'))'...
-                                    '+(k_fuel*r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')/11558)'...
-                                    '+(k_fuel*r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/11558) )'],k);
+                                    '+(k_fuel*r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')/triso_nb)'...
+                                    '+(k_fuel*r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/triso_nb) )'],k);
                                 
                                 %-- Tp23
                                 kkkk=k-region_coated-region_fuel_kernel-pebbles_region+1;
@@ -142,13 +142,13 @@ for n=1:pebbles_region
                                 %++ Tp3
                                 kk=k+region_coated+region_fuel_kernel+pebbles_region-1;
                                 cfeq.setIndex('a', ['(-4)*pi*k_fuel*'...
-                                    'r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/11558'],kk);
+                                    'r',num2str(n+1),'*r',num2str(n),'/(r',num2str(n+1),'-r',num2str(n),')/triso_nb'],kk);
                                 
                                 %-- Tp1
                                 
                                 kkk=k-3*(region_coated+region_fuel_kernel+pebbles_region)-3;
                                 cfeq.setIndex('a', ['(-4)*pi*k_fuel*'...
-                                    'r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')/11558'],kkk);
+                                    'r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')/triso_nb'],kkk);
                              else
                                cfeq.setIndex('a',num2str(0),k);   
                             end
@@ -260,7 +260,7 @@ for n=1:pebbles_region
                         
                 end
                 cfeq.setIndex('a', ['4*pi*k_fuel*r',num2str(n),'*r',num2str(n-1),'/(r',num2str(n),'-r',num2str(n-1),')'...
-                    '+ h_conv*pb_area/11000 '],k);
+                    '+ h_conv*pb_area/pb_nb '],k);
                 %                 k=k+3*(region_coated+region_fuel_kernel)+2;
                 switch reactor
                     case 'TMSR'
@@ -344,10 +344,10 @@ for n=1:pebbles_region
                 
                 for m=1:region_coated+region_fuel_kernel
                     if m==1
-                        cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/10000/3'...
+                        cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/triso_nb/3'...
                             ],k);
                     elseif m<region_coated+region_fuel_kernel
-                        cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/10000/3'...
+                        cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/triso_nb/3'...
                             ],k);
                     else
                         if n==1
@@ -367,7 +367,7 @@ for n=1:pebbles_region
                 else
                     for m=1:region_coated+region_fuel_kernel
                         if m<region_coated+region_fuel_kernel
-                            cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/10000/3'...
+                            cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/triso_nb/3'...
                                 ],k);
                         else
                             if n<pebbles_region
@@ -383,7 +383,7 @@ for n=1:pebbles_region
     else
         m=region_coated+region_fuel_kernel;
         cfeq.setIndex('f',[...
-            '+h_conv*pb_area*T_flibe/11000'],k);
+            '+h_conv*pb_area*T_flibe/pb_nb'],k);
         k=k+1;
     end
 end
