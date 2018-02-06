@@ -2,7 +2,8 @@ global fuel_domNb;
 global isMultiScale;
 global flibe_domains;
 global reactor;
-
+global out_flow_bound;  % for outlet temperature in Mk1
+global inlet_temp_bound; % for inlet temperature in Mk1
 % create table to store probe values
 model.result.table.create('tbl1', 'Table');
 model.result.table('tbl1').set('tablebuffersize', '100000');
@@ -29,7 +30,7 @@ if isMultiScale
         case 'TMSR'
             model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp4)');
         case 'Mk1'
-            model.probe('dom2').set('expr', '1/5*(Tp1+Tp21+Tp22+Tp23+Tp24+Tp3)');
+            model.probe('dom2').set('expr', '1/6*(Tp1+Tp21+Tp22+Tp23+Tp24+Tp3)');
     end
 else
     model.probe('dom2').set('expr', 'T_fuel');
@@ -93,11 +94,11 @@ model.component('mod1').probe('bnd1').set('probename', 'TL_out');
 model.component('mod1').probe('bnd1').set('expr', 'T_flibe');
 model.component('mod1').probe('bnd1').set('unit', 'degC');
 model.component('mod1').probe('bnd1').set('descr', 'Temperature');
-model.component('mod1').probe('bnd1').selection.set([61 62 67 68 202 205 254 260]);
+model.component('mod1').probe('bnd1').selection.set(out_flow_bound);
 
 % Boundary probe for average inlet temperature
 model.component('mod1').probe.create('bnd2', 'Boundary');
-model.component('mod1').probe('bnd2').selection.set([63 64 71 72 203 207 246 256]);
+model.component('mod1').probe('bnd2').selection.set(inlet_temp_bound);
 model.component('mod1').probe('bnd2').label('TL_in');
 model.component('mod1').probe('bnd2').set('expr', 'T_flibe');
 model.component('mod1').probe('bnd2').set('unit', 'degC');
