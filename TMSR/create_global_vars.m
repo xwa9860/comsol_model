@@ -38,6 +38,7 @@ model.param.set('pb_zone', '3', 'number of radial zones in the pebbles');
 
 model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
 model.param.set('pb_nb', '11000', 'number of pebbles in the core');
+model.param.set('triso_nb', '11558', 'number of trisos in each core');
 model.param.set('pb_v', 'pb_nb*4/3*(pb_diam/2)^3*pi', 'volume of fuel pebbles');
 model.param.set('fuel_v', 'pb_v/0.6', 'volume of upper region of the core');
 
