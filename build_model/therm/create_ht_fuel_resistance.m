@@ -349,9 +349,9 @@ for n=1:pebbles_region
                             ],k);
                     else
                         if n==1
-                            cfeq.setIndex('f',num2str(0),k)
+                            cfeq.setIndex('f',num2str(0),k);
                         elseif n<pebbles_region
-                            cfeq.setIndex('f',num2str(0),k)
+                            cfeq.setIndex('f',num2str(0),k);
                         end
                         
                     end
@@ -360,16 +360,16 @@ for n=1:pebbles_region
                 
             case 'Mk1'
                 if n==1
-                    cfeq.setIndex('f',num2str(0),k)
+                    cfeq.setIndex('f',num2str(0),k);
                     k=k+1;
                 else
                     for m=1:region_coated+region_fuel_kernel
                         if m<region_coated+region_fuel_kernel
-                            cfeq.setIndex('f',['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/triso_nb/3'...
-                                ],k);
+                            cfeq.setIndex('f', ['PdensityN/0.6*4/3*(pb_diam/2)^3*pi/triso_nb/3'...
+                                ], k);
                         else
                             if n<pebbles_region
-                                cfeq.setIndex('f',num2str(0),k)
+                                cfeq.setIndex('f', num2str(0), k);
                             end
                             
                         end
@@ -404,7 +404,7 @@ for i=1:pebbles_region
                 end
         end
     else
-        init.set(['Tp', num2str(i)], 900)
+        init.set(['Tp', num2str(i)], 900);
     end
 end
 
