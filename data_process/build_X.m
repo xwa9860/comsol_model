@@ -21,7 +21,7 @@ switch reactor
             input = [ones(5, 1) log_fuel_temp];
         end  
     case 'Mk1'          
-        % load temperature values in an input matrix
+        % load temperature values, which are used in serpent scripts to generate xs matrix, in an input matrix
         
         % The coolant in the fuel regions are also contained in this input matrix
         % because the cross sections are generated per porous media zones

@@ -1,5 +1,6 @@
 
-global flibe_domains dimNb fuel_domNb inlet_temp_bound
+global flibe_domains dimNb fuel_domNb inlet_temp_bound;
+
 model.physics.create('ht_flibe', 'HeatTransferInFluids', 'geom1');
 model.physics('ht_flibe').identifier('ht_flibe');
 model.physics('ht_flibe').label('Heat Transfer - Flibe');

@@ -12,14 +12,14 @@ function temp_var_pb = build_temp_var()
             case 'Mk1'
                 switch fuel_comp
                     case 'fresh'
-                        var_nb = 4; % 1(flibe)+3(fuel)
+                        var_nb = 4; % 3(fuel)+1(flibe)
                     case 'eq'
-                        var_nb = 25; % 1(flibe)+3*8 burnup number(fuel)
+                        var_nb = 25; % 3*8 burnup number(fuel)+1(flibe)
                 end
 
                 temp_var_pb = strings(var_nb, 1);  
                 for i = 1:(var_nb-1)
-                 temp_var_pb(i) = strcat("log(T_fuel_", num2str(i), "[1/K])");
+                 temp_var_pb(i) = strcat("log(Tp2", num2str(i), "[1/K])");
                 end
                 temp_var_pb(var_nb) = "T_flibe";
             case 'TMSR'

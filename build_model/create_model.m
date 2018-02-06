@@ -33,7 +33,13 @@ if isMultiScale
     run('create_ht_fuel_resistance.m');
     model.variable.create('var25');
     model.variable('var25').model('mod1');
-    model.variable('var25').set('T_fuel', 'Tp44');
+    model.variable('var25').label('Fuel surface temp, used in flibe heat transfer');
+    switch reactor
+        case 'TMSR'
+            model.variable('var25').set('T_fuel', 'Tp4');
+        case 'Mk1'
+            model.variable('var25').set('T_fuel', 'Tp3');
+    end
 else
     run('create_ht_fuel.m');
 end 

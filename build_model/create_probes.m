@@ -1,6 +1,8 @@
 global fuel_domNb;
 global isMultiScale;
 global flibe_domains;
+global reactor;
+
 % create table to store probe values
 model.result.table.create('tbl1', 'Table');
 model.result.table('tbl1').set('tablebuffersize', '100000');
@@ -23,7 +25,12 @@ model.probe('dom2').selection.set(fuel_domNb);
 model.probe('dom2').label('average_fuel_temp_probe');
 model.probe('dom2').set('table', 'tbl1');
 if isMultiScale
-    model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp44)');
+    switch reactor
+        case 'TMSR'
+            model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp4)');
+        case 'Mk1'
+            model.probe('dom2').set('expr', '1/15*(Tp1+Tp21+Tp22+Tp23+Tp24+Tp3)');
+    end
 else
     model.probe('dom2').set('expr', 'T_fuel');
 end
@@ -232,9 +239,9 @@ if isTMSR && isMultiScale
     model.probe.create('dom18', 'Domain');
     model.probe('dom18').model('mod1');
     model.probe('dom18').selection.set(fuel_domNb);
-    model.probe('dom18').label('Tp44');
+    model.probe('dom18').label('Tp4');
     model.probe('dom18').set('table', 'tbl1');
-    model.probe('dom18').set('descr', 'Tp44');
+    model.probe('dom18').set('descr', 'Tp4');
     model.probe('dom18').set('window', 'window2');
     model.probe('dom18').set('expr', 'Tp44');
     model.probe('dom18').set('unit', 'degC');
