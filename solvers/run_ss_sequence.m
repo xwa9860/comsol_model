@@ -8,6 +8,8 @@ function model = run_ss_sequence()
     %}
 
     global transient_type;
+    global output_path;
+    
     switch transient_type
         case 'control_rods_removal'
             isControlRodRemoval = true;
@@ -25,7 +27,7 @@ function model = run_ss_sequence()
             model = mphload([output_path, 'scaling.mph']);
         end
     else
-        global output_path;
+        
         isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
         isLoadSSFromFile = false; % boolean, loading steady state results from file
 
@@ -54,10 +56,10 @@ function model = run_ss_sequence()
             end
         end
 
-% %         %% Scale the flux to power
-% %         fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
-% %         model = create_and_run_scaling(model, isControlRodRemoval);
-% % 
+        %% Scale the flux to power
+        fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
+        model = create_and_run_scaling(model, isControlRodRemoval);
+
 
     end
 end
@@ -88,15 +90,15 @@ function model = start_from_begining(output_path)
     fprintf('\nRun steady state study\n');
     model = create_steady_state_solver(model);
     model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
-% %     switch reactor
-% %         case 'Mk1'
-% %             run('create_3d_steady_state_results');
-% %         case 'TMSR'
-% %             run('create_steady_state_results');
-% %     end
+    switch reactor
+        case 'Mk1'
+            run('create_3d_steady_state_results');
+        case 'TMSR'
+            run('create_steady_state_results');
+    end
 
-%     % Iterate betwen eigenvalue and steady state computation until the result converges
-%     model = iterate_ss_eigen(model, 'ss.mph', 'eigen.mph'); 
+    % Iterate betwen eigenvalue and steady state computation until the result converges
+    model = iterate_ss_eigen(model, 'ss.mph', 'eigen.mph'); 
     
 
 end
