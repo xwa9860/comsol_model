@@ -1,5 +1,5 @@
 
-model.param.set('v_inlet', '0.14[m/s]', 'upwards velocity, uniform in the core 0.14[m/s]');
+model.param.set('v_inlet', '0.14*0.4[m/s]', 'upwards velocity, uniform in the core 0.14[m/s], to have a mass flow rate of about 150kg/s');
 model.param.set('T0_flibe', '1051[K]', 'initial temperature for flibe salt, 672[degC] for TMSR');
 model.param.set('T_inlet', '672[degC]','nominal value is 672');
 model.param.set('T0_fuel', '900[K]', 'initial temperature for fuel pebbles, 800[degC]');
@@ -11,23 +11,30 @@ model.param.set('z0', '20[cm]-4.899[cm]', 'height of pebble boundary when pb_h =
 model.param.set('zin', 'z0+pb_h', 'inner height that fuel pebble regions starts');
 model.param.set('zout', '0.53+pb_h', 'outer height that fuel pebble starts');
 model.param.set('pb_diam', '0.06[m]', 'fuel pebble diameter');
+
 model.param.set('r0','0[m]');
 model.param.set('r1', '0.017334031858766[m]');
 model.param.set('r2', '0.021839511618407[m]');
 model.param.set('r3', '0.025000000000000[m]');
 model.param.set('r4', '0.027500000000000[m]');
+
 %radius of TRISTO
 model.param.set('R0', '0[m]');
 model.param.set('R1', '0.000173340318588[m]');
 model.param.set('R2', '0.000218395116184[m]');
 model.param.set('R3', '0.000250000000000[m]');
 % model.param.set('R4', '0.000365000000000[m]');
-model.param.set('R4', '0.092000000000000[m]');
+model.param.set('R4', '0.00046000000000000[m]');
 
 %volume for each part
-model.param.set('V_fuel', '4/3*pi*0.00025^3/3[m^3]');
-model.param.set('V_coat', '4/3*pi*(0.00046^3-0.00025^3)[m^3]');
-model.param.set('V_graphite_shell', '4/3*pi*(0.06^3-0.055^3)[m^3]');
+%model.param.set('V_graphite_shell', '4/3*pi*(0.06^3-0.055^3)[m^3]');
+%volume for each part
+model.param.set('V_fuel', '4/3*pi*R3^3/3[m^3]', 'volume of fuel kernel in a triso');
+model.param.set('V_coat', '4/3*pi*(R4^3-R3^3)[m^3]', 'volume of coatings in a triso');
+model.param.set('V_graphite_core', '4/3*pi*(r1^3)[m^3]', 'volume of the graphtie kernel in a pebble');
+model.param.set('V_graphite_shell', '4/3*pi*(r4^3-r3^3)[m^3]', 'volume of the graphite shell in a pebble');
+
+
 
 % Tp0 is zero
 model.param.set('Tp0', '0');

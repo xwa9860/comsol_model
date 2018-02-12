@@ -24,7 +24,8 @@ global dirichelet_b inlet_temp_bound out_flow_bound;
 
 % solver mode
 global transient_type
-transient_type = 'overcooling'; %'ext_RI_step';% 'overcooling';
+transient_type = 'overcooling';
+%'ext_RI_step';% 'overcooling';
 
 general_path = 'TMSR';
 data_path = 'TMSR\XS_data\';
