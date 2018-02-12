@@ -16,7 +16,7 @@ model.param.set('r0','0[m]');
 model.param.set('r1', '0.017334031858766[m]');
 model.param.set('r2', '0.021839511618407[m]');
 model.param.set('r3', '0.025000000000000[m]');
-model.param.set('r4', '0.027500000000000[m]');
+model.param.set('r4', '0.0300000000000[m]');
 
 %radius of TRISTO
 model.param.set('R0', '0[m]');
