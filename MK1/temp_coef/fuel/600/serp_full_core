@@ -1,6 +1,6 @@
 %%---Cross section data library path
 set title "FHR core"
-set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
+set acelib "/global/home/groups/co_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
 include "Blanket"
 include "FuelW"
 include "Downcomer"
@@ -31,26 +31,6 @@ set pop 10000 2000 500
 set bc 1
 set ures 1
 set power 2.36E8
-% OR, ORCC, CR, CRCC1, CRCC2, CRCC3, CRCC4, Barrel, Dcmer, Vessel, Blanket, FuelW, FuelA1, FuelA2, FuelA3, FuelA4
-set gcu 196 197 1 2 48 94 140 272 273 274 265 209 216 223 230 237
-set nfg 8
-5.8e-8
-1.9e-7
-5e-7
-4e-6
-4.8e-5
-2.5e-2
-1.4
-set opti 1
-%% detector for power
-%det <name> dn 1 <rmin> <rmax> <nr>  <amin> <amax> <na> <zmin> <zmax> <nz>
-det 1 dr -8 void dn 1 0  175 35 0 360 1 41 573 38
-%% detector for thermal neutron flux
-ene 1 1 1E-11 0.625E-6
-det 2 de 1 dn 1 0  175 35 0 360 1 41 573 38
-%% detector for fast neutron flux
-ene 2 1 0.625E-6 200
-det 3 de 2 dn 1 0  175 35 0 360 1 41 573 38
 
 %%---Plot the geometry
 plot 1 700 700 0 %% yz cross plane at x=0

@@ -33,7 +33,7 @@ cell 209 385 fill 370  664 -665 667 -666
 %%---FCC unit cell lattice
 surf 691 cube 0. 0. 0. 4.550828
 cell 217  386 fill 369 -691
-lat 370 6 0. 0. 4.55082752 386
+lat 370 6 0. 0. 4.550828 386
 
 
 %%---Graphite pebble bed(or unit cell) from input file
