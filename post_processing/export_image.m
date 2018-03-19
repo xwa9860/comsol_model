@@ -23,7 +23,7 @@ function model = export_image(model, image_name, label, ...
     img.set('webresolution', '96');
     img.set('size', 'manualprint');
     img.set('antialias', 'on');
-    img.set('zoomextents', 'off');
+    img.set('zoomextents', 'on');
     
     img.set('title', 'on');
     img.set('legend', 'on');
@@ -37,4 +37,6 @@ function model = export_image(model, image_name, label, ...
     img.set('qualitylevel', '92');
     img.set('qualityactive', 'off');
     img.set('imagetype', 'png');
+    
+    
 end

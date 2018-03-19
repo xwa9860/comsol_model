@@ -1,17 +1,11 @@
-% define inlet velocity for boundary condition
-% model.func.create('an9', 'Analytic');
-% model.func('an9').label('Inlet Velocity');
-% model.func('an9').set('args', {'z' 'z0'});
-% model.func('an9').set('expr', '(1-bottomInletFraction)/0.54*0.06*(z^2 - z0)');
-% model.func('an9').set('plotargs', {'z' '0' '1'; 'z0' '0' '1'});
-% model.func('an9').set('funcname', 'vel_in');
-global pm_domains out_bound1 out_bound2 out_bound3 in_bound1 in_bound2;
+global pm_domains out_bound1 out_bound2 out_bound3
+global in_bound1 in_bound2 in_bound3 in_bound4 in_bound5;
+global dimNb;
 
 % create Brinkman module
 model.physics.create('br', 'Brinkman', 'geom1');
 model.physics('br').label('Momentum - Porous Media Flow');
 model.physics('br').selection.set(pm_domains);
-
 model.physics('br').prop('ShapeProperty').set('valueType', {'complex';  ...
 'complex';  ...
 'real';  ...
@@ -42,6 +36,7 @@ model.physics('br').feature('fmp1').set('kappa', {'0'; '0'; '0'; '0'; '0'; '0'; 
 model.physics('br').feature('fmp1').label('Fluid and Matrix Properties');
 model.physics('br').feature('fmp1').feature('fd1').label('Forchheimer Drag');
 
+%% outlet boundary conditions
 % lower(wall) outlet
 model.physics('br').create('out1', 'OutletBoundary', dimNb-1);
 model.physics('br').feature('out1').selection.set(out_bound1);
@@ -66,6 +61,15 @@ model.physics('br').feature('out3').selection.set(out_bound3);
 model.physics('br').feature('out3').set('BoundaryCondition', 'Pressure');
 model.component('mod1').physics('br').feature('out3').set('p0', '-0.1*rhoL*g');
 
+%% inlet boundary conditions
+% define inlet velocity for boundary condition
+% model.func.create('an9', 'Analytic');
+% model.func('an9').label('Inlet Velocity');
+% model.func('an9').set('args', {'z' 'z0'});
+% model.func('an9').set('expr', '(1-bottomInletFraction)/0.54*0.06*(z^2 - z0)');
+% model.func('an9').set('plotargs', {'z' '0' '1'; 'z0' '0' '1'});
+% model.func('an9').set('funcname', 'vel_in');
+
 % bottom inlet
 model.physics('br').create('inl1', 'InletBoundary', dimNb-1);
 model.physics('br').feature('inl1').selection.set(in_bound1);
@@ -89,6 +93,19 @@ model.component('mod1').physics('br').feature('inl2').set('k0', '0.005[m^2/s^2]'
 model.component('mod1').physics('br').feature('inl2').set('ep0', '0.005[m^2/s^3]');
 model.component('mod1').physics('br').feature('inl2').set('om0', '20[1/s]');
 
+% 
+model.component('mod1').physics('br').create('inl3', 'InletBoundary', 2);
+model.component('mod1').physics('br').feature('inl3').selection.set(in_bound3);
+model.component('mod1').physics('br').feature('inl3').set('U0in', 0.05);
+% 
+model.component('mod1').physics('br').create('inl4', 'InletBoundary', 2);
+model.component('mod1').physics('br').feature('inl4').selection.set(in_bound4);
+model.component('mod1').physics('br').feature('inl4').set('U0in', 0.05);
+
+model.component('mod1').physics('br').create('inl5', 'InletBoundary', 2);
+model.component('mod1').physics('br').feature('inl5').selection.set(in_bound5);
+model.component('mod1').physics('br').feature('inl5').set('U0in', 0.05);
+
 % model.physics('br').feature('inl2').set('BoundaryCondition', 'MassFlow');
 % model.physics('br').feature('inl2').set('mfr', 'mL*(1-bottomInletFraction)');
 % model.physics('br').feature('inl2').set('U0in', '0.5');
@@ -108,7 +125,7 @@ model.component('mod1').physics('br').feature('inl2').set('om0', '20[1/s]');
 % model.component('mod1').physics('br').feature('inl3').set('mfr', '10[kg/s]');
 
 
-% wall 
+%% wall 
 model.physics('br').feature('wall1').set('BoundaryCondition', 'Slip');
 model.physics('br').feature('wall1').set('constraintType', 'symmetricConstraint');
 model.physics('br').feature('wall1').set('zeta', '-0.1[V]');

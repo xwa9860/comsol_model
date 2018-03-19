@@ -1,3 +1,8 @@
+%{
+The 'main' script that runs the modeling procedures for Mk1
+This is the only script that should be called by users of the Mk1 model
+%}
+
 clear all;
 close all;
 

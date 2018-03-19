@@ -14,8 +14,8 @@ function [ks_triso, cps_triso, rhos_triso] = calc_triso_thermal_properties()
     end
     resistance_equ = sum(resistance_coatings);
     K_equ = (1/Rs(1) - 1/Rs(5)) /(4*pi*resistance_equ);  % equivelent thermal conductivity for the coatings
-    ks_triso = [repmat(ks(1),1,3),K_equ]; % used in the model
-
+    ks_triso = [repmat(ks(1),1,3), K_equ]; % used in the model
+    %ks_triso = [193 193 193 193];
     
     %% density
     rhos = [10500, 1000, 1900, 3200, 1900];

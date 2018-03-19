@@ -1,4 +1,4 @@
-global isTMSR isMultiScale
+global reactor isMultiScale fuel_comp
 fprintf('creating a model object in the server\n')
 run('create_comsol_model.m');
 
@@ -23,14 +23,60 @@ fprintf('creating materials\n')
 run('create_mats.m');
 
 fprintf('creating physics\n')
-if ~isTMSR
-    run('create_porous_media');
+switch reactor
+    case 'Mk1'
+        run('create_porous_media');
 end
+
 % Heat transfer modules
 run('create_ht_flibe.m');
 
 if isMultiScale
-    run('create_ht_fuel_resistance.m');
+    switch fuel_comp
+        case 'fresh'
+            bu_nb = 1;
+        case 'eq'
+            bu_nb = 8;
+    end
+    
+
+
+    % create the heat tranfer module(s)
+    for k = 1 : bu_nb
+        module_name = ['ht_fuel', num2str(k)];
+ 
+        %For MK1
+        %{
+        naming conventions:
+        'Tp1b': graphite kernel
+        'Tp21b', ..., 'TP24':fuel
+        'TP3b': graphite shell
+        %}
+
+        %For TMSR
+        %naming:
+        %'Tp11...Tp31...' : fuel
+        %'Tp4: graphite shell
+
+        switch reactor
+            case 'TMSR'
+                temp_var_ht = ...
+                 {'Tp11' 'Tp12' 'Tp13' 'Tp14' ...
+                    'Tp21' 'Tp22' 'Tp23' 'Tp24' ...
+                    'Tp31' 'Tp32' 'Tp33' 'Tp34'...
+                    'Tp4'};
+            case 'Mk1'
+                temp_var_ht{1} = ['Tp1', num2str(k)];
+                for i = 1:4
+                temp_var_ht{i+1} = ['Tp2', num2str(i), num2str(k)];
+                end
+                temp_var_ht{6} = ['Tp3', num2str(k)];
+        end       
+        model = create_ht_fuel_multiscale(model, module_name, temp_var_ht, k);
+    end
+    
+    % create a variable for fuel surface temperature that is used in the
+    % flibe heat transfer module 
     model.variable.create('var25');
     model.variable('var25').model('mod1');
     model.variable('var25').label('Fuel surface temp, used in flibe heat transfer');
@@ -38,7 +84,12 @@ if isMultiScale
         case 'TMSR'
             model.variable('var25').set('T_fuel', 'Tp4');
         case 'Mk1'
-            model.variable('var25').set('T_fuel', 'Tp3');
+            switch fuel_comp
+                case 'fresh'
+                    model.variable('var25').set('T_fuel', 'Tp31');
+                case 'eq'
+                    model.variable('var25').set('T_fuel', '1/8*(Tp31+ Tp32 + Tp33 + Tp34 + Tp35 + Tp36 + Tp37 + Tp38)');
+            end
     end
 else
     run('create_ht_fuel.m');

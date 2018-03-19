@@ -1,5 +1,6 @@
 
 global flibe_domains dimNb fuel_domNb inlet_temp_bound;
+global out_flow_bound;
 
 model.physics.create('ht_flibe', 'HeatTransferInFluids', 'geom1');
 model.physics('ht_flibe').identifier('ht_flibe');
@@ -31,7 +32,6 @@ model.physics('ht_flibe').feature('ins1').label('Thermal Insulation');
 
 
 if isTMSR
-    global out_flow_bound;
     model.physics('ht_flibe').create('ofl1', 'ConvectiveOutflow', dimNb-1);    
     model.physics('ht_flibe').feature('ofl1').selection.set(out_flow_bound);
     model.physics('ht_flibe').feature('ofl1').label('Outflow');

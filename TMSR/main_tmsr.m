@@ -11,5 +11,3 @@ model = run_ss_sequence();
 %% Transient calculation
 fprintf('\nRunning transient...\n');
 model = create_transient_study(model, transient_type);
-
-

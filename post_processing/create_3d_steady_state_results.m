@@ -1,6 +1,7 @@
 %{
  Create steady state results for 3D models: tables and plots
 %}
+
 fprintf('create steady state results, plots, tables, ...')
 %% change the dataset for cp11 from eigenvalue solution to steady state solution
 model.result.dataset('cpl1').set('data', 'dset2');
@@ -8,19 +9,12 @@ model.result.dataset('cpl1').set('data', 'dset2');
 
 %% evaluate mass flow rate at inlets
 model.result.table.create('tbl2', 'Table');
-model.result.numerical.create('int1', 'IntSurface');
-
-model.result.numerical('int1').set('data', 'dset2');
-model.result.numerical('int1').selection.set(in_bound2);
-model.result.numerical('int1').set('probetag', 'none');
-
-model.result.numerical('int1').label('center inlet mass flow rate');
-model.result.numerical('int1').set('table', 'tbl2');
-model.result.numerical('int1').set('expr', {'(u*nx+v*ny+w*nz)*rhoL'});
-model.result.numerical('int1').set('unit', {'kg/s'});
-model.result.numerical('int1').set('descr', {''});
-model.result.numerical('int1').setResult;
-
+model = calc_inlet_flow(model, in_bound1, 'tbl2');
+model = calc_inlet_flow(model, in_bound2, 'tbl2');
+model = calc_inlet_flow(model, in_bound3, 'tbl2');
+model = calc_inlet_flow(model, in_bound4, 'tbl2');
+model = calc_inlet_flow(model, in_bound5, 'tbl2');
+model = calc_inlet_flow(model, inlet_temp_bound, 'tbl2');
 %% plots
 model = plot_surf(model, 'cpl1', 'T_flibe', 2, 'T_flibe(steady state)', 'degC');
 model = plot_surf(model, 'cpl1', 'T_fuel', 2, 'T_fuel(steady state)', 'degC');

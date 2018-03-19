@@ -1,6 +1,6 @@
 function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitialRun)
     tic
-    global dimNb reactor;
+    global dimNb reactor fuel_comp;
     global output_path;
     % set to eigenvalue mode
     model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 1 if not eigenvalue mode, value =0 if eigenvalue mode)');
@@ -17,18 +17,23 @@ function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitial
             model.study('std2').feature('eigv').set('shift', '1');
             model.study('std2').feature('eigv').set('shiftactive', true);
         case 'Mk1'
-            model.study('std2').feature('eigv').set('shift', '0.8');
-            model.study('std2').feature('eigv').set('eigwhich', 'sr');
-            model.sol('sol16').attach('std2');
-            model.sol('sol16').feature('e1').set('control', 'user');
-            model.sol('sol16').feature('e1').set('neigs', 1);
-            model.sol('sol16').feature('e1').set('eigwhich', 'sr');
-            model.sol('sol16').feature('e1').set('transshift', false);
-            model.sol('sol16').feature('e1').set('shift', '0.8');
-            model.sol('sol16').feature('e1').set('maxeigit', 100);
-            model.sol('sol16').feature('e1').set('krylovdim', 10);
-            model.sol('sol16').feature('e1').set('keeplog', true);
-           
+            switch fuel_comp
+                case 'fresh'                    
+                    model.study('std2').feature('eigv').set('shift', '0.8');
+                    model.study('std2').feature('eigv').set('eigwhich', 'sr');
+                    model.sol('sol16').attach('std2');
+                    model.sol('sol16').feature('e1').set('control', 'user');
+                    model.sol('sol16').feature('e1').set('neigs', 1);
+                    model.sol('sol16').feature('e1').set('eigwhich', 'sr');
+                    model.sol('sol16').feature('e1').set('transshift', false);
+                    model.sol('sol16').feature('e1').set('shift', '0.8');
+                    model.sol('sol16').feature('e1').set('maxeigit', 100);
+                    model.sol('sol16').feature('e1').set('krylovdim', 10);
+                    model.sol('sol16').feature('e1').set('keeplog', true);
+                case 'eq'
+                    model.study('std2').feature('eigv').set('shift', '1');
+                    model.study('std2').feature('eigv').set('shiftactive', true);
+            end           
     end
     
     
@@ -50,6 +55,8 @@ function [model, lambda_eigen]= run_an_eigen_solver(model, saveToFile, isInitial
         model.study('std2').feature('eigv').set('notstudy', 'std5');
         model.study('std2').feature('eigv').set('useinitsol', 'on');        
     end
+    
+    mphsave(model, [output_path, saveToFile]); % save intermediate solutions
 
     %% run solver
     fprintf('Running eigenvalue study\n');

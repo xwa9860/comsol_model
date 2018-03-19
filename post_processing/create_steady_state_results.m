@@ -1,5 +1,5 @@
 global isMultiScale;
-global pebbles_region region_fuel_kernel region_coated;
+global pb_region region_fuel_kernel region_coated;
 
 model.result.dataset('dset2').set('solution', 'sol13');
 % dset2 is the steady state results
@@ -16,7 +16,7 @@ model = plot_surf(model, 'dset2', 'Pdensity', 2, 'Pdensity(steady_state)');
 
 if isMultiScale
     % Tp11-44 plot
-    for i =1:pebbles_region-1
+    for i =1:pb_region-1
         for j = 1:(region_fuel_kernel+region_coated)
             model = plot_surf(model, 'dset2', ['Tp',num2str(i),num2str(j)], 2, ['Tp',num2str(i),num2str(j),'(steady_state)'], temp_unit);
         end

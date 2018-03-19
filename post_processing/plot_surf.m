@@ -14,9 +14,9 @@ function [model, this_plot_nb] = plot_surf(model, dataset, expr, plotDim, label,
     if ~isempty(plotNb)
         plotNb = plotNb + 1;
     else
-        plotNb = mphglobal(model, 'plotNb')+1;
+        plotNb = mphglobal(model, 'plotNb');
     end
-    this_plot_nb = plotNb;
+    %this_plot_nb = plotNb;
     
     model.param.set('plotNb', plotNb);
     name = ['pg', num2str(plotNb)];

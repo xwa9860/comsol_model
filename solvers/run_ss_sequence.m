@@ -1,10 +1,10 @@
 function model = run_ss_sequence()
     %{
     run the eigenvalue, steady state, scaling solvers sequence to find the
-    final steady state results
+    'final' steady state results
 
     the function can either run the solvers step-by-step or load some
-    intermediate results from files
+    intermediate results from files in order to save time
     %}
 
     global transient_type;
@@ -54,8 +54,20 @@ function model = run_ss_sequence()
                 fprintf('Search for control rod positions\n');
                 model = search_control_rod_positions(model);    
             end
+            
         end
 
+%         fprintf('\nRun steady state study\n');
+%         model = create_steady_state_solver(model);
+%         model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
+%         switch reactor
+%             case 'Mk1'
+%                 run('create_3d_steady_state_results');
+%             case 'TMSR'
+%                 run('create_steady_state_results');
+%         end
+        
+        
         %% Scale the flux to power
         fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
         model = create_and_run_scaling(model, isControlRodRemoval);
@@ -81,7 +93,7 @@ function model = start_from_begining(output_path)
     end
 
     % run the following line only if temperature feedback coefficients are needed
-     %run('calc_temperature_feedback_coefs.m'); 
+    % run('calc_temperature_feedback_coefs.m'); 
     
     %% 1st steady state solution with eigenvalue power and flux distribution
     % - create steady state solver
@@ -107,12 +119,13 @@ function model = search_control_rod_positions(model)
 % Insert control rods until keff = keff_no_rods * (1-1.4%),
 % assuming 1.4% excess reactivity during online refueling operation
     global control_rods domains;
-    excess_rho = 1.4/100; % 0.025 is for PWRs
+    global excess_rho
+   
     lambda_eigen = mphglobal(model, 'lambda');
     target_eigen = lambda_eigen * (1+excess_rho);
     fprintf('\nTarget eigenvalue is\n');
     fprintf('%.10f \n', target_eigen);
-    rod_height = 4.5; % initial rod height to start searching
+    rod_height = 4; % initial rod height to start searching
 
     while abs(lambda_eigen - target_eigen) > 10^-5     
         for i = 1:length(control_rods)
@@ -139,7 +152,7 @@ end
 
 function model = iterate_ss_eigen(model, ss_name, eigen_name) 
     %iterate betwen eigenvalue and steady state computation until the result converges
-    fprintf('iterate between eigenvalue solver and steady state solver');
+    fprintf('iterate between eigenvalue solver and steady state solver\n');
     new_eigen = 0;
     isInitialRun = false;
     lambda_eigen = mphglobal(model, 'lambda');

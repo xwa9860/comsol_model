@@ -9,7 +9,7 @@ function model = create_transient_study(model, transient_type)
     %% set parameters for different transient types 
     %% define transient study parameters
     tf = 100; %second, finishing time of the transient
-    dt = 0.1; %second, time step to record the results(not the timestep that the solver takes)
+    dt = 1; %second, time step size for comsol to RECORD the results(not the timestep that the solver takes, which is determined by the comsol solver)
 
     switch transient_type
      case 'ext_RI_step'
@@ -50,8 +50,8 @@ function model = create_transient_study(model, transient_type)
      case 'control_rods_removal'   
         % change control rod positions
         model.param.set('h_CRCC3', 5.7285);
-        model.param.set('h_CRCC6', 5.7285);
-        
+        model.param.set('h_CRCC5', 5.7285);
+        model.param.set('h_CRCC7', 5.7285);
         
      case 'overcooling'
         % define Overcooling transient parameters
@@ -68,6 +68,8 @@ function model = create_transient_study(model, transient_type)
         model.func('rm1').set('location', 'OCOnset');
         model.func('rm1').set('cutoff', '-100');
         model.physics('ht_flibe').feature('temp1').set('T0', 'T_inlet+rm1(t/1[s])');
+     otherwise
+            fprintf('Transient type not implemented');
         
     end
 
@@ -88,12 +90,7 @@ function model = create_transient_study(model, transient_type)
 
     % desable ConcN
     model.variable('var23').active(false);
-    % change the normalized power to Pdensity
-    % if isMultiScale
-    %     %Pdensity
-    % else
-    %     model.physics('ht_fuel').feature('hs1').set('Q0', 'Pdensity');
-    % end
+    
 
     %% set initial values for Flux and Conc
     global gnb dnb;
@@ -153,8 +150,8 @@ function model = create_transient_study(model, transient_type)
     model.sol('sol4').feature('v1').set('initmethod', 'sol');
     model.sol('sol4').feature('v1').set('initsol', 'sol15');
     model.sol('sol4').feature('v1').set('solnum', 'auto');
-    model.sol('sol4').feature('v1').set('clist', {'range(0,0.1,100)' '0.02[s]'});
-    model.sol('sol4').feature('t1').set('tlist', 'range(0,0.1,100)');
+    model.sol('sol4').feature('v1').set('clist', {'range(0, 1,100)' '0.02[s]'});
+    model.sol('sol4').feature('t1').set('tlist', 'range(0, 1,100)');
     model.sol('sol4').feature('t1').set('maxorder', 2);
     model.sol('sol4').feature('t1').set('estrat', 'exclude');
     model.sol('sol4').feature('t1').set('plot', true);

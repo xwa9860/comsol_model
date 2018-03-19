@@ -23,7 +23,7 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
     model = set_a_XS_map(model, comsol_var_name, fixed_data, isCR);
     
     %% build a list of temperature variable names that will be used to set the XS in COMSOL
-    temp_var_pb = build_temp_var();
+    temp_var_xs = build_temp_var();
   
     %% either load coefficients from files or compute them
     if is_get_coef_from_file
@@ -54,7 +54,7 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
 
     
     %% set coefficients to comsol model
-    model = set_coef(model, comsol_var_name, temp_var_pb, coefs, 'lin_temp_dep');
+    model = set_coef(model, comsol_var_name, temp_var_xs, coefs, 'lin_temp_dep');
     model = set_diff2(model, comsol_var_name);
     
     

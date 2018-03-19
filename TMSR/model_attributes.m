@@ -10,13 +10,16 @@ global isTMSR isVerbose isMultiScale isSp3 hasRods;
 global is_get_coef_from_file;
 global output_path
 
+% operating parameters
+global T0_flibe T0_fuel;
+
 % domain numbers and ....universe numbers
 global domains gr_comps fuel_domNb universes temp_indep_comps fuel_univ;
 global flibe_domains;
 global pm_domains main_pm_domains;
 
 % pebble design
-global pebbles_region region_coated region_fuel_kernel;
+global pb_region region_coated region_fuel_kernel pb_non_fuel_region;
 
 % boundaries
 global dirichelet_b inlet_temp_bound out_flow_bound;
@@ -24,6 +27,12 @@ global dirichelet_b inlet_temp_bound out_flow_bound;
 
 % solver mode
 global transient_type
+
+% reactor design
+global triso_pf
+
+triso_pf = 0.09;
+
 transient_type = 'overcooling';
 %'ext_RI_step';% 'overcooling';
 
@@ -35,10 +44,10 @@ dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
 gnb=8; % energy group number
 unb = 4;
-pebbles_region = 4; % number of regions in a fuel pebble, e.g.: sublayers in fuel(containing triso particles), shell
+pb_region = 4; % number of regions in a fuel pebble, e.g.: sublayers in fuel(containing triso particles), shell
+pb_non_fuel_region = 1; % number of regions in a fuel pebble that doesn't contain fuel
 region_coated=1; % number of regions in TRISO coat
 region_fuel_kernel=3; % number of regions in the fuel kernel in a TRISO particle
-
 isVerbose = true;
 is_get_coef_from_file = true;
 
@@ -54,7 +63,11 @@ isSp3 = false;
 isTMSR = true;
 hasRods = false;
 
+%% opearting parameters
+T0_flibe = 1051-273.15; % degC, temperature that corresponds to 1900 kg/m3 density
+T0_fuel = 900-273.15; % degC
 
+%% domains and universes
 domainNames = {'fuel', 'salt', 'gr'};
 uvalueSet = [3, 4, 1];
 if dimNb == 2
@@ -101,4 +114,5 @@ else
 dirichelet_b = [2 5 7 11 14];
 end
 
-OpPower = '1E7[W]'; %string, input to comsol global variable 'Pop'
+OpPower = 1E7; %string, input to comsol global variable 'Pop', in watt
+T_inlet = 672;

@@ -1,5 +1,6 @@
 function model = create_and_run_scaling(model,  isControlRodRemoval)
     global output_path;
+    global fuel_comp reactor;
     %% create new variable FluxN to get normalized fluxes => integral of
     % pdensity = Pop
     model.variable.create('var20');
@@ -65,7 +66,21 @@ function model = create_and_run_scaling(model,  isControlRodRemoval)
     model.study('std6').feature('stat').set('notsolmethod', 'sol');
 
     % turn all the modules off
-    model.study('std6').feature('stat').set('activate', {'ht_fuel' 'off' 'neutrondiffusion' 'off' 'ht_flibe' 'off'});    
+    switch reactor
+        case 'TMSR'
+            model.study('std6').feature('stat').set('activate', {'ht_fuel' 'off' 'neutrondiffusion' 'off' 'ht_flibe' 'off'}); 
+        case 'Mk1'
+            switch fuel_comp
+                case 'eq'
+                    model.study('std6').feature('stat').set('activate',{'br' 'off' 'ht_fuel1' 'off' 'ht_fuel2' 'off' 'ht_fuel3' 'off' 'ht_fuel4' 'off' ...
+                        'ht_fuel5' 'off' 'ht_fuel6' 'off' 'ht_fuel7' 'off' 'ht_fuel8' 'off' ...
+                        'ht_flibe' 'off' 'neutrondiffusion' 'off'});
+                case 'fresh'
+                    model.study('std6').feature('stat').set('activate',{'br' 'off' 'ht_fuel1' 'off' 'ht_flibe' 'off' 'neutrondiffusion' 'off'});
+            end
+    end
+    
+     
     model.study('std6').feature('stat').set('usesol', 'on');
     model.study('std6').feature('stat').set('notstudy', 'std2');
 

@@ -28,9 +28,9 @@ model.probe('dom2').set('table', 'tbl1');
 if isMultiScale
     switch reactor
         case 'TMSR'
-            model.probe('dom2').set('expr', '1/13*(Tp11+Tp12+Tp13+Tp14+Tp21+Tp22+Tp23+Tp24+Tp31+Tp32+Tp33+Tp34+Tp4)');
+            model.probe('dom2').set('expr', '1/9*(Tp11+Tp12+Tp13+Tp21+Tp22+Tp23+Tp31+Tp32+Tp33)');
         case 'Mk1'
-            model.probe('dom2').set('expr', '1/6*(Tp1+Tp21+Tp22+Tp23+Tp24+Tp3)');
+            model.probe('dom2').set('expr', '1/3*(Tp21+Tp22+Tp23)');
     end
 else
     model.probe('dom2').set('expr', 'T_fuel');
@@ -87,24 +87,47 @@ model.probe('dom5').set('unit', 'degC');
 
 
 if strcmp(reactor, 'Mk1')
-% Boundary probe for average outlet temperature
-model.component('mod1').probe.create('bnd1', 'Boundary');
-model.component('mod1').probe('bnd1').label('TL_out');
-model.component('mod1').probe('bnd1').set('probename', 'TL_out');
-model.component('mod1').probe('bnd1').set('expr', 'T_flibe');
-model.component('mod1').probe('bnd1').set('unit', 'degC');
-model.component('mod1').probe('bnd1').set('descr', 'Temperature');
-model.component('mod1').probe('bnd1').selection.set(out_flow_bound);
+    % Boundary probe for average outlet temperature
+    model.component('mod1').probe.create('bnd1', 'Boundary');
+    model.component('mod1').probe('bnd1').label('TL_out_ave');
+    model.component('mod1').probe('bnd1').set('probename', 'TL_out_ave');
+    model.component('mod1').probe('bnd1').set('expr', 'T_flibe');
+    model.component('mod1').probe('bnd1').set('unit', 'degC');
+    model.component('mod1').probe('bnd1').set('descr', 'Temperature');
+    model.component('mod1').probe('bnd1').selection.set(out_flow_bound);
 
-% Boundary probe for average inlet temperature
-model.component('mod1').probe.create('bnd2', 'Boundary');
-model.component('mod1').probe('bnd2').selection.set(inlet_temp_bound);
-model.component('mod1').probe('bnd2').label('TL_in');
-model.component('mod1').probe('bnd2').set('expr', 'T_flibe');
-model.component('mod1').probe('bnd2').set('unit', 'degC');
-model.component('mod1').probe('bnd2').set('descr', 'Temperature');
-%model.component('mod1').probe('bnd2').set('table', 'tbl3');
-model.component('mod1').probe('bnd2').set('window', 'window4');
+    % Boundary probe for average inlet temperature
+    model.component('mod1').probe.create('bnd2', 'Boundary');
+    model.component('mod1').probe('bnd2').selection.set(inlet_temp_bound);
+    model.component('mod1').probe('bnd2').label('TL_in_ave');
+    model.component('mod1').probe('bnd2').set('probename', 'TL_in_ave');
+    model.component('mod1').probe('bnd2').set('expr', 'T_flibe');
+    model.component('mod1').probe('bnd2').set('unit', 'degC');
+    model.component('mod1').probe('bnd2').set('descr', 'Temperature');
+    %model.component('mod1').probe('bnd2').set('table', 'tbl3');
+    model.component('mod1').probe('bnd2').set('window', 'window4');
+    
+    % Boundary probe for average outlet temperature
+    model.component('mod1').probe.create('bnd3', 'Boundary');
+    model.component('mod1').probe('bnd3').label('TL_out_max');
+    model.component('mod1').probe('bnd3').set('probename', 'TL_out_max');
+    model.component('mod1').probe('bnd3').set('type', 'maximum');
+    model.component('mod1').probe('bnd3').set('expr', 'T_flibe');
+    model.component('mod1').probe('bnd3').set('unit', 'degC');
+    model.component('mod1').probe('bnd3').set('descr', 'Temperature');
+    model.component('mod1').probe('bnd3').selection.set(out_flow_bound);
+
+    % Boundary probe for average inlet temperature
+    model.component('mod1').probe.create('bnd4', 'Boundary');
+    model.component('mod1').probe('bnd4').selection.set(inlet_temp_bound);
+    model.component('mod1').probe('bnd4').label('TL_in_max');
+    model.component('mod1').probe('bnd4').set('probename', 'TL_in_max');
+    model.component('mod1').probe('bnd4').set('type', 'maximum');
+    model.component('mod1').probe('bnd4').set('expr', 'T_flibe');
+    model.component('mod1').probe('bnd4').set('unit', 'degC');
+    model.component('mod1').probe('bnd4').set('descr', 'Temperature');
+    %model.component('mod1').probe('bnd2').set('table', 'tbl3');
+    model.component('mod1').probe('bnd4').set('window', 'window4');
 end
 
 if isMultiScale

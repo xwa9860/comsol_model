@@ -10,8 +10,8 @@ model.material('mat1').propertyGroup('def').set('dynamicviscosity', 'mu_flibe(T_
 model.material('mat1').propertyGroup('def').set('hydraulicpermeability', {'Kbr' '0' '0' '0' 'Kbr' '0' '0' '0' 'Kbr'});
 model.material('mat1').propertyGroup('def').set('porosity', 'ep');
 model.material('mat1').propertyGroup('def').set('thermalconductivity', {'1.1' '0' '0' '0' '1.1' '0' '0' '0' '1.1'});
-model.material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)*0.4'); %1900*0.4*(pi*0.68^2) * 0.14 = 154kg/s
-model.material('mat1').propertyGroup('def').set('heatcapacity', '2386*0.4'); %flibe heat capacity * porosity; 1E7/(2386*150) = 30 degC 
+model.material('mat1').propertyGroup('def').set('density', 'rho_flibe(T_flibe)'); %1900*0.4*(pi*0.68^2) * 0.14 = 154kg/s
+model.material('mat1').propertyGroup('def').set('heatcapacity', '2386'); %flibe heat capacity * porosity; 1E7/(2386*150) = 30 degC 
 
 
 %% pure flibe in TMSR

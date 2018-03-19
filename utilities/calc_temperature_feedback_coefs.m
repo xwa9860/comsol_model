@@ -1,42 +1,61 @@
-%Compute temperature reactivity feedback and plot the comparison
-%between this model and serpent
+%{
+Compute temperature reactivity feedback and plot the comparison
+between this model and the serpent model
+
+
+%%--------------------For Mk1
+% Serpent results for Mk1
+fuel_temp = [300, 600, 900, 1200, 1500];
+keff = [9.89334E-01 9.87615E-01 9.58675E-01, 9.57168E-01 9.12511E-01];
+fuel_serpent = -0.0000596655; % computed from serpent outputs
+flibe_serpent = -0.0000196931; % computed from serpent outputs
+
+%comsol feedback coef for fuel
+fuel_comsol = -0.0000672071;
+
+
+%comsol feedback coef for flibe
+flibe_comsol= -0.0000217063;
+
+%}
 global general_path;
 global output_path;
 global reactor;
+global T0_flibe T0_fuel;
 
 %% fuel
 fuel_temps = [300, 600, 900, 1200, 1500];
-drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps);
-drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps);
-plot_temp_fb(fuel_temps, drho_fuel_comsol, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
+% compute delta_keffs at these temperatures in COMSOL
+drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps, T0_fuel);
+% % set fuel temperature back to the nominal value for following computations
+% model.param.set('T0_fuel', '800[degC]', 'initial temperature');
+% fprintf('Run eigenvalue study');
+% model.sol('sol16').runAll;
+% lambda_eigen = mphglobal(model, 'lambda');
+% fprintf('\nThe eigenvalue with initial temperatures is\n');
+% fprintf('%.10f \n', lambda_eigen);
 
-% set fuel temperature back
-model.param.set('T0_fuel', '800[degC]', 'initial temperature');
-fprintf('Run eigenvalue study');
-model.sol('sol16').runAll;
-lambda_eigen = mphglobal(model, 'lambda');
-fprintf('\nThe eigenvalue with initial temperatures is\n');
-fprintf('%.10f \n', lambda_eigen);
+% read keffs from serpent output and compute the delta between them
+drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps);
+plot_temp_fb(fuel_temps, drho_fuel_serpent, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
+% % plot_temp_fb(fuel_temps, drho_fuel_comsol, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
+
+
 
 %% flibe
-switch reactor
-    case 'TMSR'
-        flibe_density = [17, 18, 19, 20, 21]*100;
-        flibe_temps = round((2413-flibe_density)/0.488);
-    case 'Mk1'
-        flibe_temps = [650 700 1000 1300];
-end
-drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps);
+flibe_density = [17, 18, 19, 20, 21]*100;
+flibe_temps = round((2413-flibe_density)/0.488);
+    
+drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps, T0_flibe);
+        
 drho_flibe_serpent = read_keffs([general_path, 'temp_coef/flibe/'],  flibe_temps);
 
-%For TMSR, we have computed the drho with raw flibe cross sections taken directly from serpent
+%For TMSR, we have also computed the drho with raw flibe cross sections taken directly from serpent
 %file, without data fitting
 %drho_flibe_initial_XS= calc_delta_reactivity([0.9691579531, 0.9690427061, 0.9687800299 , 0.9685916542,0.9686395821], 3, 'COMSOL') ;
 % set flibe temperature back
-
+%plot_temp_fb(flibe_temps, drho_flibe_serpent, drho_flibe_serpent, reactor, [output_path 'flibe_fb.png']) 
 plot_temp_fb(flibe_temps, drho_flibe_comsol, drho_flibe_serpent, reactor, [output_path 'flibe_fb.png']) 
-model.param.set('T0_flibe', '672[degC]', 'initial temperature');
-        
         
 function drho= read_keffs(file_path, temps)
     
@@ -52,7 +71,7 @@ function drho= read_keffs(file_path, temps)
 end
 
 
-function drho_comsol = compute_drho(model, temp_var, temps)
+function drho_comsol = compute_drho(model, temp_var, temps, nominal_temp)
     
     for caseNb = 1:length(temps)
         model.param.set(temp_var, num2str(temps(caseNb)), 'initial temperature');
@@ -67,9 +86,10 @@ function drho_comsol = compute_drho(model, temp_var, temps)
     drho_comsol = calc_delta_reactivity(eigens, 3, 'COMSOL');
 
     % set back to nominal
-    model.param.set(temp_var, num2str(temps(round(length(temps)/2))), 'initial temperature');
-
-
+    model.param.set(temp_var, nominal_temp, 'initial temperature');
+    
+    [p, some] = polyfit(temps, drho_comsol, 1);
+    fprintf('\n The feedback coef in comsol is %4.10f\n', p(1));
 end
 
 

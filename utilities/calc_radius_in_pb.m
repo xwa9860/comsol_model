@@ -1,18 +1,21 @@
-% calculate the radius for each radial zone in a fuel pebble
-R = 0.03; % Mk1 pebble radius in meter
-R_inside=0.03-5/1000;
-zone_nb = 3; % number of zones
-V_zone = 4/3*pi*R_inside^3/zone_nb;%volume for each zone in a pebble
-% r1=0;
-% r2= R* zone_nb^(-1/3.0)/2
-% r3 = (r2 * 2^(1/3) + 2*r2)/2
-% r4 = (r2*2^(1/3) + R)/2
-% r5=0.025+(0.05/2);
-format long
-cal_radius=V_zone/(4/3)/pi;
-r_2_re=nthroot(cal_radius,3);
-r_3_re=nthroot(V_zone*2/(4/3)/pi,3);
-r_4_re=nthroot(V_zone*3/(4/3)/pi,3);
-r_5_re=R-5/1000/2;
-r = [r_2_re,r_3_re,r_4_re,r_5_re];
+function rs = calc_radius_in_pb()
 
+    global reactor
+    switch reactor
+        case 'TMSR'
+            % calculate the radius for each radial zone in a fuel pebble
+            r_fuel = 0.025;
+            rs(3) = r_fuel; % outer radius of the fuel in meter
+            zone_nb = 3; % number of zones in the fuel kernel
+            V_zone = 4/3*pi*r_fuel^3/zone_nb; %volume for each fuel zone in a pebble
+
+            rs(1)= r_fuel * zone_nb^(-1/3.0);
+            rs(2) = rs(1) * 2^(1/3);
+            rs(4) = 0.03;
+        case 'Mk1'
+            rs = [0.0125, 0.01325, 0.015]% radius of graphite kernel
+            % 'r1', '0.0125[m]', 'radius of graphite kernel in a pebble'
+            % 'r2', '0.01325[m]', 'outer radius of fuel layer in a pebble'
+            % 'r3', '0.015[m]', 'outer radius of fuel pebble'
+    end
+end
