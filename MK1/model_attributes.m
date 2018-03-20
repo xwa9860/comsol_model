@@ -64,7 +64,7 @@ switch fuel_comp
         rod_data_path = 'MK1\XS_data_rod_fresh\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
-        output_path = 'results\Mk1\flow_optimization\';
+        output_path = 'results\Mk1\flow_optimization\bottom_heavy\';
     case 'eq'
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';

@@ -1,20 +1,21 @@
 %{
  Create steady state results for 3D models: tables and plots
 %}
+global out_flow_bound
 
 fprintf('create steady state results, plots, tables, ...')
 %% change the dataset for cp11 from eigenvalue solution to steady state solution
 model.result.dataset('cpl1').set('data', 'dset2');
 
 
-%% evaluate mass flow rate at inlets
-% model.result.table.create('tbl2', 'Table');
+%% evaluate mass flow rate at inlets and outlets
+model.result.table.create('tbl2', 'Table');
 % model = calc_inlet_flow(model, in_bound1, 'tbl2');
 % model = calc_inlet_flow(model, in_bound2, 'tbl2');
 % model = calc_inlet_flow(model, in_bound3, 'tbl2');
 % model = calc_inlet_flow(model, in_bound4, 'tbl2');
 % model = calc_inlet_flow(model, in_bound5, 'tbl2');
-% model = calc_inlet_flow(model, inlet_temp_bound, 'tbl2');
+model = calc_inlet_flow(model, out_flow_bound, 'tbl2');
 %% plots
 model = plot_surf(model, 'cpl1', 'T_flibe', 2, 'T_flibe(steady state)', 'degC');
 model = plot_surf(model, 'cpl1', 'T_fuel', 2, 'T_fuel(steady state)', 'degC');

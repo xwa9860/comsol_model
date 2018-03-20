@@ -1,4 +1,6 @@
-
+%{
+create the heat transfer in flibe module to compute flibe temperature
+%}
 global flibe_domains dimNb fuel_domNb inlet_temp_bound;
 global out_flow_bound;
 
@@ -31,15 +33,14 @@ model.physics('ht_flibe').feature('ins1').label('Thermal Insulation');
 
 
 
-if isTMSR
+if isTMSR % TMSR: define outlet boundary and velocity profile
     model.physics('ht_flibe').create('ofl1', 'ConvectiveOutflow', dimNb-1);    
     model.physics('ht_flibe').feature('ofl1').selection.set(out_flow_bound);
     model.physics('ht_flibe').feature('ofl1').label('Outflow');
     
     model.physics('ht_flibe').feature('fluid1').set('minput_pressure', '0');
     model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0'; '0'; 'v_inlet'});
-    %   model.physics('ht_flibe').feature('fluid1').set('minput_velocity', {'0' 'v_inlet' '0'});
-else
+else % Mk1: get velocity profile from the porous media module
     model.physics('ht_flibe').feature('fluid1').set('minput_pressure_src', 'root.mod1.br.pA');
     model.physics('ht_flibe').feature('fluid1').set('minput_velocity_src', 'root.mod1.u');
 end

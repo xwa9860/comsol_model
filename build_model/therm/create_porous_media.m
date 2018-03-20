@@ -82,7 +82,7 @@ model.func.create('an9', 'Analytic');
 model.func('an9').label('Inlet Velocity');
 model.func('an9').set('args', {'z'});
 model.func('an9').set('expr', '(3.3-0.45*(2-z)^2)*0.016'); %bottom heavy
-model.func('an9').set('plotargs', {'z' '0' '1'});
+model.func('an9').set('plotargs', {'z' '1' '5'});
 model.func('an9').set('funcname', 'vel_in');
 
 model.physics('br').create('inl2', 'InletBoundary', dimNb-1);
@@ -98,7 +98,7 @@ model.component('mod1').physics('br').feature('inl2').set('om0', '20[1/s]');
 % 
 model.component('mod1').physics('br').create('inl3', 'InletBoundary', 2);
 model.component('mod1').physics('br').feature('inl3').selection.set(in_bound_center_curved);
-model.component('mod1').physics('br').feature('inl3').set('U0in', 0.05);
+model.component('mod1').physics('br').feature('inl3').set('U0in', 0.04);
 
 % upper inlet 
 model.component('mod1').physics('br').create('inl4', 'InletBoundary', 2);

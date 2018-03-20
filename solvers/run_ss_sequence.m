@@ -75,6 +75,7 @@ function model = run_ss_sequence()
 
     end
 end
+
 function model = start_from_begining(output_path)
     %% 1st eigenvalue solution
     isLoad1stEigenFromFile = false; %load the first eigenvalue solution(with initial temperature conditions) from file
