@@ -1,4 +1,4 @@
-function model = clac_inlet_flow(model, inlet_bound, table)
+function model = calc_inlet_flow(model, inlet_bound, table)
 %% evaluate mass flow rate at inlets
 global intNb
 % https://www.mathworks.com/matlabcentral/answers/99602-how-can-i-use-global-variables-and-matlab-workspaces
