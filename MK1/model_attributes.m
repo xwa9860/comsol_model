@@ -55,21 +55,22 @@ global triso_pf
 triso_pf = 0.4;
 
 fuel_comp = 'fresh';
-general_path = 'MK1\';
+general_path = 'MK1/';
 
 switch fuel_comp
     case 'fresh'
-        data_path = 'MK1\XS_data_fresh\';
-        fuel_data_path = 'MK1\XS_data_fresh\fuel\';
-        rod_data_path = 'MK1\XS_data_rod_fresh\';
+        data_path = 'MK1/XS_data_fresh/';
+        fuel_data_path = 'MK1/XS_data_fresh/fuel/';
+        rod_data_path = 'MK1/XS_data_rod_fresh/';
         %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
+
         output_path = 'results\Mk1\flow_optimization\bottom_heavy\';
     case 'eq'
-        data_path = 'MK1\XS_data\';
-        fuel_data_path = 'MK1\XS_data\fuel\';
-        rod_data_path = 'MK1\XS_data_rod\';
-        output_path = 'results\Mk1\eq_RI\';
+        data_path = 'MK1/XS_data/';
+        fuel_data_path = 'MK1/XS_data/fuel/';
+        rod_data_path = 'MK1/XS_data_rod/';
+        output_path = 'results/Mk1/eq_steady_state/';
 end
         
 dimNb = 3; % 3D model

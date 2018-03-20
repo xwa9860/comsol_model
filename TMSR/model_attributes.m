@@ -37,8 +37,8 @@ transient_type = 'overcooling';
 %'ext_RI_step';% 'overcooling';
 
 general_path = 'TMSR';
-data_path = 'TMSR\XS_data\';
-output_path = 'results\TMSR\multiscale_OC\';
+data_path = 'TMSR/XS_data/';
+output_path = 'results/TMSR/multiscale_OC/';
 
 dimNb= 2; % model dimension, 2 or 3
 dnb=6; % delayed neutron precursor group number
@@ -54,9 +54,9 @@ is_get_coef_from_file = true;
 %Define input variables for the model 
 isMultiScale= true;
 if isMultiScale
-    fuel_data_path = 'TMSR\XS_data\multi_fuel_3_3\';
+    fuel_data_path = 'TMSR/XS_data/multi_fuel_3_3/';
 else
-    fuel_data_path = 'TMSR\XS_data\fuel\';
+    fuel_data_path = 'TMSR/XS_data/fuel/';
 end
 
 isSp3 = false;
