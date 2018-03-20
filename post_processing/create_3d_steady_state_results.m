@@ -4,7 +4,7 @@
 
 global out_flow_bound
 
-fprintf('create steady state results, plots, tables, ...')
+fprintf('create steady state results, plots, tables, ...');
 %% change the dataset for cp11 from eigenvalue solution to steady state solution
 model.result.dataset('cpl1').set('data', 'dset2');
 
