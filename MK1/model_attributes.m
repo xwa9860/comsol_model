@@ -29,7 +29,7 @@ global domains gr_comps;
 global universes;
 
 % boundaries
-global in_bound1 in_bound2 in_bound3 in_bound4 in_bound5 inlet_temp_bound;
+global in_bound_lower in_bound_center_curved in_bound_center_straight in_bound_up_curved in_bound_up_top inlet_temp_bound;
 global out_bound1 out_bound2 out_bound3 out_flow_bound; 
 global valueSet pm_domains main_pm_domains;
 global dirichelet_b;
@@ -54,7 +54,7 @@ global triso_pf
 
 triso_pf = 0.4;
 
-fuel_comp = 'eq';
+fuel_comp = 'fresh';
 general_path = 'MK1\';
 
 switch fuel_comp
@@ -64,7 +64,7 @@ switch fuel_comp
         rod_data_path = 'MK1\XS_data_rod_fresh\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
-        output_path = 'results\Mk1\multiscale_OC\fresh_fuel\';
+        output_path = 'results\Mk1\flow_optimization\';
     case 'eq'
         data_path = 'MK1\XS_data\';
         fuel_data_path = 'MK1\XS_data\fuel\';
@@ -165,19 +165,27 @@ porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuel
 %boundary numbers used in comsol
 
 % lower inlet
-in_bound1=  [63, 64, 71, 72, 203, 207, 246, 256];
-%[63, 64, 71, 72, 165, 169, 206, 216]; new cr channel size
+in_bound_lower =  [63, 64, 71, 72, 203, 207, 246, 256];
+
 % center inlet
-in_bound2 = [107, 108, 118, 123, 130, 139, 147, 151, 158, 167, 225, 238, 290, 294, 305, 312, 326, 330, 335, 341];
-% [103, 104, 185, 199]; new cr channel size
+in_bound_center_curved = [95, 96, 219, 236];
+
+in_center_bound1 = [103:106, 116, 117, 121, 122, 128, ...
+    129, 137, 138, 145, 146, 149, 150, 156, 157, 165, ...
+    166, 223, 224, 235, 237, 288, 289, 292, 293, 303, ...
+    304, 310, 311, 324, 325, 328, 329, 333, 334, 339, 340];
+in_center_bound2 = [107, 108, 118, 123, 130, 139, 147, ...
+    151, 158, 167, 225, 238, 290, 294, 305, 312, 326, ...
+    330, 335, 341];
+in_center_bound3 = [97, 98, 109, 110, 119, 124, 131, 140, ...
+    148, 152, 159, 168, 220, 226, 240, 242, 291, 295, 306, ...
+    313, 327, 331, 336, 342];
+in_bound_center_straight= [in_center_bound1, in_center_bound2, in_center_bound3];
+
 % upper inlet
-%in_bound3 = [73, 74, 208, 253] ;
-in_bound3 = [75, 76, 97, 98, 109, 110, 119, 124, 131, 140, 148, 152, 159, 168, 209, 220, 226, 240, 242, 244, 291, 295, 306, 313, 327, 331, 336, 342];
-in_bound4 = [95, 96, 103:106, 116, 117, 121, 122, 128, 129, 137, 138, 145, 146, 149, 150, 156, 157, 165, 166, 219, 223, 224, 235:237, 288, 289, 292, 293, 303, 304, 310, 311, 324, 325, 328, 329, 333, 334, 339, 340];
-%in_bound5 = [75, 76, 209, 244];
-in_bound5 = [91, 92, 217, 245];
-% new control rod channel size in_bound3 = [73, 74, 170, 213]; %, 75, 76, 171, 204]; %[  105, 106, 186, 201, ]
-% new control rod channel size in_bound4 = [95, 96, 99:102, 181, 183, 184, 196:198]; 
+in_bound_up_curved = [75, 76, 209, 244];
+in_bound_up_top = [73, 74, 208, 253];
+
 % lower outlet
 out_bound1 = [39, 40, 191, 272]; % [39, 40, 153, 232]; % new control rod channel size   
 % middle outlet
@@ -194,7 +202,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1
 %% ---------------------- flibe heat transfer module
 
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
-inlet_temp_bound = [in_bound1, in_bound2, in_bound3, in_bound4, in_bound5];
+inlet_temp_bound = [in_bound_lower, in_bound_center_curved, in_bound_center_straight, in_bound_up_curved, in_bound_up_top];
 
 
 %% ----------------------- neutron diffusion module
