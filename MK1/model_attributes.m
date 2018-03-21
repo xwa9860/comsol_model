@@ -1,14 +1,18 @@
-% MK1
+%{
+ MK1
 %--------------------------------------------------
 % 236 MW thermal
 % 116*2 MW to heat exchanger + 4 MW loss
 
 % This file defines model attributes
 %--------------------------------------------------
+%}
+
 global reactor;
 reactor = 'Mk1';
 
-%% Define global variables for the model that can be used across the files and functions
+%% ------------------------------------------------------------------------ 
+% Make variables global so that they can be used across all the files and functions
 % model mode
 global general_path data_path fuel_data_path rod_data_path; 
 global dimNb dnb gnb unb seg_nb;
@@ -42,6 +46,11 @@ global power_mode;
 
 % solver mode
 global transient_type
+
+% reactor design
+global triso_pf
+
+%% -------------------------------------------------------------------------
 transient_type = 'overcooling';
 %'control_rods_removal';
 %'ext_RI_step';
@@ -49,12 +58,9 @@ transient_type = 'overcooling';
 %'ext_RI_ramp';
 %'overcooling';
 
-% reactor design
-global triso_pf
-
 triso_pf = 0.4;
 
-fuel_comp = 'eq';
+fuel_comp = 'fresh';
 general_path = 'MK1/';
 
 switch fuel_comp
@@ -64,7 +70,8 @@ switch fuel_comp
         rod_data_path = 'MK1/XS_data_rod_fresh/';
         %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
-        output_path = 'results/Mk1/eq_steady_state/';
+
+        output_path = 'results/Mk1/flow_optimization/bottom_heavy/';
     case 'eq'
         data_path = 'MK1/XS_data/';
         fuel_data_path = 'MK1/XS_data/fuel/';
@@ -95,18 +102,18 @@ switch power_mode
 end
 
 
-%% modeling options that you can switch on and off 
+%% ----------------------- modeling options that you can switch on and off 
 isTMSR = false;
 isVerbose = false; % setting this to true will print out more information in console
 isMultiScale= true;
 is_rounded_geom = true; % the sharp corners in the fuel region are rounded, which avoids local flow recirculation
 isSp3 = false;
 
-%% opearting parameters
+%% ----------------------- opearting parameters
 T0_flibe = 650; % degC
 T0_fuel = 800; % degC
 
-%% region names, universes, and domain numbers
+%% ----------------------- region names, universes, and domain numbers
 keySet = {'CR', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'...
       'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS',...
        'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
@@ -133,7 +140,7 @@ domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
 is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
 
-%% for XS definition
+% for XS definition
 temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
 control_rods = {'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
       'CRCC5', 'CRCC6', 'CRCC7', 'CRCC8_1', 'CRCC8_2'};   
@@ -145,7 +152,7 @@ seg_nb = 4;
 seg_heights = [572.85, 430.85, 272, 112.5, 41.6]*0.01;
 
     
-%% graphite based components, for material thermal properties definition
+% graphite based components, for material thermal properties definition
  gr_comps = {'CR',...
   'ORCC','OR', 'CB', 'DC',...
   'VS', 'CRCC1', 'CRCC2', 'CRCC3', 'CRCC4', ...
@@ -187,11 +194,11 @@ in_bound_up_curved = [75, 76, 209, 244];
 in_bound_up_top = [73, 74, 208, 253];
 
 % lower outlet
-out_bound1 = [39, 40, 191, 272]; % [39, 40, 153, 232]; % new control rod channel size   
+out_bound1 = [39, 40, 191, 272];   
 % middle outlet
-out_bound2 = [41, 42, 192, 264];  %[41, 42, 154, 224]; % new control rod channel size   
+out_bound2 = [41, 42, 192, 264];  
 % upper outlet
-out_bound3 = [61, 62, 67, 68, 202, 205, 254, 260]; % [61, 62, 67, 68, 164, 167, 214, 220];  % new control rod channel size
+out_bound3 = [61, 62, 67, 68, 202, 205, 254, 260]; 
 out_flow_bound = [out_bound1, out_bound2, out_bound3];
 
 
@@ -200,32 +207,14 @@ pm_domains = cell2mat(valueSet);
 main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 
 %% ---------------------- flibe heat transfer module
-
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
 inlet_temp_bound = [in_bound_lower, in_bound_center_curved, in_bound_center_straight, in_bound_up_curved, in_bound_up_top];
 
 
 %% ----------------------- neutron diffusion module
-
-dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33,34, 51:54, 57:60, 65:66, ...
-    69:70, 75:76, 85:86, 97, 102, 105, 110, 121, 126, 129, 134, 136:138,...
-    140:141, 143:144, 146:147, 152, 161:162, 164:165, 168, 170, 173, 178,...
-    180:183, 192, 194:195, 199, 201, 204, 212, 214:215, 217:218, 220:222, ...
-    232:233, 236, 241, 250:253];
-
-if is_rounded_geom  % some corners of the center reflector are rounded for smoother coolant streamlines
 dirichelet_b = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 16, 17, 18, 21, 22,...
     23, 24, 33:34, 61:64, 67:68, 71:72, 77:78, 93:94, 101:102, 113:114,...
     127, 133, 136, 142, 155, 161, 164, 170, 172:174, 176:177, 179:180,...
     182:183, 188, 202:203, 205, 207, 210, 218, 222, 228, 230:233, 246, ...
     254, 256, 260, 262, 265, 276, 278:279, 281:282, 284:286, 298:299,...
     302, 308, 318:321];
-end
-% if the control rod channels don't go all the way through the center
-% reflector, geom plan 2 radiuses are 0.345 instead of 0.35
-% dirichelet_b = [1:6, 9:12, 15:18, 21:24, 33, 34, 61:64, 67, 68, 71, 72, ...
-%     77, 78, 93, 94, 109:112, 117, 118, 121, 122, 127, 128, 131, 132, ...
-%     134:136, 138, 139, 141, 142, 144, 145, 150, 164, 165, 167, 169, 172, ...
-%     180, 188, 189, 191:194,...
-%     206, 214, 216, 220, 222, 225, 236, 238, 239, 241, 242, 244:246, 250, ...
-%     251, 254, 255, 260:263];

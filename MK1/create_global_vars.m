@@ -1,11 +1,6 @@
-%% create global variables for Mk1
-
-%model.param.set('U', '0.000055[m/s]', 'upwards velocity');
-%model.param.set('Po', '0 [atm]', 'pressure');
-%model.param.set('Ochuteout', '0.8', 'defueling chute pressure multiplier');
-
-
-
+%{ 
+create global variables for Mk1
+%}
 
 % fuel element geometry and design
 model.param.set('pb_area', 'pb_nb*4*(pb_diam/2)^2*pi', 'heat transfer area between flibe and pebbles');
@@ -23,8 +18,7 @@ model.param.set('V_coat', '4/3*pi*(R4^3-R3^3)[m^3]', 'volume of coatings and mat
 model.param.set('V_graphite_core', '4/3*pi*(r1^3)[m^3]', 'volume of the graphtie kernel in a pebble');
 model.param.set('V_graphite_shell', '4/3*pi*(r3^3-r2^3)[m^3]', 'volume of the graphite shell in a pebble');
 
-
-% model.param.set('deltaHCenterInlet', '1.5', 'width of the center inlet opening');
+% inlet and outlet width
 model.param.set('Houtlet', '1 [m]', 'outlet region height overlapping with active core region');
 model.param.set('Hinlet', '1.5 [m]', 'inlet region height overlapping with active core region');
 
@@ -36,7 +30,5 @@ model.param.set('Qmax', 'Qcore*1.41/Vcore[MW/m^3]', 'core peak power density');
 model.param.set('Vplug', '11[m^3]');
 model.param.set('Qplug', 'Qcore/Vplug');
 model.param.set('mL', '976*0.95[kg/s]', 'mass flow rate of the primary coolant, assuming 5% by pass');
-%model.param.set('mf', '1', 'fueling chute mass flowrate, fraction of total');
 model.param.set('bottomInletFraction', '0.3', 'fraction of mass flow rate going through the bottom inlet');
-%model.param.set('Pci0', '1.3', 'center inlet pressure head (m) (boundary condition)');
-%model.param.set('Pcb0', 'Pci0+.2', 'bottom inlet pressure head(boundary condition)');
+
