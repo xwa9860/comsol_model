@@ -75,7 +75,8 @@ model.physics('br').feature('inl1').set('om0', '20[1/s]');
 model.func.create('an9', 'Analytic');
 model.func('an9').label('Inlet Velocity');
 model.func('an9').set('args', {'z'});
-model.func('an9').set('expr', '(3.3-0.45*(2-z)^2)*0.016'); %bottom heavy
+% model.func('an9').set('expr', '(3.3-0.45*(2-z)^2)*0.016'); %bottom heavy
+model.func('an9').set('expr', '(2.9-0.1*(2.8-z)^2)*0.015'); %even distribution
 model.func('an9').set('plotargs', {'z' '1' '5'});
 model.func('an9').set('funcname', 'vel_in');
 

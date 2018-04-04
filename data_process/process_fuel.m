@@ -37,7 +37,7 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
                 tot_case_nb = 5;
             end
         else
-                tot_case_nb = 50;
+                tot_case_nb = 100;
         end
                                         
         %define input variable matrix: X

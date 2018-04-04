@@ -1,5 +1,6 @@
 function model = create_eigenvalue_solver(model, isTMSR)
 global fuel_comp
+global isMultiScale
 
     model.study.create('std2');
     model.study('std2').create('eigv', 'Eigenvalue');
@@ -9,9 +10,13 @@ global fuel_comp
     else
         switch fuel_comp
             case 'eq'
-                model.study('std2').feature('eigv').set('activate',{'br' 'off' 'ht_fuel1' 'off' 'ht_fuel2' 'off' 'ht_fuel3' 'off' 'ht_fuel4' 'off' ...
-                    'ht_fuel5' 'off' 'ht_fuel6' 'off' 'ht_fuel7' 'off' 'ht_fuel8' 'off' ...
-                    'ht_flibe' 'off' 'neutrondiffusion' 'on'});
+                if isMultiScale
+                    model.study('std2').feature('eigv').set('activate',{'br' 'off' 'ht_fuel1' 'off' 'ht_fuel2' 'off' 'ht_fuel3' 'off' 'ht_fuel4' 'off' ...
+                        'ht_fuel5' 'off' 'ht_fuel6' 'off' 'ht_fuel7' 'off' 'ht_fuel8' 'off' ...
+                        'ht_flibe' 'off' 'neutrondiffusion' 'on'});
+                else
+                    model.study('std2').feature('eigv').set('activate',{'br' 'off' 'ht_fuel' 'off' 'ht_flibe' 'off' 'neutrondiffusion' 'on'});
+                end
             case 'fresh'
                 model.study('std2').feature('eigv').set('activate',{'br' 'off' 'ht_fuel1' 'off' 'ht_flibe' 'off' 'neutrondiffusion' 'on'});
         end
