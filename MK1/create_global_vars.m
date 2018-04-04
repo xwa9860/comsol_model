@@ -12,14 +12,14 @@ model.param.set('porosity', '0.4');
 model.param.set('pb_diam', '3[cm]');
 
 
-%volume for each part
+% volume for each part
 model.param.set('V_fuel', '4/3*pi*R3^3/3[m^3]', 'volume of fuel kernel in a triso');
 model.param.set('V_coat', '4/3*pi*(R4^3-R3^3)[m^3]', 'volume of coatings and matrix around a triso');
 model.param.set('V_graphite_core', '4/3*pi*(r1^3)[m^3]', 'volume of the graphtie kernel in a pebble');
 model.param.set('V_graphite_shell', '4/3*pi*(r3^3-r2^3)[m^3]', 'volume of the graphite shell in a pebble');
 
 % inlet and outlet width
-model.param.set('Houtlet', '1 [m]', 'outlet region height overlapping with active core region');
+model.param.set('Houtlet', '0.7 [m]', 'outlet region height overlapping with active core region');
 model.param.set('Hinlet', '1.5 [m]', 'inlet region height overlapping with active core region');
 
 model.param.set('decay', '1', 'decay heat fraction of total power');

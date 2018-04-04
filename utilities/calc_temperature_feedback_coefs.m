@@ -36,7 +36,7 @@ drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps, T0_fuel);
 % fprintf('%.10f \n', lambda_eigen);
 
 % read keffs from serpent output and compute the delta between them
-drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps);
+drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps, 'fuel_fb_keffs');
 plot_temp_fb(fuel_temps, drho_fuel_serpent, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
 % % plot_temp_fb(fuel_temps, drho_fuel_comsol, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
 
@@ -48,7 +48,7 @@ flibe_temps = round((2413-flibe_density)/0.488);
     
 drho_flibe_comsol = compute_drho(model, 'T0_flibe', flibe_temps, T0_flibe);
         
-drho_flibe_serpent = read_keffs([general_path, 'temp_coef/flibe/'],  flibe_temps);
+drho_flibe_serpent = read_keffs([general_path, 'temp_coef/flibe/'],  flibe_temps, 'flibe_fb_keffs');
 
 %For TMSR, we have also computed the drho with raw flibe cross sections taken directly from serpent
 %file, without data fitting
@@ -57,12 +57,12 @@ drho_flibe_serpent = read_keffs([general_path, 'temp_coef/flibe/'],  flibe_temps
 %plot_temp_fb(flibe_temps, drho_flibe_serpent, drho_flibe_serpent, reactor, [output_path 'flibe_fb.png']) 
 plot_temp_fb(flibe_temps, drho_flibe_comsol, drho_flibe_serpent, reactor, [output_path 'flibe_fb.png']) 
         
-function drho= read_keffs(file_path, temps)
+function drho= read_keffs(file_path, temps, keff_saveTo)
     
     for i=1:length(temps)
         keffs(i) = read_keff([file_path, num2str(temps(i)), '/serp_full_core_res.m']);
     end
-    
+    csvwrite(keff_saveTo, keffs) % save the raw value of keffs to a file
     drho = calc_delta_reactivity(keffs, 3, 'SERPENT');
     
     [p, some] = polyfit(temps, drho, 1);

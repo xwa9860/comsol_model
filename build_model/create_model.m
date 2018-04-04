@@ -93,6 +93,15 @@ if isMultiScale
     end
 else
     run('create_ht_fuel.m');
+    
+    %% create T_fuel_i varaibles for computing cross-sections
+    model.variable.create('var_T_fuel');
+    model.variable('var_T_fuel').model('mod1');
+    for i = 1:3
+        for j = 1:8
+            model.variable('var_T_fuel').set(['Tp2', num2str(i), num2str(j)], 'T_fuel');
+        end
+    end
 end 
 %Neutronics module
 run('create_neutron_diffusion.m');

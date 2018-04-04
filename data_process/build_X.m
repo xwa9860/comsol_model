@@ -42,7 +42,7 @@ switch reactor
         end
         
         % adding intercept(column of ones)
-        input = [ones(50, 1) log(fuel_temps) raw_flibe_temps'];   
+        input = [ones(tot_case_nb, 1) log(fuel_temps) raw_flibe_temps'];   
         
 end
 % fprintf('input matrix x has size:');
