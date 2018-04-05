@@ -29,28 +29,51 @@
 
     if length(mat_size) == 3 %3D array, e.g. scattering matrix for different cases
         if mat_size(1) ~= length(x)  % case nb
-            error('x, y matrix not fit')
+            error('x, y matrix not fit\n');
         end
-        for g = 1 : mat_size(3)
-            y = matrix_to_fit(:, :, g);
-            coefs(:, :, g) = x\y;
+        for i = 1 : mat_size(3)
+            for j = 1 : mat_size(2) 
+                fprintf('processing scattering cross-sections\n');
+                y = matrix_to_fit(:, j, i);
+                coefs(:, j, i) = x\y;                
+                % evaluate the goodness of fit and give warnings if the error
+                % is large
+                residual = abs(max((x*coefs(:, j, i)-matrix_to_fit(:, j, i))./matrix_to_fit(:, j, i)));
+                if ~(residual < 1)
+                   fprintf('error too large\n')
+                   rate_of_zero = sum(y < 1E-11);
+                   if rate_of_zero > length(y)*0.8
+                        warning('most of the values are 0, coefficients forced to be 0');                        
+                        coefs(:, j, i) = zeros(x_size(2), 1);
+                   end            
+            end
+
         end
-        residual=0; % to do this is placeholder, need to compute residual properly in the future
+        
     end 
 
     if length(mat_size) == 2 %2D array
         % for this step, the following three approaches all give the same
         % results
-        % - coefs = x\matrix_to_fit;
-        % - mat_size = size(matrix_to_fit);
+        % - 1) coefs = x\matrix_to_fit;
+        % - 2), 3) 
+        %   mat_size = size(matrix_to_fit);
         %   for g = 1 : mat_size(2)
         %    - coefs(:, g) = x\matrix_to_fit(:, g);
         %    - coefs(:, g) = regress(matrix_to_fit(:,g), x);
         mat_size = size(matrix_to_fit);
         for g = 1 : mat_size(2)
             coefs(:, g) = x\matrix_to_fit(:, g);
+            
             %coefs(:, g) = regress(matrix_to_fit(:,g), x);
-            residual = (matrix_to_fit - x*coefs)./matrix_to_fit;
+            residual = abs( max( (matrix_to_fit(:, g) - x*coefs(:, g))./matrix_to_fit(:, g)));
+            if ~(residual < 0.2) 
+                warning('Fitting error too large');
+                fprintf('matrix_to_fit');
+                fprintf(matrix_to_fit(:,g));               
+                fprintf('coefs');
+                fprintf(coefs);
+            end
         end 
     end
     
