@@ -26,7 +26,8 @@ str.create('col1', 'Color');
 str.set('planecoordsys', 'cartesian');
 str.set('showzexpr', true);
 str.set('expr', {'u' 'v' 'w'});
-str.set('posmethod', 'magnitude');
+str.set('posmethod', 'uniform');
+str.set('udist', 0.01);
 str.set('resolution', 'normal');
 
 con = res.feature('con1');

@@ -94,7 +94,7 @@ function model = start_from_begining(output_path)
     end
 
     % run the following line only if temperature feedback coefficients are needed
-    % run('calc_temperature_feedback_coefs.m'); 
+    run('calc_temperature_feedback_coefs.m'); 
     
     %% 1st steady state solution with eigenvalue power and flux distribution
     % - create steady state solver

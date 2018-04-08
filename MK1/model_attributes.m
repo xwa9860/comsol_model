@@ -60,7 +60,7 @@ transient_type = 'overcooling';
 
 triso_pf = 0.4;
 
-fuel_comp = 'fresh';
+fuel_comp = 'eq';
 general_path = 'MK1/';
 
 switch fuel_comp
@@ -71,12 +71,12 @@ switch fuel_comp
         %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
         %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
 
-        output_path = 'results/Mk1/flow_optimization/bottom_heavy/';
+        output_path = 'results/Mk1/flow_optimization/even_flow/';
     case 'eq'
-        data_path = 'MK1/XS_data/';
-        fuel_data_path = 'MK1/XS_data/fuel/';
+        data_path = 'MK1/XS_data_new/';
+        fuel_data_path = 'MK1/XS_data_new/fuel/';
         rod_data_path = 'MK1/XS_data_rod/';
-        output_path = 'results/Mk1/eq_steady_state/';
+        output_path = 'results/Mk1/eq_steady_state_new_xsdata/';
 end
         
 dimNb = 3; % 3D model
@@ -105,7 +105,7 @@ end
 %% ----------------------- modeling options that you can switch on and off 
 isTMSR = false;
 isVerbose = false; % setting this to true will print out more information in console
-isMultiScale= true;
+isMultiScale= false;
 is_rounded_geom = true; % the sharp corners in the fuel region are rounded, which avoids local flow recirculation
 isSp3 = false;
 
@@ -138,7 +138,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
 
 % for XS definition
 temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
