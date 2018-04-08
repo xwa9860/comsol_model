@@ -39,7 +39,7 @@
                 % evaluate the goodness of fit and give warnings if the error
                 % is large
                 residual = abs(max((x*coefs(:, j, i)-matrix_to_fit(:, j, i))./matrix_to_fit(:, j, i)));
-                if ~(residual < 1)
+                if ~(residual < 0.2)
                    fprintf('error too large\n')
                    rate_of_zero = sum(y < 1E-11);
                    if rate_of_zero > length(y)*0.8

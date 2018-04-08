@@ -72,14 +72,15 @@ end
 
 
 function drho_comsol = compute_drho(model, temp_var, temps, nominal_temp)
+    eigens = ones(size(temps)); % initialization
     
     for caseNb = 1:length(temps)
+        fprintf('\nAt temperature\n');
+        fprintf('%.10f \n', temps(caseNb));
         model.param.set(temp_var, num2str(temps(caseNb)), 'initial temperature');
         model.sol('sol16').runAll;
-        lambda_eigen = mphglobal(model, 'lambda');
+        lambda_eigen = mphglobal(model, 'lambda')
         eigens(caseNb) = lambda_eigen;
-        fprintf('\nAt temperature\n');
-        fprintf('%.10f \n', temps(caseNb))
         fprintf('\nThe eigenvalue is\n');
         fprintf('%.10f \n', lambda_eigen)
     end
