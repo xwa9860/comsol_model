@@ -51,7 +51,7 @@ global transient_type
 global triso_pf
 
 %% -------------------------------------------------------------------------
-transient_type = 'overcooling';
+transient_type = 'ext_RI_step';
 %'control_rods_removal';
 %'ext_RI_step';
 %'control_rods_removal';
@@ -105,7 +105,7 @@ end
 %% ----------------------- modeling options that you can switch on and off 
 isTMSR = false;
 isVerbose = false; % setting this to true will print out more information in console
-isMultiScale= false;
+isMultiScale= true;
 is_rounded_geom = true; % the sharp corners in the fuel region are rounded, which avoids local flow recirculation
 isSp3 = false;
 
