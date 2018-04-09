@@ -17,9 +17,13 @@ function model = run_ss_sequence()
             isControlRodRemoval = false;
     end
 
-
-    isLoadScalingFromFile = false;
-
+    % The user can choose to load saved solution file from any of the steps
+    % to save time from running from the beginning.
+    isLoadScalingFromFile = false; %boolean, loading scaling results from file, skip the eigenvalue and steady state computation
+    isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
+    isLoadSSFromFile = false; % boolean, loading steady state results from file
+    
+    
     if isLoadScalingFromFile
         if isControlRodRemoval
             model = mphload([output_path, 'scaling_cr.mph']);
@@ -27,11 +31,8 @@ function model = run_ss_sequence()
             model = mphload([output_path, 'scaling.mph']);
         end
     else
-        
-        isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
-        isLoadSSFromFile = false; % boolean, loading steady state results from file
-
         if isLoadEigenFromFile
+            fprintf('Loading eigenvalue results from file eigen.mph or eigen_cr.mph\n');
             if isControlRodRemoval
                 model = mphload([output_path, 'eigen_cr.mph']);
             else
@@ -48,24 +49,25 @@ function model = run_ss_sequence()
             else
                 fprintf('Running the solvers from the beginning\n');
                 model = start_from_begining(output_path);
-            end
+            
 
-            if isControlRodRemoval
-                fprintf('Search for control rod positions\n');
-                model = search_control_rod_positions(model);    
+                if isControlRodRemoval
+                    fprintf('Search for control rod positions\n');
+                    model = search_control_rod_positions(model);    
+                end
             end
             
         end
 
-%         fprintf('\nRun steady state study\n');
-%         model = create_steady_state_solver(model);
-%         model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
-%         switch reactor
-%             case 'Mk1'
-%                 run('create_3d_steady_state_results');
-%             case 'TMSR'
-%                 run('create_steady_state_results');
-%         end
+        fprintf('\nRun steady state study\n');
+        model = create_steady_state_solver(model);
+        model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
+        switch reactor
+            case 'Mk1'
+                run('create_3d_steady_state_results');
+            case 'TMSR'
+                run('create_steady_state_results');
+        end
         
         
         %% Scale the flux to power
@@ -94,7 +96,7 @@ function model = start_from_begining(output_path)
     end
 
     % run the following line only if temperature feedback coefficients are needed
-    run('calc_temperature_feedback_coefs.m'); 
+    %run('calc_temperature_feedback_coefs.m'); 
 
     return;
     

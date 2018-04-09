@@ -138,7 +138,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
 
 % for XS definition
 temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
