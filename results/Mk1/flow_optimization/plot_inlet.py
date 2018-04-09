@@ -50,21 +50,21 @@ vel_max = 0.2
 
 # plot
 plt.subplot(131)
-plt.plot(f1(x), x, '.')
+plt.plot(f3(x), x, '.')
 plt.ylabel('Height (m)')
 plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)')
+plt.xlabel('Inlet velocity (m/s)\n (limited opening)')
 
 plt.subplot(132)
 plt.plot(f2(x), x, '.')
 plt.ylabel('Height (m)')
 plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)')
+plt.xlabel('Inlet velocity (m/s)\n (even inlet)')
 
 plt.subplot(133)
-plt.plot(f3(x), x, '.')
+plt.plot(f1(x), x, '.')
 plt.ylabel('Height (m)')
 plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)')
+plt.xlabel('Inlet velocity (m/s)\n (bottom heavy)')
 plt.savefig('inlet_vel')
 plt.show()
