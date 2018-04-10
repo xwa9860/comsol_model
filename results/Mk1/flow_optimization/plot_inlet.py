@@ -34,13 +34,7 @@ f2 = np.vectorize(f2)
 def f3(x):
     # initial inlet design with only a small opening in the middle
     if x < 3 and x > 1.5:
-        return  0.14*(x-1.5)
-    # if x <= 1.5:
-        # return 0
-    # if x >= 3 and x < 4.925:
-        # return 0
-    # if x >= 4.925 and x < 5.7285:
-        # return 0.05
+        return 0.14*(x-1.5)
     return 0.00000001
 f3 = np.vectorize(f3)
 
@@ -49,22 +43,19 @@ x = np.arange(0, 5.8, 0.1)
 vel_max = 0.2
 
 # plot
-plt.subplot(131)
-plt.plot(f3(x), x, '.')
-plt.ylabel('Height (m)')
-plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)\n (limited opening)')
+f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharey=True)
 
-plt.subplot(132)
-plt.plot(f2(x), x, '.')
-plt.ylabel('Height (m)')
+ax1.plot(f3(x), x, '.')
+ax1.set_title('Limited opening')
+ax1.set_ylabel('Height (m)')
 plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)\n (even inlet)')
 
-plt.subplot(133)
-plt.plot(f1(x), x, '.')
-plt.ylabel('Height (m)')
-plt.xlim(0, vel_max)
-plt.xlabel('Inlet velocity (m/s)\n (bottom heavy)')
+ax2.plot(f2(x), x, '.')
+ax2.set_title('Even inlet')
+ax2.set_xlabel('Inlet velocity (m/s)')
+ax2.set_xlim(0, vel_max)
+
+ax3.plot(f1(x), x, '.')
+ax3.set_title('Bottom heavy inlet')
 plt.savefig('inlet_vel')
 plt.show()
