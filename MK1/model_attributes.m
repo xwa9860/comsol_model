@@ -10,7 +10,8 @@
 
 global reactor;
 reactor = 'Mk1';
-
+global dom_probe_nb;
+dom_probe_nb = 10;
 %% ------------------------------------------------------------------------ 
 % Make variables global so that they can be used across all the files and functions
 % model mode
@@ -52,7 +53,6 @@ global triso_pf
 
 %% -------------------------------------------------------------------------
 transient_type = 'ext_RI_step';
-%'control_rods_removal';
 %'ext_RI_step';
 %'control_rods_removal';
 %'ext_RI_ramp';
@@ -68,15 +68,13 @@ switch fuel_comp
         data_path = 'MK1/XS_data_fresh/';
         fuel_data_path = 'MK1/XS_data_fresh/fuel/';
         rod_data_path = 'MK1/XS_data_rod_fresh/';
-        %output_path = 'results\Mk1\multiscale_RI\fresh_ext_RI\';
-        %output_path = 'results\Mk1\multiscale_RI\fresh_cr\zero_power\';
-
-        output_path = 'results/Mk1/flow_optimization/even_flow/';
+        %output_path = 'results\Mk1\multiscale_OC_test_probe\';
+        output_path = 'results\Mk1\multiscale_RI\fresh_cr\';
     case 'eq'
-        data_path = 'MK1/XS_data_new/';
-        fuel_data_path = 'MK1/XS_data_new/fuel/';
+        data_path = 'MK1/XS_data_eq/';
+        fuel_data_path = 'MK1/XS_data_eq/fuel/';
         rod_data_path = 'MK1/XS_data_rod/';
-        output_path = 'results/Mk1/eq_steady_state_new_xsdata/';
+        output_path = 'results/Mk1/eq_steady_state/';
 end
         
 dimNb = 3; % 3D model

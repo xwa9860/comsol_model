@@ -13,7 +13,7 @@ function rs = calc_radius_in_pb()
             rs(2) = rs(1) * 2^(1/3);
             rs(4) = 0.03;
         case 'Mk1'
-            rs = [0.0125, 0.01325, 0.015]% radius of graphite kernel
+            rs = [0.0125, 0.01325, 0.015];% radius of graphite kernel
             % 'r1', '0.0125[m]', 'radius of graphite kernel in a pebble'
             % 'r2', '0.01325[m]', 'outer radius of fuel layer in a pebble'
             % 'r3', '0.015[m]', 'outer radius of fuel pebble'

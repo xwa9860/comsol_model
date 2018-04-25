@@ -35,7 +35,7 @@ function temp_var_xs = build_temp_var()
                     k = k + 1;
                 end
             end
-            temp_var_xs(var_nb) = "T_flibe";
+            temp_var_xs(var_nb) = "T_flibe/1000";
         %% TMSR    
         case 'TMSR'
             if isMultiScale

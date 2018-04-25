@@ -24,7 +24,7 @@ global reactor;
 global T0_flibe T0_fuel;
 
 %% fuel
-fuel_temps = [300, 600, 900, 1200, 1500];
+fuel_temps = [600, 900, 1200, 1500];
 % compute delta_keffs at these temperatures in COMSOL
 drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps, T0_fuel);
 % % set fuel temperature back to the nominal value for following computations
@@ -37,8 +37,7 @@ drho_fuel_comsol = compute_drho(model, 'T0_fuel', fuel_temps, T0_fuel);
 
 % read keffs from serpent output and compute the delta between them
 drho_fuel_serpent = read_keffs([general_path, 'temp_coef/fuel/'], fuel_temps, 'fuel_fb_keffs');
-plot_temp_fb(fuel_temps, drho_fuel_serpent, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
-% % plot_temp_fb(fuel_temps, drho_fuel_comsol, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
+plot_temp_fb(fuel_temps, drho_fuel_comsol, drho_fuel_serpent, reactor, [output_path 'fuel_fb.png']) 
 
 
 
@@ -79,10 +78,10 @@ function drho_comsol = compute_drho(model, temp_var, temps, nominal_temp)
         fprintf('%.10f \n', temps(caseNb));
         model.param.set(temp_var, num2str(temps(caseNb)), 'initial temperature');
         model.sol('sol16').runAll;
-        lambda_eigen = mphglobal(model, 'lambda')
+        lambda_eigen = mphglobal(model, 'lambda');
         eigens(caseNb) = lambda_eigen;
-        fprintf('\nThe eigenvalue is\n');
-        fprintf('%.10f \n', lambda_eigen)
+        fprintf('\nThe keff(1/eigen_value) is\n');
+        fprintf('%.10f \n', 1/lambda_eigen)
     end
     drho_comsol = calc_delta_reactivity(eigens, 3, 'COMSOL');
 
@@ -102,7 +101,7 @@ function figures = plot_temp_fb(temps, drho_comsol, drho_serpent, reactor, saveT
     
     plot(temps, drho_comsol, 'k-o');
     hold on;
-    errorbar(temps, drho_serpent, 2E-5*ones(1,5), 'k--^');
+    errorbar(temps, drho_serpent, 2E-5*ones(1,length(temps)), 'k--^');
     xlim([200 1600]);
     switch reactor
         case 'TMSR'

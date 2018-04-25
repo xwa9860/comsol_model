@@ -1,6 +1,6 @@
 function model = create_eigenvalue_solver(model, isTMSR)
-global fuel_comp
-global isMultiScale
+    global fuel_comp
+    global isMultiScale
 
     model.study.create('std2');
     model.study('std2').create('eigv', 'Eigenvalue');

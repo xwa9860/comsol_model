@@ -2,7 +2,7 @@ global isTMSR dimNb reactor;
 global xs_name_unit_map;
 global domains universes fuel_univ fuel_domNb temp_indep_comps;
 global rod_positions control_rods;
-fprintf('defining geometry and thermal properties variables\n')
+fprintf('defining geometry and thermal properties variables in the COMSOL model\n')
 
 model.variable.create('var1');
 model.variable('var1').model('mod1');

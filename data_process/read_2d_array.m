@@ -13,7 +13,6 @@ function XS_mat = read_2d_array(serpent_data_name, row_nb, gnb, isCR, pos_var_na
             isCR = false;
             heights = [];
     end
-
     
     for i = 0:gnb-1 
         for j=1:gnb 

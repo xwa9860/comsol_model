@@ -14,8 +14,8 @@ function data = read_dep(data_path, univ, tot_case_nb, isCR, pos_var_name)
             run(data_path{k});
         end
     else
-        for c = 1:tot_case_nb 
-            file_name = ['case_', num2str(c), '.m'];   
+        for c = 1:tot_case_nb
+            file_name = ['case_', num2str(c), '.m']; 
             run([data_path file_name])
         end
     end

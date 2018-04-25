@@ -1,64 +1,42 @@
-function model = run_ss_sequence()
+function model = run_ss_sequence(start_after)
     %{
-    run the eigenvalue, steady state, scaling solvers sequence to find the
+    Run the eigenvalue, steady state, scaling solvers sequence to find the
     'final' steady state results
-
-    the function can either run the solvers step-by-step or load some
-    intermediate results from files in order to save time
-    %}
-
+    The function can either run the solvers step-by-step or load some
+    intermediate results from files in order to save time. The users can 
+    choose to load saved solution file from any of the steps
+    to save time from running from the beginning.
+    
+    start_from: "beginning", "eigen_1st", "ss", "scaling"
+    %} 
+    global isTMSR reactor; 
     global transient_type;
-    global output_path;
     
-    switch transient_type
-        case 'control_rods_removal'
-            isControlRodRemoval = true;
-        otherwise
-            isControlRodRemoval = false;
+    if ismember(start_after, ["eigen", "ss", "scaling"]) 
+        model = load_from_file(start_after);
     end
-
-    % The user can choose to load saved solution file from any of the steps
-    % to save time from running from the beginning.
-    isLoadScalingFromFile = false; %boolean, loading scaling results from file, skip the eigenvalue and steady state computation
-    isLoadEigenFromFile = false; % boolean, loading eigenvalue results from file
-    isLoadSSFromFile = false; % boolean, loading steady state results from file
     
+    %% start from the beginning
+    if ismember(start_after, ["beginning"])
+            fprintf('Running the solvers from the beginning\n');
+            model= create_model();
     
-    if isLoadScalingFromFile
-        if isControlRodRemoval
-            model = mphload([output_path, 'scaling_cr.mph']);
-        else
-            model = mphload([output_path, 'scaling.mph']);
-        end
-    else
-        if isLoadEigenFromFile
-            fprintf('Loading eigenvalue results from file eigen.mph or eigen_cr.mph\n');
-            if isControlRodRemoval
-                model = mphload([output_path, 'eigen_cr.mph']);
-            else
-                model = mphload([output_path, 'eigen.mph']);
-            end
-        else
-            if isLoadSSFromFile
-                fprintf('Loading steady state results from file ss.mph or ss_cr.mph\n');
-                if isControlRodRemoval
-                    model = mphload([output_path, 'ss_cr.mph']);
-                else
-                    model = mphload([output_path, 'ss.mph']);
-                end
-            else
-                fprintf('Running the solvers from the beginning\n');
-                model = start_from_begining(output_path);
-            
+            %% solvers
+            model = create_eigenvalue_solver(model, isTMSR);
+            % Eigenvalue calculation
+            isInitialRun = true;
+            [model, lambda_eigen] = run_an_eigen_solver(model, 'eigen_1st.mph', isInitialRun);
 
-                if isControlRodRemoval
-                    fprintf('Search for control rod positions\n');
-                    model = search_control_rod_positions(model);    
-                end
-            end
-            
-        end
-
+            % run the following line only if temperature feedback coefficients are needed
+            % run('calc_temperature_feedback_coefs.m');                 
+    end
+    
+    %% run steady state solver and iterations
+    if ismember(start_after, [ "beginning", "eigen_1st"])
+        % 1st steady state solution with eigenvalue power and flux distribution
+        % - create steady state solver
+        % - run the solver
+        % - create steady state results
         fprintf('\nRun steady state study\n');
         model = create_steady_state_solver(model);
         model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
@@ -68,57 +46,24 @@ function model = run_ss_sequence()
             case 'TMSR'
                 run('create_steady_state_results');
         end
-        
-        
-        %% Scale the flux to power
+
+        % Iterate betwen eigenvalue and steady state computation until the result converges
+        model = iterate_ss_eigen(model, 'ss.mph', 'eigen.mph');
+    
+        if string(transient_type) == "control_rods_removal"
+            fprintf('Search for control rod positions\n');
+            model = search_control_rod_positions(model);    
+        end
+    end
+    
+    %% Scale the flux to power    
+    if ismember(start_after, ["beginning", "eigen_1st", "ss"])
         fprintf('\nScaling the flux and delayed neutron precursor concentration...\n');
-        model = create_and_run_scaling(model, isControlRodRemoval);
-
-
+        model = create_and_run_scaling(model, string(transient_type) == "control_rods_removal");            
     end
+
 end
 
-function model = start_from_begining(output_path)
-    %% 1st eigenvalue solution
-    isLoad1stEigenFromFile = false; %load the first eigenvalue solution(with initial temperature conditions) from file
-    if isLoad1stEigenFromFile
-        model = mphload([output_path, 'eigen_1st.mph']);
-        lambda_eigen = mphglobal(model, 'lambda');
-        fprintf('\nThe eigenvalue with initial temperature conditions is\n');
-        fprintf('%.10f \n', lambda_eigen);
-    else
-        run('create_model.m');
-        %% solvers
-        model = create_eigenvalue_solver(model, isTMSR);
-        % Eigenvalue calculation
-        isInitialRun = true;
-        [model, lambda_eigen] = run_an_eigen_solver(model, 'eigen_1st.mph', isInitialRun);
-    end
-
-    % run the following line only if temperature feedback coefficients are needed
-    %run('calc_temperature_feedback_coefs.m'); 
-
-    return;
-    
-    %% 1st steady state solution with eigenvalue power and flux distribution
-    % - create steady state solver
-    % - run the solver
-    % - create steady state results
-    fprintf('\nRun steady state study\n');
-    model = create_steady_state_solver(model);
-    model = run_a_steady_state_solver(model, lambda_eigen, 'ss_1st.mph');    
-    switch reactor
-        case 'Mk1'
-            run('create_3d_steady_state_results');
-        case 'TMSR'
-            run('create_steady_state_results');
-    end
-
-    % Iterate betwen eigenvalue and steady state computation until the result converges
-    model = iterate_ss_eigen(model, 'ss.mph', 'eigen.mph'); 
-    
-
-end
 
 function model = search_control_rod_positions(model)
 % Insert control rods until keff = keff_no_rods * (1-1.4%),
@@ -167,4 +112,16 @@ function model = iterate_ss_eigen(model, ss_name, eigen_name)
         [model, new_eigen] = run_an_eigen_solver(model, eigen_name, isInitialRun);
         model = run_a_steady_state_solver(model, lambda_eigen, ss_name);  
     end
+end
+
+function model = load_from_file(start_after)    
+    global transient_type;
+    global output_path;
+
+    switch transient_type
+        case 'control_rods_removal'
+            model = mphload([output_path, char(start_after), '_cr.mph']);
+        otherwise
+            model = mphload([output_path, char(start_after), '.mph']);
+    end   
 end

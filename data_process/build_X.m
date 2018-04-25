@@ -27,7 +27,7 @@ switch reactor
         % because the cross sections are generated per porous media zones
         % that contains both fuel pebbles and coolant
         raw_temps = load([fuel_data_path, 'temp.mat']);   
-        raw_flibe_temps = raw_temps.liq;
+        raw_flibe_temps = raw_temps.liq(1:tot_case_nb)/1000;
         
         % The raw temperatures in the temp.mat file were randomly sampled 
         % in python and converted to a matlab .mat file. 
@@ -38,14 +38,14 @@ switch reactor
         burnup_nb = burnup_nb(2);
         fuel_temps = ones(tot_case_nb, 3*burnup_nb);
         for i = 0:burnup_nb-1
-            fuel_temps(:, i*3+1 :i*3+3) = raw_fuel_temps(:, i+1, 1:3);
+            fuel_temps(:, i*3+1 :i*3+3) = raw_fuel_temps(1:tot_case_nb, i+1, 1:3);
         end
         
         % adding intercept(column of ones)
         input = [ones(tot_case_nb, 1) log(fuel_temps) raw_flibe_temps'];   
         
 end
-% fprintf('input matrix x has size:');
-% size(input)
+%fprintf('input matrix x has size:');
+%size(input);
 end
     

@@ -39,11 +39,11 @@ function model = process_fuel(model, comsol_var_name, u_fuel)
                 tot_case_nb = 5;
             end
         else
-                tot_case_nb = 100;
+                tot_case_nb = 500;
         end
                                         
         %define input variable matrix: X
-        input = build_X(tot_case_nb);    
+        input = build_X(tot_case_nb);   
         % read fuel cross-section data from serpent result files
         fuel_data = read_dep(fuel_data_path, u_fuel, tot_case_nb, isCR, '');
         % fit a function to compute the coefficients,

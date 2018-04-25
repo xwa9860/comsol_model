@@ -10,7 +10,7 @@ fprintf('Define parameters used in matlab\n');
 run('model_attributes.m');
 
 fprintf('Build or load intermediate model, then run solver sequence\n');
-model = run_ss_sequence();
+model = run_ss_sequence("beginning");
 
 %% Transient calculation
 fprintf('\nRunning transient...\n');

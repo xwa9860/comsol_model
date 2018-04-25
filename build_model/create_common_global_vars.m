@@ -8,6 +8,8 @@ model.param.set('eigenMode', '0', 'binary value for NON engenvalue mode(value = 
 model.param.set('plotNb', '1', 'tracks plot number, increment as new plots are added');
 model.param.set('animNb', '1', 'tracks plot number, increment as new plots are added');
 model.param.set('intNb', '1', 'tracks inlet flow probe number, increment as new probes are added');
+model.param.set('dom_probe_nb', '1', 'tracks domain probe number, increment as new probes are added');
+
 
 % radius in triso and pebble
 r_triso = calc_radius_in_triso();
