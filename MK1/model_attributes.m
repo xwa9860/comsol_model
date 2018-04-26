@@ -34,7 +34,7 @@ global domains gr_comps;
 global universes;
 
 % boundaries
-global in_bound_lower in_bound_center_curved in_bound_center_straight in_bound_up_curved in_bound_up_top inlet_temp_bound;
+global in_bound_lower in_bound_center_low in_bound_center_curved in_bound_center_straight in_bound_up_curved in_bound_up_top inlet_temp_bound;
 global out_bound1 out_bound2 out_bound3 out_flow_bound; 
 global valueSet pm_domains main_pm_domains;
 global dirichelet_b;
@@ -52,7 +52,9 @@ global transient_type
 global triso_pf
 
 %% -------------------------------------------------------------------------
-transient_type = 'ext_RI_step';
+transient_type = 'overcooling';
+%'control_rods_removal';
+% 'ext_RI_step';
 %'ext_RI_step';
 %'control_rods_removal';
 %'ext_RI_ramp';
@@ -60,7 +62,7 @@ transient_type = 'ext_RI_step';
 
 triso_pf = 0.4;
 
-fuel_comp = 'eq';
+fuel_comp = 'fresh';
 general_path = 'MK1/';
 
 switch fuel_comp
@@ -68,8 +70,8 @@ switch fuel_comp
         data_path = 'MK1/XS_data_fresh/';
         fuel_data_path = 'MK1/XS_data_fresh/fuel/';
         rod_data_path = 'MK1/XS_data_rod_fresh/';
-        %output_path = 'results\Mk1\multiscale_OC_test_probe\';
-        output_path = 'results\Mk1\multiscale_RI\fresh_cr\';
+        output_path = 'results\Mk1\multiscale_OC\';
+        %output_path = 'results\Mk1\multiscale_RI\fresh_cr_new_inlet\';
     case 'eq'
         data_path = 'MK1/XS_data_eq/';
         fuel_data_path = 'MK1/XS_data_eq/fuel/';
@@ -136,7 +138,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
 
 % for XS definition
 temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};
@@ -173,6 +175,7 @@ porous_media = {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuel
 in_bound_lower =  [63, 64, 71, 72, 203, 207, 246, 256];
 
 % center inlet
+in_bound_center_low = [91, 92, 217, 245];
 in_bound_center_curved = [95, 96, 219, 236];
 
 in_center_bound1 = [103:106, 116, 117, 121, 122, 128, ...
@@ -206,7 +209,7 @@ main_pm_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1
 
 %% ---------------------- flibe heat transfer module
 flibe_domains = cell2mat(values(domains, {'Blanket', 'fuelU', 'fuelB', 'fuela1', 'fuela2', 'fuela3', 'fuela4'}));
-inlet_temp_bound = [in_bound_lower, in_bound_center_curved, in_bound_center_straight, in_bound_up_curved, in_bound_up_top];
+inlet_temp_bound = [in_bound_lower, in_bound_center_low, in_bound_center_curved, in_bound_center_straight, in_bound_up_curved, in_bound_up_top];
 
 
 %% ----------------------- neutron diffusion module
