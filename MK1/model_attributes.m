@@ -52,7 +52,7 @@ global transient_type
 global triso_pf
 
 %% -------------------------------------------------------------------------
-transient_type = 'overcooling';
+transient_type = 'control_rods_removal';
 %'control_rods_removal';
 % 'ext_RI_step';
 %'ext_RI_step';
@@ -70,8 +70,8 @@ switch fuel_comp
         data_path = 'MK1/XS_data_fresh/';
         fuel_data_path = 'MK1/XS_data_fresh/fuel/';
         rod_data_path = 'MK1/XS_data_rod_fresh/';
-        output_path = 'results\Mk1\multiscale_OC\';
-        %output_path = 'results\Mk1\multiscale_RI\fresh_cr_new_inlet\';
+        %output_path = 'results\Mk1\multiscale_OC\';
+        output_path = 'results\Mk1\multiscale_RI\fresh_cr\';
     case 'eq'
         data_path = 'MK1/XS_data_eq/';
         fuel_data_path = 'MK1/XS_data_eq/fuel/';
