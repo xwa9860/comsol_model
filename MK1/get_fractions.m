@@ -18,7 +18,7 @@ end
 
 fractionsN = 8*fraca/sum(fraca);
 % bar_plot(fractionsN);
-
+sum(fractionsN)
 end
 function bar_fig = bar_plot(fractionsN)
 
