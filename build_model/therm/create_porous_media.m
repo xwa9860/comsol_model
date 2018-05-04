@@ -83,8 +83,8 @@ model.component('mod1').physics('br').feature('inl6').set('U0in', 0.05);
 model.func.create('an9', 'Analytic');
 model.func('an9').label('Inlet Velocity');
 model.func('an9').set('args', {'z'});
-model.func('an9').set('expr', '(2.85-0.05*(1.755-z)^4)*0.016'); %bottom heavy
-%model.func('an9').set('expr', '(3.3-0.45*(2-z)^2)*0.016'); %bottom heavy
+%model.func('an9').set('expr', '(2.85-0.05*(1.755-z)^4)*0.016'); %bottom heavy
+model.func('an9').set('expr', '(3.3-0.45*(2-z)^2)*0.016'); %bottom heavy
 %model.func('an9').set('expr', '(2.9-0.1*(2.8-z)^2)*0.015'); %even distribution
 model.func('an9').set('plotargs', {'z' '1' '4.5'});
 model.func('an9').set('funcname', 'vel_in');
