@@ -72,7 +72,7 @@ function model = search_control_rod_positions(model)
     global excess_rho
    
     lambda_eigen = mphglobal(model, 'lambda');
-    target_eigen = lambda_eigen * (1+excess_rho);
+    target_eigen = lambda_eigen * (1 + excess_rho);
     fprintf('\nTarget eigenvalue is\n');
     fprintf('%.10f \n', target_eigen);
     rod_height = 4; % initial rod height to start searching

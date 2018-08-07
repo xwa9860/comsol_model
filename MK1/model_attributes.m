@@ -52,9 +52,9 @@ global transient_type
 global triso_pf
 
 %% -------------------------------------------------------------------------
-transient_type = 'ext_RI_step';
+transient_type = 'control_rods_removal';
+% All options:
 %'overcooling';
-%'control_rods_removal';
 % 'ext_RI_step';
 %'ext_RI_step';
 %'control_rods_removal';
@@ -63,16 +63,15 @@ transient_type = 'ext_RI_step';
 
 triso_pf = 0.4;
 
-fuel_comp = 'eq';
+fuel_comp = 'fresh';
 general_path = 'MK1/';
 
 switch fuel_comp
     case 'fresh'
         data_path = 'MK1/XS_data_fresh/';
         fuel_data_path = 'MK1/XS_data_fresh/fuel/';
-        rod_data_path = 'MK1/XS_data_rod_fresh/';
-        %output_path = 'results\Mk1\multiscale_OC\';
-        output_path = 'results\Mk1\multiscale_RI\fresh_cr\';
+        rod_data_path = 'MK1/XS_data_rod_fresh/';       
+        output_path = 'results/Mk1/multiscale_RI/fresh_cr/';
     case 'eq'
         data_path = 'MK1/XS_data_eq/';
         fuel_data_path = 'MK1/XS_data_eq/fuel/';
@@ -99,7 +98,7 @@ switch power_mode
     case 'full'
         OpPower = 236E6; %input to comsol global variable 'Pop'
         T_inlet = 600;
-        excess_rho = 0.014; % 0.025 is for PWRs
+        excess_rho = 0.038; % 0.025 is for PWRs
 end
 
 
@@ -139,7 +138,7 @@ dvalueSet = [11, 9, 8, 13, 12, 10, 7, ...
 
 domains = containers.Map(keySet,dvalueSet);
 universes = containers.Map(keySet, uvalueSet);
-is_get_coef_from_file = false; % loading fuel XS matrices from files instead of computing from serpent res files
+is_get_coef_from_file = true; % loading fuel XS matrices from files instead of computing from serpent res files
 
 % for XS definition
 temp_indep_comps = {'CR', 'Blanket', 'ORCC','OR', 'CB', 'DC', 'VS'};

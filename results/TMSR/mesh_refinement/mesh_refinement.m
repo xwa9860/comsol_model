@@ -26,8 +26,8 @@ loglog(DOF_qua, deltaK_qua, 'k-^');
 % xlim([500 1600]);
 % ylim([-0.015 0.025]);
 title('Mesh refinement study');
-ylabel('\Delta K_{eff}');
-xlabel('DOF');
+ylabel('\Delta k_{eff}');
+xlabel('Degree of freedom');
 legend('Linear elements', 'Quadratic elements');
 hold off;
 

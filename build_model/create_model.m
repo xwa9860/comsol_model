@@ -9,10 +9,10 @@ function model = create_model()
     % specific for Mk1 or TMSR
     run('create_global_vars.m');
 
-    fprintf('creating function, such as step, ramp, ... functions\n')
+    fprintf('Creating function, such as step, ramp, ... functions\n')
     run('create_fcns.m');
 
-    fprintf('creating geometry\n')
+    fprintf('Creating geometry\n')
     run('create_geom.m');
     run('create_mesh.m');
     tic
@@ -20,7 +20,7 @@ function model = create_model()
     run('create_vars.m');
     toc
 
-    fprintf('creating materials\n')
+    fprintf('Creating materials\n')
     run('create_mats.m');
 
     fprintf('creating physics\n')
